@@ -1,0 +1,448 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-16T20:14:55.349Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 14,
+    "implemented": 14,
+    "items": [
+      {
+        "id": "REQ-1",
+        "summary": "Implement a fully offline-first data layer that stores all pull-up logs locally on the device (no internet required for core functionality) and supports unlimited lifetime data.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/lib/offlineDb.ts",
+          "frontend/src/lib/types.ts",
+          "frontend/src/hooks/usePullupStore.ts",
+          "frontend/src/main.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/lib/offlineDb.ts",
+          "frontend/src/lib/types.ts",
+          "frontend/src/main.tsx"
+        ]
+      },
+      {
+        "id": "REQ-10",
+        "summary": "Sound effects system (no music): add and wire SFX for button click, wheel tick, data save chime, rank promotion impact, streak ignition flame, metal touch, and deep bass pulse on personal record; provide a global volume control that affects all SFX.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/public/assets/sfx/button-click.mp3",
+          "frontend/public/assets/sfx/wheel-tick.mp3",
+          "frontend/public/assets/sfx/save-chime.mp3",
+          "frontend/public/assets/sfx/rank-promotion-impact.mp3",
+          "frontend/public/assets/sfx/streak-ignition-flame.mp3",
+          "frontend/public/assets/sfx/metal-touch.mp3",
+          "frontend/public/assets/sfx/pr-bass-pulse.mp3",
+          "frontend/src/lib/sfx.ts",
+          "frontend/src/hooks/useSfx.ts",
+          "frontend/src/main.tsx",
+          "frontend/src/components/WheelPicker.tsx",
+          "frontend/src/components/BottomNav.tsx",
+          "frontend/src/screens/LogScreen.tsx",
+          "frontend/src/screens/DashboardScreen.tsx",
+          "frontend/src/screens/AnalyticsScreen.tsx",
+          "frontend/src/components/RankPromotionOverlay.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/lib/sfx.ts",
+          "frontend/src/main.tsx",
+          "frontend/src/components/WheelPicker.tsx",
+          "frontend/src/components/BottomNav.tsx",
+          "frontend/src/screens/LogScreen.tsx",
+          "frontend/src/screens/DashboardScreen.tsx",
+          "frontend/src/screens/AnalyticsScreen.tsx",
+          "frontend/src/components/RankPromotionOverlay.tsx"
+        ]
+      },
+      {
+        "id": "REQ-11",
+        "summary": "Settings: implement an interactive stickman pull-up volume control (no static slider) where the user drags a stickman upward on a pull-up bar to increase volume; reaching 100% triggers an automatic drop and resets volume to 0, with physics-like animation (arm stretch, gravity drop) and a special vibration at max pull; also include Reset Data with a premium confirmation animation.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/StickmanVolumeControl.tsx",
+          "frontend/src/screens/SettingsScreen.tsx",
+          "frontend/src/lib/reset.ts",
+          "frontend/src/components/ResetDataDialog.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/StickmanVolumeControl.tsx",
+          "frontend/src/screens/SettingsScreen.tsx",
+          "frontend/src/lib/reset.ts",
+          "frontend/src/components/ResetDataDialog.tsx"
+        ]
+      },
+      {
+        "id": "REQ-12",
+        "summary": "Apply the specified luxury visual system across the entire app (glass morphism, soft shadows, depth layers, minimal cold futuristic feel) using the exact provided color palette for backgrounds, cards, accents, buttons, wheel picker, text, and rank colors; ensure the UI feels 'alive' with pervasive motion and responsive micro-interactions.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/index.css",
+          "frontend/tailwind.config.js",
+          "frontend/src/components/AppShell.tsx",
+          "frontend/src/components/WheelPicker.tsx",
+          "frontend/src/components/BottomNav.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/index.css",
+          "frontend/tailwind.config.js",
+          "frontend/src/components/AppShell.tsx",
+          "frontend/src/components/WheelPicker.tsx",
+          "frontend/src/components/BottomNav.tsx"
+        ]
+      },
+      {
+        "id": "REQ-13",
+        "summary": "Implement haptic feedback patterns using the platform vibration capability where available: light vibration on button press, medium on save, strong on rank promotion, and special vibration on volume max pull; ensure the app degrades gracefully when vibration is unsupported.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/lib/haptics.ts",
+          "frontend/src/components/HapticButton.tsx",
+          "frontend/src/components/BottomNav.tsx",
+          "frontend/src/screens/LogScreen.tsx",
+          "frontend/src/components/RankPromotionOverlay.tsx",
+          "frontend/src/components/StickmanVolumeControl.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/lib/haptics.ts",
+          "frontend/src/components/BottomNav.tsx",
+          "frontend/src/screens/LogScreen.tsx",
+          "frontend/src/components/RankPromotionOverlay.tsx",
+          "frontend/src/components/StickmanVolumeControl.tsx"
+        ]
+      },
+      {
+        "id": "REQ-14",
+        "summary": "Ensure performance and smoothness: animations and interactions (wheel inertia, counters, graph drawing, transitions) must remain responsive with no noticeable lag on typical mobile devices; avoid unnecessary network requests and heavy rerenders.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/WheelPicker.tsx",
+          "frontend/src/components/HistoryGraph365.tsx",
+          "frontend/src/components/RollingCounter.tsx",
+          "frontend/src/hooks/usePullupStore.ts",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/WheelPicker.tsx",
+          "frontend/src/components/HistoryGraph365.tsx",
+          "frontend/src/components/RollingCounter.tsx",
+          "frontend/src/App.tsx"
+        ]
+      },
+      {
+        "id": "REQ-2",
+        "summary": "Add manual backup and restore via a user-initiated export/import flow that can be stored in Google Drive by the user (no automatic sync required): export all local data to a single file and restore from that file, with clear success/failure states.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/lib/backup.ts",
+          "frontend/src/screens/SettingsScreen.tsx",
+          "frontend/src/components/BackupRestorePanel.tsx",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/lib/backup.ts",
+          "frontend/src/screens/SettingsScreen.tsx",
+          "frontend/src/components/BackupRestorePanel.tsx",
+          "frontend/src/App.tsx"
+        ]
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Enforce a strict 'no keyboard anywhere' UX: remove/avoid all freeform text inputs and numeric typing. All numeric values (sets, reps, duration, weight, any number) must be chosen via a vertical wheel picker with inertia, snapping, center highlight glow, and tick sound feedback; notes must be selectable predefined tags only.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/WheelPicker.tsx",
+          "frontend/src/components/TagMultiSelect.tsx",
+          "frontend/src/lib/predefinedTags.ts",
+          "frontend/src/screens/LogScreen.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/WheelPicker.tsx",
+          "frontend/src/components/TagMultiSelect.tsx",
+          "frontend/src/lib/predefinedTags.ts",
+          "frontend/src/screens/LogScreen.tsx"
+        ]
+      },
+      {
+        "id": "REQ-4",
+        "summary": "Create the core app navigation and screens: Dashboard, Log, History, Analytics, Settings, with icon-based minimal navigation and smooth transitions between screens (blur/depth animation).",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/AppShell.tsx",
+          "frontend/src/components/BottomNav.tsx",
+          "frontend/src/components/ScreenTransition.tsx",
+          "frontend/src/screens/DashboardScreen.tsx",
+          "frontend/src/screens/HistoryScreen.tsx",
+          "frontend/src/screens/AnalyticsScreen.tsx",
+          "frontend/src/screens/SettingsScreen.tsx",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/AppShell.tsx",
+          "frontend/src/components/BottomNav.tsx",
+          "frontend/src/screens/DashboardScreen.tsx",
+          "frontend/src/screens/HistoryScreen.tsx",
+          "frontend/src/screens/AnalyticsScreen.tsx",
+          "frontend/src/screens/SettingsScreen.tsx",
+          "frontend/src/App.tsx"
+        ]
+      },
+      {
+        "id": "REQ-5",
+        "summary": "Dashboard: show today's total pullups as a large animated rolling counter; show current rank as an animated metallic hexagon badge; show streak flame animation; show fatigue indicator ring; show an orb-style energy core that fills as the user progresses toward a goal; apply subtle animated gradient background with depth blur.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/assets/generated.ts",
+          "frontend/src/components/RollingCounter.tsx",
+          "frontend/src/components/RankBadge.tsx",
+          "frontend/src/components/StreakFlame.tsx",
+          "frontend/src/components/FatigueRing.tsx",
+          "frontend/src/components/EnergyOrb.tsx",
+          "frontend/src/components/FrostedBackground.tsx",
+          "frontend/src/screens/DashboardScreen.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/assets/generated.ts",
+          "frontend/src/components/RollingCounter.tsx",
+          "frontend/src/components/RankBadge.tsx",
+          "frontend/src/components/StreakFlame.tsx",
+          "frontend/src/components/FatigueRing.tsx",
+          "frontend/src/components/EnergyOrb.tsx",
+          "frontend/src/components/FrostedBackground.tsx",
+          "frontend/src/screens/DashboardScreen.tsx"
+        ]
+      },
+      {
+        "id": "REQ-6",
+        "summary": "Log Screen: implement a premium logging flow using wheel pickers to select number of sets and reps per set, with optional duration and optional weight; include predefined tags for notes; on save, persist the session, play a premium confirmation sound, trigger haptics, and show a pulse confirmation animation.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/SessionBuilder.tsx",
+          "frontend/src/lib/haptics.ts",
+          "frontend/src/lib/animations.ts",
+          "frontend/src/screens/LogScreen.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/SessionBuilder.tsx",
+          "frontend/src/lib/haptics.ts",
+          "frontend/src/lib/animations.ts",
+          "frontend/src/screens/LogScreen.tsx"
+        ]
+      },
+      {
+        "id": "REQ-7",
+        "summary": "History Screen: display the last 365 days of pull-up totals in a smooth animated graph that draws left-to-right on open; allow tapping a day to view details; show weekly average, monthly total, and personal records derived from the stored data.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/HistoryGraph365.tsx",
+          "frontend/src/components/DayDetailsSheet.tsx",
+          "frontend/src/lib/stats.ts",
+          "frontend/src/screens/HistoryScreen.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/HistoryGraph365.tsx",
+          "frontend/src/components/DayDetailsSheet.tsx",
+          "frontend/src/lib/stats.ts",
+          "frontend/src/screens/HistoryScreen.tsx"
+        ]
+      },
+      {
+        "id": "REQ-8",
+        "summary": "Analytics Screen: compute and display max pullups ever, current streak, longest streak, daily average, fatigue score, consistency score, and rank progress based on local data; include a personal record celebration (visual + SFX + haptic) when a new record is achieved.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/lib/analytics.ts",
+          "frontend/src/components/MetricCard.tsx",
+          "frontend/src/components/RecordCelebration.tsx",
+          "frontend/src/screens/AnalyticsScreen.tsx",
+          "frontend/src/screens/LogScreen.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/lib/analytics.ts",
+          "frontend/src/components/MetricCard.tsx",
+          "frontend/src/components/RecordCelebration.tsx",
+          "frontend/src/screens/AnalyticsScreen.tsx",
+          "frontend/src/screens/LogScreen.tsx"
+        ]
+      },
+      {
+        "id": "REQ-9",
+        "summary": "Rank system: implement the full rank ladder (Bronze III → Ascendant) with animated metallic hexagon badges including metal texture, inner glow, moving shine reflection, particle aura, and a promotion animation (explosion/impact). Rank progress must update based on the user’s accumulated performance and be visible on Dashboard and Analytics.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/lib/ranks.ts",
+          "frontend/src/components/ParticleAura.tsx",
+          "frontend/src/components/RankPromotionOverlay.tsx",
+          "frontend/src/components/RankBadge.tsx",
+          "frontend/src/hooks/useRankProgress.ts",
+          "frontend/src/screens/DashboardScreen.tsx",
+          "frontend/src/screens/AnalyticsScreen.tsx",
+          "frontend/src/screens/LogScreen.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/lib/ranks.ts",
+          "frontend/src/components/RankPromotionOverlay.tsx",
+          "frontend/src/components/RankBadge.tsx",
+          "frontend/src/hooks/useRankProgress.ts",
+          "frontend/src/screens/DashboardScreen.tsx",
+          "frontend/src/screens/AnalyticsScreen.tsx",
+          "frontend/src/screens/LogScreen.tsx"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "backend/main.mo",
+    "build-request.json",
+    "build-template/Dockerfile",
+    "build-template/LICENSE",
+    "build-template/README.md",
+    "build-template/deploy.sh",
+    "build-template/icp.yaml",
+    "build-template/package.json",
+    "build-template/pnpm-lock.yaml",
+    "build-template/pnpm-workspace.yaml",
+    "build-template/scripts/prune-unused-images.js",
+    "build-template/scripts/resize-images.js",
+    "build-template/src/backend/canister.yaml",
+    "build-template/src/backend/system-idl/aaaaa-aa.did",
+    "build-template/src/frontend/canister.yaml",
+    "build-template/src/frontend/components.json",
+    "build-template/src/frontend/env.json",
+    "build-template/src/frontend/eslint-rules/no-bigint-in-query-keys.js",
+    "build-template/src/frontend/eslint-rules/require-internet-identity-provider.js",
+    "build-template/src/frontend/eslint.config.js",
+    "build-template/src/frontend/package.json",
+    "build-template/src/frontend/postcss.config.js",
+    "build-template/src/frontend/src/components/ui/accordion.tsx",
+    "build-template/src/frontend/src/components/ui/alert-dialog.tsx",
+    "build-template/src/frontend/src/components/ui/alert.tsx",
+    "build-template/src/frontend/src/components/ui/aspect-ratio.tsx",
+    "build-template/src/frontend/src/components/ui/avatar.tsx",
+    "build-template/src/frontend/src/components/ui/badge.tsx",
+    "build-template/src/frontend/src/components/ui/breadcrumb.tsx",
+    "build-template/src/frontend/src/components/ui/button.tsx",
+    "build-template/src/frontend/src/components/ui/calendar.tsx",
+    "build-template/src/frontend/src/components/ui/card.tsx",
+    "build-template/src/frontend/src/components/ui/carousel.tsx",
+    "build-template/src/frontend/src/components/ui/chart.tsx",
+    "build-template/src/frontend/src/components/ui/checkbox.tsx",
+    "build-template/src/frontend/src/components/ui/collapsible.tsx",
+    "build-template/src/frontend/src/components/ui/command.tsx",
+    "build-template/src/frontend/src/components/ui/context-menu.tsx",
+    "build-template/src/frontend/src/components/ui/dialog.tsx",
+    "build-template/src/frontend/src/components/ui/drawer.tsx",
+    "build-template/src/frontend/src/components/ui/dropdown-menu.tsx",
+    "build-template/src/frontend/src/components/ui/form.tsx",
+    "build-template/src/frontend/src/components/ui/hover-card.tsx",
+    "build-template/src/frontend/src/components/ui/input-otp.tsx",
+    "build-template/src/frontend/src/components/ui/input.tsx",
+    "build-template/src/frontend/src/components/ui/label.tsx",
+    "build-template/src/frontend/src/components/ui/menubar.tsx",
+    "build-template/src/frontend/src/components/ui/navigation-menu.tsx",
+    "build-template/src/frontend/src/components/ui/pagination.tsx",
+    "build-template/src/frontend/src/components/ui/popover.tsx",
+    "build-template/src/frontend/src/components/ui/progress.tsx",
+    "build-template/src/frontend/src/components/ui/radio-group.tsx",
+    "build-template/src/frontend/src/components/ui/resizable.tsx",
+    "build-template/src/frontend/src/components/ui/scroll-area.tsx",
+    "build-template/src/frontend/src/components/ui/select.tsx",
+    "build-template/src/frontend/src/components/ui/separator.tsx",
+    "build-template/src/frontend/src/components/ui/sheet.tsx",
+    "build-template/src/frontend/src/components/ui/sidebar.tsx",
+    "build-template/src/frontend/src/components/ui/skeleton.tsx",
+    "build-template/src/frontend/src/components/ui/slider.tsx",
+    "build-template/src/frontend/src/components/ui/sonner.tsx",
+    "build-template/src/frontend/src/components/ui/switch.tsx",
+    "build-template/src/frontend/src/components/ui/table.tsx",
+    "build-template/src/frontend/src/components/ui/tabs.tsx",
+    "build-template/src/frontend/src/components/ui/textarea.tsx",
+    "build-template/src/frontend/src/components/ui/toggle-group.tsx",
+    "build-template/src/frontend/src/components/ui/toggle.tsx",
+    "build-template/src/frontend/src/components/ui/tooltip.tsx",
+    "build-template/src/frontend/src/hooks/use-mobile.tsx",
+    "build-template/src/frontend/src/lib/utils.ts",
+    "build-template/src/frontend/tsconfig.json",
+    "build-template/src/frontend/vite.config.js",
+    "build-template/tsconfig.json",
+    "caffeine.lock.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/index.css",
+    "frontend/index.html",
+    "frontend/public/assets/generated/bg-frosted-gradient.dim_1440x2560.png",
+    "frontend/public/assets/generated/flame-sprite.dim_1024x1024.png",
+    "frontend/public/assets/generated/hex-badge-base.dim_512x512.png",
+    "frontend/public/assets/generated/metal-ascendant.dim_1024x1024.png",
+    "frontend/public/assets/generated/metal-bronze.dim_1024x1024.png",
+    "frontend/public/assets/generated/metal-diamond.dim_1024x1024.png",
+    "frontend/public/assets/generated/metal-elite.dim_1024x1024.png",
+    "frontend/public/assets/generated/metal-gold.dim_1024x1024.png",
+    "frontend/public/assets/generated/metal-platinum.dim_1024x1024.png",
+    "frontend/public/assets/generated/metal-silver.dim_1024x1024.png",
+    "frontend/public/assets/generated/orb-core.dim_1024x1024.png",
+    "frontend/public/assets/generated/stickman-pullup.dim_1024x512.png",
+    "frontend/src/App.tsx",
+    "frontend/src/assets/generated.ts",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/components/AppShell.tsx",
+    "frontend/src/components/BackupRestorePanel.tsx",
+    "frontend/src/components/BottomNav.tsx",
+    "frontend/src/components/DayDetailsSheet.tsx",
+    "frontend/src/components/EnergyOrb.tsx",
+    "frontend/src/components/FatigueRing.tsx",
+    "frontend/src/components/FrostedBackground.tsx",
+    "frontend/src/components/HistoryGraph365.tsx",
+    "frontend/src/components/MetricCard.tsx",
+    "frontend/src/components/RankBadge.tsx",
+    "frontend/src/components/RankPromotionOverlay.tsx",
+    "frontend/src/components/RecordCelebration.tsx",
+    "frontend/src/components/ResetDataDialog.tsx",
+    "frontend/src/components/RollingCounter.tsx",
+    "frontend/src/components/SessionBuilder.tsx",
+    "frontend/src/components/StickmanVolumeControl.tsx",
+    "frontend/src/components/StreakFlame.tsx",
+    "frontend/src/components/TagMultiSelect.tsx",
+    "frontend/src/components/WheelPicker.tsx",
+    "frontend/src/config.ts",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/useActor.ts",
+    "frontend/src/hooks/useInternetIdentity.ts",
+    "frontend/src/hooks/usePullupStore.tsx",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/hooks/useRankProgress.ts",
+    "frontend/src/hooks/useSfx.tsx",
+    "frontend/src/index.css",
+    "frontend/src/lib/analytics.ts",
+    "frontend/src/lib/animations.ts",
+    "frontend/src/lib/backup.ts",
+    "frontend/src/lib/haptics.ts",
+    "frontend/src/lib/offlineDb.ts",
+    "frontend/src/lib/predefinedTags.ts",
+    "frontend/src/lib/ranks.ts",
+    "frontend/src/lib/reset.ts",
+    "frontend/src/lib/sfx.ts",
+    "frontend/src/lib/stats.ts",
+    "frontend/src/lib/types.ts",
+    "frontend/src/main.tsx",
+    "frontend/src/screens/AnalyticsScreen.tsx",
+    "frontend/src/screens/DashboardScreen.tsx",
+    "frontend/src/screens/HistoryScreen.tsx",
+    "frontend/src/screens/LogScreen.tsx",
+    "frontend/src/screens/SettingsScreen.tsx",
+    "frontend/src/ui-summary.json",
+    "frontend/src/utils/StorageClient.ts",
+    "frontend/tailwind.config.js",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

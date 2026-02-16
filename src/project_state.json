@@ -1,0 +1,200 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "Pullups Tracker: fully offline, ultra-premium pull-up tracking mobile app for personal use with elite futuristic UI, wheel-only numeric input (no keyboard), deep analytics, animated dashboard/history/graphs, rank system with metallic hex badges, sound effects + haptics, and optional manual Google Drive backup/restore.",
+  "architectural_notes": [
+    "App must be fully offline-first; never require internet for core functionality.",
+    "Persist all workout data in a local database; support unlimited lifetime records.",
+    "No keyboard/text input anywhere; all numeric input via vertical wheel pickers; notes via predefined selectable tags only.",
+    "Optional manual Google Drive backup/restore only (not required for operation).",
+    "UI style: elite futuristic minimal cold aesthetic with glassmorphism, soft shadows, depth layers, icon-based navigation.",
+    "Extensive animations: counters rolling, hex shine, graph draw, blur transitions, orb fill, streak flame, rank promo explosion, button depth presses.",
+    "Audio: sound effects only (no music) with specified events; integrate with haptic feedback tiers.",
+    "Performance requirement: extremely smooth/instant response; prioritize animation and scrolling fluidity.",
+    "Color palette must follow provided hex values for backgrounds, accents, ranks, text, status colors, wheel picker.",
+    "Volume control must be the stickman pull-up interaction (no static slider), including physics, arm stretch, gravity drop, vibration."
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "imageRequirements": "## Required Images\n- Metallic hexagon badge base (hex-badge-base.dim_512x512.png)\n- Bronze metal texture tile (metal-bronze.dim_1024x1024.png)\n- Silver metal texture tile (metal-silver.dim_1024x1024.png)\n- Gold metal texture tile (metal-gold.dim_1024x1024.png)\n- Platinum metal texture tile (metal-platinum.dim_1024x1024.png)\n- Diamond metal texture tile (metal-diamond.dim_1024x1024.png)\n- Elite white metal texture tile (metal-elite.dim_1024x1024.png)\n- Ascendant iridescent magenta metal texture tile (metal-ascendant.dim_1024x1024.png)\n- Minimal stickman hanging on pull-up bar illustration (stickman-pullup.dim_1024x512.png)\n- Subtle futuristic animated-style background plate (bg-frosted-gradient.dim_1440x2560.png)\n- Flame sprite sheet for streak animation (flame-sprite.dim_1024x1024.png)\n- Energy orb core texture (orb-core.dim_1024x1024.png)",
+  "existing_features": [
+    {
+      "id": "feature-implement-a-fully-offline-first-data-layer-that-stores-all-pull-up-logs-locally-on-the-device-no-internet-required-for-core-functionality-and-supports-unlimited-lifetime-data",
+      "title": "Implement a fully offline-first data layer that stores all pull-up logs locally on the device (no internet required for core functionality) and supports unlimited lifetime data.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-manual-backup-and-restore-via-a-user-initiated-export-import-flow-that-can-be-stored-in-google-drive-by-the-user-no-automatic-sync-required-export-all-local-data-to-a-single-file-and-restore-from-that-file-with-clear-success-failure-states",
+      "title": "Add manual backup and restore via a user-initiated export/import flow that can be stored in Google Drive by the user (no automatic sync required): export all local data to a single file and restore from that file, with clear success/failure states.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-enforce-a-strict-no-keyboard-anywhere-ux-remove-avoid-all-freeform-text-inputs-and-numeric-typing-all-numeric-values-sets-reps-duration-weight-any-number-must-be-chosen-via-a-vertical-wheel-picker-with-inertia-snapping-center-highlight-glow-and-tick-sound-feedback-notes-must-be-selectable-predefined-tags-only",
+      "title": "Enforce a strict 'no keyboard anywhere' UX: remove/avoid all freeform text inputs and numeric typing. All numeric values (sets, reps, duration, weight, any number) must be chosen via a vertical wheel picker with inertia, snapping, center highlight glow, and tick sound feedback; notes must be selectable predefined tags only.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-the-core-app-navigation-and-screens-dashboard-log-history-analytics-settings-with-icon-based-minimal-navigation-and-smooth-transitions-between-screens-blur-depth-animation",
+      "title": "Create the core app navigation and screens: Dashboard, Log, History, Analytics, Settings, with icon-based minimal navigation and smooth transitions between screens (blur/depth animation).",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-dashboard-show-today-s-total-pullups-as-a-large-animated-rolling-counter-show-current-rank-as-an-animated-metallic-hexagon-badge-show-streak-flame-animation-show-fatigue-indicator-ring-show-an-orb-style-energy-core-that-fills-as-the-user-progresses-toward-a-goal-apply-subtle-animated-gradient-background-with-depth-blur",
+      "title": "Dashboard: show today's total pullups as a large animated rolling counter; show current rank as an animated metallic hexagon badge; show streak flame animation; show fatigue indicator ring; show an orb-style energy core that fills as the user progresses toward a goal; apply subtle animated gradient background with depth blur.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-log-screen-implement-a-premium-logging-flow-using-wheel-pickers-to-select-number-of-sets-and-reps-per-set-with-optional-duration-and-optional-weight-include-predefined-tags-for-notes-on-save-persist-the-session-play-a-premium-confirmation-sound-trigger-haptics-and-show-a-pulse-confirmation-animation",
+      "title": "Log Screen: implement a premium logging flow using wheel pickers to select number of sets and reps per set, with optional duration and optional weight; include predefined tags for notes; on save, persist the session, play a premium confirmation sound, trigger haptics, and show a pulse confirmation animation.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-history-screen-display-the-last-365-days-of-pull-up-totals-in-a-smooth-animated-graph-that-draws-left-to-right-on-open-allow-tapping-a-day-to-view-details-show-weekly-average-monthly-total-and-personal-records-derived-from-the-stored-data",
+      "title": "History Screen: display the last 365 days of pull-up totals in a smooth animated graph that draws left-to-right on open; allow tapping a day to view details; show weekly average, monthly total, and personal records derived from the stored data.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-analytics-screen-compute-and-display-max-pullups-ever-current-streak-longest-streak-daily-average-fatigue-score-consistency-score-and-rank-progress-based-on-local-data-include-a-personal-record-celebration-visual-sfx-haptic-when-a-new-record-is-achieved",
+      "title": "Analytics Screen: compute and display max pullups ever, current streak, longest streak, daily average, fatigue score, consistency score, and rank progress based on local data; include a personal record celebration (visual + SFX + haptic) when a new record is achieved.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-rank-system-implement-the-full-rank-ladder-bronze-iii-ascendant-with-animated-metallic-hexagon-badges-including-metal-texture-inner-glow-moving-shine-reflection-particle-aura-and-a-promotion-animation-explosion-impact-rank-progress-must-update-based-on-the-user-s-accumulated-performance-and-be-visible-on-dashboard-and-analytics",
+      "title": "Rank system: implement the full rank ladder (Bronze III → Ascendant) with animated metallic hexagon badges including metal texture, inner glow, moving shine reflection, particle aura, and a promotion animation (explosion/impact). Rank progress must update based on the user’s accumulated performance and be visible on Dashboard and Analytics.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-sound-effects-system-no-music-add-and-wire-sfx-for-button-click-wheel-tick-data-save-chime-rank-promotion-impact-streak-ignition-flame-metal-touch-and-deep-bass-pulse-on-personal-record-provide-a-global-volume-control-that-affects-all-sfx",
+      "title": "Sound effects system (no music): add and wire SFX for button click, wheel tick, data save chime, rank promotion impact, streak ignition flame, metal touch, and deep bass pulse on personal record; provide a global volume control that affects all SFX.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-settings-implement-an-interactive-stickman-pull-up-volume-control-no-static-slider-where-the-user-drags-a-stickman-upward-on-a-pull-up-bar-to-increase-volume-reaching-100-triggers-an-automatic-drop-and-resets-volume-to-0-with-physics-like-animation-arm-stretch-gravity-drop-and-a-special-vibration-at-max-pull-also-include-reset-data-with-a-premium-confirmation-animation",
+      "title": "Settings: implement an interactive stickman pull-up volume control (no static slider) where the user drags a stickman upward on a pull-up bar to increase volume; reaching 100% triggers an automatic drop and resets volume to 0, with physics-like animation (arm stretch, gravity drop) and a special vibration at max pull; also include Reset Data with a premium confirmation animation.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-the-specified-luxury-visual-system-across-the-entire-app-glass-morphism-soft-shadows-depth-layers-minimal-cold-futuristic-feel-using-the-exact-provided-color-palette-for-backgrounds-cards-accents-buttons-wheel-picker-text-and-rank-colors-ensure-the-ui-feels-alive-with-pervasive-motion-and-responsive-micro-interactions",
+      "title": "Apply the specified luxury visual system across the entire app (glass morphism, soft shadows, depth layers, minimal cold futuristic feel) using the exact provided color palette for backgrounds, cards, accents, buttons, wheel picker, text, and rank colors; ensure the UI feels 'alive' with pervasive motion and responsive micro-interactions.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-haptic-feedback-patterns-using-the-platform-vibration-capability-where-available-light-vibration-on-button-press-medium-on-save-strong-on-rank-promotion-and-special-vibration-on-volume-max-pull-ensure-the-app-degrades-gracefully-when-vibration-is-unsupported",
+      "title": "Implement haptic feedback patterns using the platform vibration capability where available: light vibration on button press, medium on save, strong on rank promotion, and special vibration on volume max pull; ensure the app degrades gracefully when vibration is unsupported.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-performance-and-smoothness-animations-and-interactions-wheel-inertia-counters-graph-drawing-transitions-must-remain-responsive-with-no-noticeable-lag-on-typical-mobile-devices-avoid-unnecessary-network-requests-and-heavy-rerenders",
+      "title": "Ensure performance and smoothness: animations and interactions (wheel inertia, counters, graph drawing, transitions) must remain responsive with no noticeable lag on typical mobile devices; avoid unnecessary network requests and heavy rerenders.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Core offline pull-up logging with local database (unlimited lifetime data)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Wheel-only numeric input system (no keyboard anywhere) with inertia/snapping/tick sounds/center highlight",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Dashboard screen with animated today counter, rank badge, streak flame, fatigue ring, goal orb, animated gradient/blur background",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Log screen: wheel selectors for sets/reps/duration/weight + predefined tag-only notes; premium save chime + pulse animation",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "History screen: last 365 days animated graph with tap-for-day details, weekly avg, monthly total, personal records",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Analytics screen: max pullups, streak stats, daily average, fatigue score, consistency score, rank progress",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Rank system with tiers (Bronze III → Ascendant) and animated metallic hexagon badges + promotion animations",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Sound effects system (no music) including clicks, wheel ticks, save chime, rank promo, streak ignition, PR bass pulse",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Interactive volume control: stickman pull-up physics control (drag up to increase, auto-drop/reset at 100%) + haptics",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Settings: stickman sound control, manual Google Drive backup/restore, and data reset with confirmation animation",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Pullups Tracker",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

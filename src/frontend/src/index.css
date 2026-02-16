@@ -1,0 +1,157 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --radius: 0.75rem;
+        
+        /* App-specific colors in OKLCH */
+        --app-bg-primary: 0.145 0.02 240;
+        --app-bg-secondary: 0.18 0.02 240;
+        --app-bg-card: 0.21 0.02 240;
+        --app-accent: 0.75 0.15 195;
+        --app-secondary-accent: 0.85 0.15 85;
+        --app-text-primary: 0.92 0.01 240;
+        --app-text-secondary: 0.62 0.02 240;
+        --app-border: 0.3 0.02 240;
+        --app-danger: 0.60 0.22 25;
+        --app-success: 0.75 0.20 150;
+        
+        /* Rank colors */
+        --rank-bronze: 0.60 0.12 50;
+        --rank-silver: 0.80 0.01 240;
+        --rank-gold: 0.85 0.15 85;
+        --rank-platinum: 0.70 0.15 220;
+        --rank-diamond: 0.85 0.12 195;
+        --rank-elite: 0.95 0.01 240;
+        --rank-ascendant: 0.75 0.25 320;
+        
+        /* Shadcn defaults (dark theme) */
+        --background: 0.145 0.02 240;
+        --foreground: 0.92 0.01 240;
+        --card: 0.21 0.02 240;
+        --card-foreground: 0.92 0.01 240;
+        --popover: 0.21 0.02 240;
+        --popover-foreground: 0.92 0.01 240;
+        --primary: 0.75 0.15 195;
+        --primary-foreground: 0.145 0.02 240;
+        --secondary: 0.3 0.02 240;
+        --secondary-foreground: 0.92 0.01 240;
+        --muted: 0.3 0.02 240;
+        --muted-foreground: 0.62 0.02 240;
+        --accent: 0.3 0.02 240;
+        --accent-foreground: 0.92 0.01 240;
+        --destructive: 0.60 0.22 25;
+        --destructive-foreground: 0.92 0.01 240;
+        --border: 0.3 0.02 240;
+        --input: 0.3 0.02 240;
+        --ring: 0.75 0.15 195;
+    }
+
+    * {
+        @apply border-border;
+    }
+    
+    body {
+        @apply bg-app-bg-primary text-app-text-primary;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+}
+
+@layer components {
+    .glass-panel {
+        background: oklch(var(--app-bg-card) / 0.6);
+        backdrop-filter: blur(20px);
+        border: 1px solid oklch(var(--app-border) / 0.3);
+    }
+    
+    .glass-card {
+        background: oklch(var(--app-bg-card) / 0.4);
+        backdrop-filter: blur(10px);
+        border: 1px solid oklch(var(--app-border) / 0.2);
+    }
+    
+    .wheel-picker-bg {
+        background: oklch(0.15 0.02 240);
+    }
+    
+    .wheel-picker-highlight {
+        box-shadow: 0 0 30px oklch(var(--app-accent) / 0.3);
+    }
+}
+
+@layer utilities {
+    .text-app-accent {
+        color: oklch(var(--app-accent));
+    }
+    
+    .text-app-secondary-accent {
+        color: oklch(var(--app-secondary-accent));
+    }
+    
+    .text-app-text-primary {
+        color: oklch(var(--app-text-primary));
+    }
+    
+    .text-app-text-secondary {
+        color: oklch(var(--app-text-secondary));
+    }
+    
+    .text-app-success {
+        color: oklch(var(--app-success));
+    }
+    
+    .text-app-danger {
+        color: oklch(var(--app-danger));
+    }
+    
+    .bg-app-bg-primary {
+        background-color: oklch(var(--app-bg-primary));
+    }
+    
+    .bg-app-bg-secondary {
+        background-color: oklch(var(--app-bg-secondary));
+    }
+    
+    .bg-app-bg-card {
+        background-color: oklch(var(--app-bg-card));
+    }
+    
+    .bg-app-accent {
+        background-color: oklch(var(--app-accent));
+    }
+    
+    .bg-app-secondary-accent {
+        background-color: oklch(var(--app-secondary-accent));
+    }
+    
+    .bg-app-danger {
+        background-color: oklch(var(--app-danger));
+    }
+    
+    .bg-app-success {
+        background-color: oklch(var(--app-success));
+    }
+    
+    .border-app-border {
+        border-color: oklch(var(--app-border));
+    }
+    
+    .border-app-accent {
+        border-color: oklch(var(--app-accent));
+    }
+}
+
+@keyframes shine {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(200%);
+    }
+}
+
+.animate-shine {
+    animation: shine 3s infinite;
+}

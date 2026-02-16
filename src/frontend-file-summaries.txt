@@ -1,0 +1,4 @@
+{
+  "frontend/src/components/RollingCounter.tsx": "Animated number counter with smooth rolling effect; fixed TypeScript error by providing initial value for useRef.",
+  "frontend/src/components/WheelPicker.tsx": "Vertical wheel picker with inertial scrolling, snapping, center highlight, and tick SFX; fixed TypeScript errors by explicitly typing values array as number[]."
+}

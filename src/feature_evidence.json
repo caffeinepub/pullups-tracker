@@ -1,0 +1,315 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-implement-a-fully-offline-first-data-layer-that-stores-all-pull-up-logs-locally-on-the-device-no-internet-required-for-core-functionality-and-supports-unlimited-lifetime-data",
+      "featureTitle": "Implement a fully offline-first data layer that stores all pull-up logs locally on the device (no internet required for core functionality) and supports unlimited lifetime data.",
+      "files": [
+        "frontend/src/lib/offlineDb.ts",
+        "frontend/src/lib/types.ts",
+        "frontend/src/main.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-manual-backup-and-restore-via-a-user-initiated-export-import-flow-that-can-be-stored-in-google-drive-by-the-user-no-automatic-sync-required-export-all-local-data-to-a-single-file-and-restore-from-that-file-with-clear-success-failure-states",
+      "featureTitle": "Add manual backup and restore via a user-initiated export/import flow that can be stored in Google Drive by the user (no automatic sync required): export all local data to a single file and restore from that file, with clear success/failure states.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/BackupRestorePanel.tsx",
+        "frontend/src/lib/backup.ts",
+        "frontend/src/screens/SettingsScreen.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-enforce-a-strict-no-keyboard-anywhere-ux-remove-avoid-all-freeform-text-inputs-and-numeric-typing-all-numeric-values-sets-reps-duration-weight-any-number-must-be-chosen-via-a-vertical-wheel-picker-with-inertia-snapping-center-highlight-glow-and-tick-sound-feedback-notes-must-be-selectable-predefined-tags-only",
+      "featureTitle": "Enforce a strict 'no keyboard anywhere' UX: remove/avoid all freeform text inputs and numeric typing. All numeric values (sets, reps, duration, weight, any number) must be chosen via a vertical wheel picker with inertia, snapping, center highlight glow, and tick sound feedback; notes must be selectable predefined tags only.",
+      "files": [
+        "frontend/src/components/TagMultiSelect.tsx",
+        "frontend/src/components/WheelPicker.tsx",
+        "frontend/src/lib/predefinedTags.ts",
+        "frontend/src/screens/LogScreen.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-create-the-core-app-navigation-and-screens-dashboard-log-history-analytics-settings-with-icon-based-minimal-navigation-and-smooth-transitions-between-screens-blur-depth-animation",
+      "featureTitle": "Create the core app navigation and screens: Dashboard, Log, History, Analytics, Settings, with icon-based minimal navigation and smooth transitions between screens (blur/depth animation).",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/AppShell.tsx",
+        "frontend/src/components/BottomNav.tsx",
+        "frontend/src/screens/AnalyticsScreen.tsx",
+        "frontend/src/screens/DashboardScreen.tsx",
+        "frontend/src/screens/HistoryScreen.tsx",
+        "frontend/src/screens/SettingsScreen.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-dashboard-show-today-s-total-pullups-as-a-large-animated-rolling-counter-show-current-rank-as-an-animated-metallic-hexagon-badge-show-streak-flame-animation-show-fatigue-indicator-ring-show-an-orb-style-energy-core-that-fills-as-the-user-progresses-toward-a-goal-apply-subtle-animated-gradient-background-with-depth-blur",
+      "featureTitle": "Dashboard: show today's total pullups as a large animated rolling counter; show current rank as an animated metallic hexagon badge; show streak flame animation; show fatigue indicator ring; show an orb-style energy core that fills as the user progresses toward a goal; apply subtle animated gradient background with depth blur.",
+      "files": [
+        "frontend/src/assets/generated.ts",
+        "frontend/src/components/EnergyOrb.tsx",
+        "frontend/src/components/FatigueRing.tsx",
+        "frontend/src/components/FrostedBackground.tsx",
+        "frontend/src/components/RankBadge.tsx",
+        "frontend/src/components/RollingCounter.tsx",
+        "frontend/src/components/StreakFlame.tsx",
+        "frontend/src/screens/DashboardScreen.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-log-screen-implement-a-premium-logging-flow-using-wheel-pickers-to-select-number-of-sets-and-reps-per-set-with-optional-duration-and-optional-weight-include-predefined-tags-for-notes-on-save-persist-the-session-play-a-premium-confirmation-sound-trigger-haptics-and-show-a-pulse-confirmation-animation",
+      "featureTitle": "Log Screen: implement a premium logging flow using wheel pickers to select number of sets and reps per set, with optional duration and optional weight; include predefined tags for notes; on save, persist the session, play a premium confirmation sound, trigger haptics, and show a pulse confirmation animation.",
+      "files": [
+        "frontend/src/components/SessionBuilder.tsx",
+        "frontend/src/lib/animations.ts",
+        "frontend/src/lib/haptics.ts",
+        "frontend/src/screens/LogScreen.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-6"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-history-screen-display-the-last-365-days-of-pull-up-totals-in-a-smooth-animated-graph-that-draws-left-to-right-on-open-allow-tapping-a-day-to-view-details-show-weekly-average-monthly-total-and-personal-records-derived-from-the-stored-data",
+      "featureTitle": "History Screen: display the last 365 days of pull-up totals in a smooth animated graph that draws left-to-right on open; allow tapping a day to view details; show weekly average, monthly total, and personal records derived from the stored data.",
+      "files": [
+        "frontend/src/components/DayDetailsSheet.tsx",
+        "frontend/src/components/HistoryGraph365.tsx",
+        "frontend/src/lib/stats.ts",
+        "frontend/src/screens/HistoryScreen.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-7"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-analytics-screen-compute-and-display-max-pullups-ever-current-streak-longest-streak-daily-average-fatigue-score-consistency-score-and-rank-progress-based-on-local-data-include-a-personal-record-celebration-visual-sfx-haptic-when-a-new-record-is-achieved",
+      "featureTitle": "Analytics Screen: compute and display max pullups ever, current streak, longest streak, daily average, fatigue score, consistency score, and rank progress based on local data; include a personal record celebration (visual + SFX + haptic) when a new record is achieved.",
+      "files": [
+        "frontend/src/components/MetricCard.tsx",
+        "frontend/src/components/RecordCelebration.tsx",
+        "frontend/src/lib/analytics.ts",
+        "frontend/src/screens/AnalyticsScreen.tsx",
+        "frontend/src/screens/LogScreen.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-8"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-rank-system-implement-the-full-rank-ladder-bronze-iii-ascendant-with-animated-metallic-hexagon-badges-including-metal-texture-inner-glow-moving-shine-reflection-particle-aura-and-a-promotion-animation-explosion-impact-rank-progress-must-update-based-on-the-user-s-accumulated-performance-and-be-visible-on-dashboard-and-analytics",
+      "featureTitle": "Rank system: implement the full rank ladder (Bronze III → Ascendant) with animated metallic hexagon badges including metal texture, inner glow, moving shine reflection, particle aura, and a promotion animation (explosion/impact). Rank progress must update based on the user’s accumulated performance and be visible on Dashboard and Analytics.",
+      "files": [
+        "frontend/src/components/RankBadge.tsx",
+        "frontend/src/components/RankPromotionOverlay.tsx",
+        "frontend/src/hooks/useRankProgress.ts",
+        "frontend/src/lib/ranks.ts",
+        "frontend/src/screens/AnalyticsScreen.tsx",
+        "frontend/src/screens/DashboardScreen.tsx",
+        "frontend/src/screens/LogScreen.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-9"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-sound-effects-system-no-music-add-and-wire-sfx-for-button-click-wheel-tick-data-save-chime-rank-promotion-impact-streak-ignition-flame-metal-touch-and-deep-bass-pulse-on-personal-record-provide-a-global-volume-control-that-affects-all-sfx",
+      "featureTitle": "Sound effects system (no music): add and wire SFX for button click, wheel tick, data save chime, rank promotion impact, streak ignition flame, metal touch, and deep bass pulse on personal record; provide a global volume control that affects all SFX.",
+      "files": [
+        "frontend/src/components/BottomNav.tsx",
+        "frontend/src/components/RankPromotionOverlay.tsx",
+        "frontend/src/components/WheelPicker.tsx",
+        "frontend/src/lib/sfx.ts",
+        "frontend/src/main.tsx",
+        "frontend/src/screens/AnalyticsScreen.tsx",
+        "frontend/src/screens/DashboardScreen.tsx",
+        "frontend/src/screens/LogScreen.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-10"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-settings-implement-an-interactive-stickman-pull-up-volume-control-no-static-slider-where-the-user-drags-a-stickman-upward-on-a-pull-up-bar-to-increase-volume-reaching-100-triggers-an-automatic-drop-and-resets-volume-to-0-with-physics-like-animation-arm-stretch-gravity-drop-and-a-special-vibration-at-max-pull-also-include-reset-data-with-a-premium-confirmation-animation",
+      "featureTitle": "Settings: implement an interactive stickman pull-up volume control (no static slider) where the user drags a stickman upward on a pull-up bar to increase volume; reaching 100% triggers an automatic drop and resets volume to 0, with physics-like animation (arm stretch, gravity drop) and a special vibration at max pull; also include Reset Data with a premium confirmation animation.",
+      "files": [
+        "frontend/src/components/ResetDataDialog.tsx",
+        "frontend/src/components/StickmanVolumeControl.tsx",
+        "frontend/src/lib/reset.ts",
+        "frontend/src/screens/SettingsScreen.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-11"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-apply-the-specified-luxury-visual-system-across-the-entire-app-glass-morphism-soft-shadows-depth-layers-minimal-cold-futuristic-feel-using-the-exact-provided-color-palette-for-backgrounds-cards-accents-buttons-wheel-picker-text-and-rank-colors-ensure-the-ui-feels-alive-with-pervasive-motion-and-responsive-micro-interactions",
+      "featureTitle": "Apply the specified luxury visual system across the entire app (glass morphism, soft shadows, depth layers, minimal cold futuristic feel) using the exact provided color palette for backgrounds, cards, accents, buttons, wheel picker, text, and rank colors; ensure the UI feels 'alive' with pervasive motion and responsive micro-interactions.",
+      "files": [
+        "frontend/src/components/AppShell.tsx",
+        "frontend/src/components/BottomNav.tsx",
+        "frontend/src/components/WheelPicker.tsx",
+        "frontend/src/index.css",
+        "frontend/tailwind.config.js"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-12"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-haptic-feedback-patterns-using-the-platform-vibration-capability-where-available-light-vibration-on-button-press-medium-on-save-strong-on-rank-promotion-and-special-vibration-on-volume-max-pull-ensure-the-app-degrades-gracefully-when-vibration-is-unsupported",
+      "featureTitle": "Implement haptic feedback patterns using the platform vibration capability where available: light vibration on button press, medium on save, strong on rank promotion, and special vibration on volume max pull; ensure the app degrades gracefully when vibration is unsupported.",
+      "files": [
+        "frontend/src/components/BottomNav.tsx",
+        "frontend/src/components/RankPromotionOverlay.tsx",
+        "frontend/src/components/StickmanVolumeControl.tsx",
+        "frontend/src/lib/haptics.ts",
+        "frontend/src/screens/LogScreen.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-13"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-ensure-performance-and-smoothness-animations-and-interactions-wheel-inertia-counters-graph-drawing-transitions-must-remain-responsive-with-no-noticeable-lag-on-typical-mobile-devices-avoid-unnecessary-network-requests-and-heavy-rerenders",
+      "featureTitle": "Ensure performance and smoothness: animations and interactions (wheel inertia, counters, graph drawing, transitions) must remain responsive with no noticeable lag on typical mobile devices; avoid unnecessary network requests and heavy rerenders.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/HistoryGraph365.tsx",
+        "frontend/src/components/RollingCounter.tsx",
+        "frontend/src/components/WheelPicker.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-14"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

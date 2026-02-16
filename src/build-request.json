@@ -1,0 +1,321 @@
+{
+  "kind": "build_request",
+  "title": "Pullups Tracker: Offline luxury pull-up logging with wheel-only input, elite animations, ranks, analytics, and manual backup/restore",
+  "projectName": "Pullups Tracker",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Implement a fully offline-first data layer that stores all pull-up logs locally on the device (no internet required for core functionality) and supports unlimited lifetime data.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "build a fully offline... it must store all data locally... never require internet for core function.",
+          "offline storage: use local database store unlimited lifetime data"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Creating, editing, and viewing logs works with the network disconnected.",
+        "All data persists across browser refreshes and app restarts using local device storage (not the backend).",
+        "The app does not block any core screen behind network calls."
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Add manual backup and restore via a user-initiated export/import flow that can be stored in Google Drive by the user (no automatic sync required): export all local data to a single file and restore from that file, with clear success/failure states.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "optional manual google drive backup and restore"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Settings includes actions to Export Backup and Restore Backup.",
+        "Export produces a downloadable file containing all logs and settings needed to restore the app state.",
+        "Restore imports a previously exported file and fully reconstructs the local database.",
+        "If the imported file is invalid/corrupt, the app shows an error and does not partially overwrite existing data."
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Enforce a strict 'no keyboard anywhere' UX: remove/avoid all freeform text inputs and numeric typing. All numeric values (sets, reps, duration, weight, any number) must be chosen via a vertical wheel picker with inertia, snapping, center highlight glow, and tick sound feedback; notes must be selectable predefined tags only.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "input system must NOT use keyboard anywhere... a vertical wheel picker must appear... no typing allowed anywhere in the app.",
+          "optional notes using predefined selectable tags only, no typing"
+        ]
+      },
+      "acceptanceCriteria": [
+        "No screen uses editable text fields, textareas, or numeric inputs that trigger the OS keyboard.",
+        "Logging sets/reps/duration/weight is possible only through wheel pickers.",
+        "Wheel picker has inertial scrolling, snaps to discrete values, highlights the centered selection, and plays a tick SFX on selection changes.",
+        "Notes are selectable tags (multi-select) and do not allow arbitrary text entry."
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Create the core app navigation and screens: Dashboard, Log, History, Analytics, Settings, with icon-based minimal navigation and smooth transitions between screens (blur/depth animation).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "main sections: dashboard screen... log screen... history screen... analytics screen... settings...",
+          "ui style: ... minimal text icon based navigation",
+          "screen transition blur animation"
+        ]
+      },
+      "acceptanceCriteria": [
+        "All five sections are accessible via a consistent navigation component.",
+        "Transitions between screens include smooth blur/depth motion (no abrupt route changes).",
+        "No placeholder sections; each screen renders real data from local storage."
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Dashboard: show today's total pullups as a large animated rolling counter; show current rank as an animated metallic hexagon badge; show streak flame animation; show fatigue indicator ring; show an orb-style energy core that fills as the user progresses toward a goal; apply subtle animated gradient background with depth blur.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "dashboard screen: show today total pullups in large animated number counter... show current rank as animated metallic hexagon badge... streak flame animation... fatigue indicator ring... pullup orb energy core... background must have subtle gradient animation and depth blur."
+        ]
+      },
+      "acceptanceCriteria": [
+        "Today’s pull-ups total updates immediately after logging and animates upward with a rolling counter effect.",
+        "Rank badge is shown as a metallic hexagon with animated shine and inner glow.",
+        "Streak is displayed with a flame animation that responds to streak state.",
+        "Fatigue indicator renders as a ring with an animated progress/level display driven by computed fatigue score.",
+        "Orb energy core fill level reflects progress toward a configurable daily goal and animates smoothly."
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "text": "Log Screen: implement a premium logging flow using wheel pickers to select number of sets and reps per set, with optional duration and optional weight; include predefined tags for notes; on save, persist the session, play a premium confirmation sound, trigger haptics, and show a pulse confirmation animation.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "log screen: user logs pullups using wheel selectors... select: number of sets reps per set optional weight optional notes using predefined selectable tags only, no typing",
+          "after saving, play premium confirmation sound and pulse animation.",
+          "haptic feedback: ... medium vibration on save"
+        ]
+      },
+      "acceptanceCriteria": [
+        "A user can log a session with multiple sets (each with reps) using wheel pickers only.",
+        "Optional duration and weight can be included via wheel pickers (and omitted).",
+        "A save action writes to local storage and immediately updates dashboard totals.",
+        "On successful save, the app plays the save chime SFX, triggers medium haptic vibration (when supported), and shows a pulse animation confirmation."
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "text": "History Screen: display the last 365 days of pull-up totals in a smooth animated graph that draws left-to-right on open; allow tapping a day to view details; show weekly average, monthly total, and personal records derived from the stored data.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "history screen: show last 365 days data in smooth animated graph. graph lines draw from left to right when opened. user can tap any day to see details. include weekly average, monthly total, and personal records."
+        ]
+      },
+      "acceptanceCriteria": [
+        "Graph renders exactly 365 days (or fewer if the user has less history) and animates the line drawing on screen entry.",
+        "User can tap/click on any day data point and see a details panel with that day’s sessions/sets.",
+        "Weekly average and monthly total are computed from stored logs and displayed.",
+        "Personal records (e.g., highest daily total, highest single-session total) are computed and displayed."
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "text": "Analytics Screen: compute and display max pullups ever, current streak, longest streak, daily average, fatigue score, consistency score, and rank progress based on local data; include a personal record celebration (visual + SFX + haptic) when a new record is achieved.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "analytics screen: show: max pullups ever current streak longest streak daily average fatigue score consistency score rank progress",
+          "psychological features: ... personal record celebration ... consistency scoring",
+          "sound effects: ... deep bass pulse on personal record",
+          "haptic feedback: ... strong vibration on rank promotion"
+        ]
+      },
+      "acceptanceCriteria": [
+        "All metrics render from local data (no hardcoded sample values).",
+        "Fatigue score and consistency score are deterministic and update as data changes (provide an in-UI info/description of the formula).",
+        "When a new personal record is logged, the app triggers a celebration animation, plays the PR bass pulse SFX, and triggers a strong/special vibration where supported."
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "text": "Rank system: implement the full rank ladder (Bronze III → Ascendant) with animated metallic hexagon badges including metal texture, inner glow, moving shine reflection, particle aura, and a promotion animation (explosion/impact). Rank progress must update based on the user’s accumulated performance and be visible on Dashboard and Analytics.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "rank system: ranks with animated metallic hexagon badges: bronze iii ... elite ascendant",
+          "each rank hexagon must include: metal texture inner glow moving shine reflection particle aura promotion animation",
+          "rank promotion explosion animation",
+          "rank promotion impact"
+        ]
+      },
+      "acceptanceCriteria": [
+        "All listed ranks exist and can be reached as the user’s tracked performance increases.",
+        "Badge visuals include metallic texture + moving shine + inner glow + particle aura.",
+        "When rank changes upward, the promotion animation plays and the rank promotion impact SFX triggers with strong haptics (where supported).",
+        "Rank progress is shown as a clear progress indicator toward the next rank."
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "text": "Sound effects system (no music): add and wire SFX for button click, wheel tick, data save chime, rank promotion impact, streak ignition flame, metal touch, and deep bass pulse on personal record; provide a global volume control that affects all SFX.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "sound system: no music allowed. only sound effects.",
+          "include sounds: button click wheel tick data save chime rank promotion impact streak ignition flame metal touch deep bass pulse on personal record"
+        ]
+      },
+      "acceptanceCriteria": [
+        "No music/audio loops are present anywhere in the app.",
+        "Each listed SFX is present as an audio asset and is triggered at the correct interaction/event.",
+        "Global volume affects all SFX consistently.",
+        "Audio playback failures are handled gracefully (no crashes)."
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "text": "Settings: implement an interactive stickman pull-up volume control (no static slider) where the user drags a stickman upward on a pull-up bar to increase volume; reaching 100% triggers an automatic drop and resets volume to 0, with physics-like animation (arm stretch, gravity drop) and a special vibration at max pull; also include Reset Data with a premium confirmation animation.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "volume control must be interactive stickman pullup system... user drags stickman upward to increase volume... when reaching 100 percent volume stickman drops automatically and volume resets to 0... no static slider allowed... physics animation, arm stretch, gravity drop, and vibration feedback",
+          "settings: ... sound control with stickman system ... reset data option with confirmation animation",
+          "haptic feedback: ... special vibration on volume max pull"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Settings includes the stickman volume control and no traditional slider UI is used for volume.",
+        "Dragging upward increases volume continuously; releasing behaves naturally with physics-like easing.",
+        "When volume reaches 100%, the stickman drops automatically, volume resets to 0, and the special max-pull vibration triggers (when supported).",
+        "Reset Data requires confirmation and plays a distinct confirmation animation before wiping local storage.",
+        "After reset, all screens reflect an empty state without errors."
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "text": "Apply the specified luxury visual system across the entire app (glass morphism, soft shadows, depth layers, minimal cold futuristic feel) using the exact provided color palette for backgrounds, cards, accents, buttons, wheel picker, text, and rank colors; ensure the UI feels 'alive' with pervasive motion and responsive micro-interactions.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "app must feel elite, futuristic, minimal, cold, and extremely smooth...",
+          "color system: ... (full palette)",
+          "ui style: glass morphism soft shadows depth layers minimal text",
+          "animations everywhere: ..."
+        ]
+      },
+      "acceptanceCriteria": [
+        "All major UI surfaces (app background, cards, buttons, text, accents) use the provided hex colors as the authoritative palette.",
+        "Wheel picker styling matches the provided wheel picker palette (background, selected/unselected colors, center glow).",
+        "Buttons have pressed depth animation and use the specified normal/pressed colors.",
+        "Micro-interactions are present across navigation and primary controls (press, hover/active states where applicable) without introducing jank."
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "text": "Implement haptic feedback patterns using the platform vibration capability where available: light vibration on button press, medium on save, strong on rank promotion, and special vibration on volume max pull; ensure the app degrades gracefully when vibration is unsupported.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "haptic feedback: light vibration on button medium vibration on save strong vibration on rank promotion special vibration on volume max pull"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Button presses trigger light haptic feedback (when supported).",
+        "Saving a log triggers medium haptic feedback (when supported).",
+        "Rank promotion triggers strong haptic feedback (when supported).",
+        "Volume max pull event triggers the special vibration (when supported).",
+        "When vibration is unsupported, no errors occur and the UX remains usable."
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "text": "Ensure performance and smoothness: animations and interactions (wheel inertia, counters, graph drawing, transitions) must remain responsive with no noticeable lag on typical mobile devices; avoid unnecessary network requests and heavy rerenders.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "performance: must be extremely smooth no lag instant response",
+          "never require internet for core function"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Core interactions (wheel scroll, save, navigation) respond immediately without blocking the main thread for noticeable durations.",
+        "The app remains functional offline and does not continuously attempt background network calls for core features.",
+        "No screen depends on backend calls to render core data."
+      ]
+    }
+  ],
+  "constraints": [
+    "Do not require internet connectivity for any core tracking, viewing, or analytics functionality.",
+    "Do not use any keyboard-triggering inputs anywhere in the app; numeric input must be wheel-based and notes must be tag-based only.",
+    "No music is allowed; only sound effects.",
+    "Frontend UI component sources under immutablePaths must not be edited directly; compose them instead.",
+    "Backend must remain a single Motoko actor; do not introduce additional backend services."
+  ],
+  "nonGoals": [
+    "Automatic Google Drive synchronization or background cloud sync (only manual export/import suitable for Drive storage).",
+    "Third-party authentication with Google OAuth for Drive APIs (not required for the manual backup approach).",
+    "Social/sharing features, leaderboards, or multi-user accounts (app is for personal use only)."
+  ],
+  "imageRequirements": {
+    "required": [
+      "Metallic hexagon badge base (hex-badge-base.dim_512x512.png)",
+      "Bronze metal texture tile (metal-bronze.dim_1024x1024.png)",
+      "Silver metal texture tile (metal-silver.dim_1024x1024.png)",
+      "Gold metal texture tile (metal-gold.dim_1024x1024.png)",
+      "Platinum metal texture tile (metal-platinum.dim_1024x1024.png)",
+      "Diamond metal texture tile (metal-diamond.dim_1024x1024.png)",
+      "Elite white metal texture tile (metal-elite.dim_1024x1024.png)",
+      "Ascendant iridescent magenta metal texture tile (metal-ascendant.dim_1024x1024.png)",
+      "Minimal stickman hanging on pull-up bar illustration (stickman-pullup.dim_1024x512.png)",
+      "Subtle futuristic animated-style background plate (bg-frosted-gradient.dim_1440x2560.png)",
+      "Flame sprite sheet for streak animation (flame-sprite.dim_1024x1024.png)",
+      "Energy orb core texture (orb-core.dim_1024x1024.png)"
+    ],
+    "edits": []
+  }
+}
