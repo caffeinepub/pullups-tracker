@@ -1,11 +1,19 @@
 import { useEffect, useRef } from 'react';
+import { LongTermTrend } from '../lib/intelligence/longTermTrend';
 
 interface EnergyOrbProps {
   progress: number;
+  trend?: LongTermTrend;
+  dimmed?: boolean;
   size?: number;
 }
 
-export default function EnergyOrb({ progress, size = 120 }: EnergyOrbProps) {
+export default function EnergyOrb({ 
+  progress, 
+  trend,
+  dimmed = false,
+  size = 120 
+}: EnergyOrbProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -20,7 +28,7 @@ export default function EnergyOrb({ progress, size = 120 }: EnergyOrbProps) {
 
     const centerX = size / 2;
     const centerY = size / 2;
-    const radius = size * 0.4;
+    const baseRadius = size * 0.4;
 
     let frame = 0;
     let animationFrame: number;
@@ -28,18 +36,25 @@ export default function EnergyOrb({ progress, size = 120 }: EnergyOrbProps) {
     const animate = () => {
       ctx.clearRect(0, 0, size, size);
 
-      const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
-      gradient.addColorStop(0, '#00f0ff');
-      gradient.addColorStop(progress, '#00f0ff40');
+      const trendMultiplier = trend ? trend.velocityMultiplier : 1;
+      const glowSize = baseRadius * (0.8 + trendMultiplier * 0.2);
+      const pulseSpeed = trend ? 0.05 * trend.velocityMultiplier : 0.05;
+      
+      const dimFactor = dimmed ? 0.4 : 1;
+
+      const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, glowSize);
+      gradient.addColorStop(0, `rgba(0, 240, 255, ${dimFactor})`);
+      gradient.addColorStop(progress, `rgba(0, 240, 255, ${0.25 * dimFactor})`);
       gradient.addColorStop(1, 'transparent');
 
       ctx.fillStyle = gradient;
       ctx.beginPath();
-      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+      ctx.arc(centerX, centerY, glowSize, 0, Math.PI * 2);
       ctx.fill();
 
-      const pulseRadius = radius * (1 + Math.sin(frame * 0.05) * 0.1);
-      ctx.strokeStyle = `#00f0ff${Math.floor(progress * 255).toString(16).padStart(2, '0')}`;
+      const pulseRadius = glowSize * (1 + Math.sin(frame * pulseSpeed) * 0.1);
+      const alpha = Math.floor(progress * 255 * dimFactor).toString(16).padStart(2, '0');
+      ctx.strokeStyle = `#00f0ff${alpha}`;
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.arc(centerX, centerY, pulseRadius, 0, Math.PI * 2);
@@ -52,13 +67,13 @@ export default function EnergyOrb({ progress, size = 120 }: EnergyOrbProps) {
     animate();
 
     return () => cancelAnimationFrame(animationFrame);
-  }, [progress, size]);
+  }, [progress, trend, dimmed, size]);
 
   return (
     <div className="relative inline-block">
       <canvas ref={canvasRef} />
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-app-accent font-bold text-xl">
+        <span className={`font-bold text-xl ${dimmed ? 'text-app-text-secondary' : 'text-app-accent'}`}>
           {Math.round(progress * 100)}%
         </span>
       </div>

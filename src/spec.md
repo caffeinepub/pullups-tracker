@@ -1,20 +1,18 @@
 # Specification
 
 ## Summary
-**Goal:** Build an offline-first, luxury-feel pull-up tracking app with wheel-only input, rich animations, ranks, analytics, sound effects + haptics, and manual backup/restore.
+**Goal:** Add a fully offline coin economy and a probabilistic chest shop (inside Settings) with premium animations, SFX, and haptics while preserving all existing Pullups Tracker features and wheel-only UX.
 
 **Planned changes:**
-- Implement a fully offline local data layer for creating/editing/viewing pull-up sessions and derived metrics, with unlimited lifetime storage.
-- Add manual Export Backup / Restore Backup in Settings to export all local data to a single file and restore safely with clear success/error handling.
-- Enforce “no keyboard anywhere”: all numeric selections via inertial vertical wheel pickers (snap, center glow, tick SFX) and notes via predefined selectable tags only.
-- Create core navigation and screens: Dashboard, Log, History, Analytics, Settings, with icon-based minimal nav and smooth blur/depth transitions.
-- Dashboard UI: animated rolling counter for today’s total, animated metallic hex rank badge, streak flame animation, fatigue indicator ring, and an energy orb that fills toward a daily goal on a subtle animated frosted gradient background.
-- Log flow: wheel-based sets/reps per set with optional duration/weight, tag notes, and on-save persist locally + confirmation pulse animation + save chime SFX + medium haptics (when supported).
-- History: animated 365-day graph (draw left-to-right), tap day for details, and show weekly average, monthly total, and personal records computed from local data.
-- Analytics: compute and display max pullups, streaks, daily average, fatigue score, consistency score, and rank progress; trigger PR celebration (visual + SFX + haptic) on new records and show an in-UI formula description for fatigue/consistency.
-- Rank ladder: Bronze III → Ascendant with animated metallic hex badges (texture, inner glow, moving shine, particle aura) and promotion animation + impact SFX + strong haptics; show rank progress on Dashboard and Analytics.
-- Sound effects system (no music): button click, wheel tick, save chime, rank promotion impact, streak ignition flame, metal touch, PR bass pulse; include global volume control.
-- Settings: interactive stickman pull-up volume control (drag to increase; at 100% auto drop and reset to 0 with physics-like animation and special vibration) and Reset Data with confirmation animation.
-- Add haptic patterns (light/medium/strong/special) with graceful fallback where unsupported; ensure performance/smoothness across animations and interactions and avoid unnecessary network dependence for core features.
+- Extend offline storage to persist: coin balance, chest opening history (with timestamp/type/cost/results), and a card wallet/inventory (with timestamp/chest type/value), without breaking existing stored data.
+- Update Settings Backup & Restore export/import JSON to include coins/history/wallet while remaining compatible with older backups missing these fields.
+- Implement offline coin awarding tied into existing flows: saving sessions, milestone detection, streak changes/bonuses, and achievement unlocks (no network required).
+- Add a Dashboard top-right coin balance UI with an animated rolling counter and subtle glow burst on increases, without changing existing Dashboard layout/animations.
+- Add a new “Chest Shop” section within Settings showing coin balance, purchasable chests (Common 250, Rare 500, Epic 1000), and a scrollable chest history list (most recent first).
+- Implement chest purchase/open flow: tap chest → confirm → deduct coins immediately → play tiered chest-opening animation → reveal cards sequentially with flip/slide + glow → persist results to wallet and history; block insufficient-funds attempts with a clear error/toast.
+- Implement exact independent probability tables and draw counts per chest (Common 3, Rare 5, Epic 7), allowing duplicates within a chest.
+- Apply tier-based visuals consistent with the existing luxury cold aesthetic: Common bronze soft glow, Rare silver shimmering aura, Epic gold/amber with particles + aura sweep.
+- Extend existing SFX system (respecting global volume) for chest open sounds and per-card reveal sounds, with stronger feedback for high-value reveals; add subtle haptics/feedback for coin awards and stronger tiered feedback for openings/reveals (graceful degradation when vibration unsupported).
+- Add optional chest modifiers (default off) with Settings controls: chest streak bonus and daily first-chest bonus; persist modifier state and relevant counters/timestamps offline, and indicate when a bonus is active.
 
-**User-visible outcome:** Users can log pull-up sessions entirely offline using wheel pickers (no typing), see animated dashboard/status/ranks, review 365-day history and analytics computed from their data, experience SFX + haptics with a stickman volume control, and manually export/import a full backup file.
+**User-visible outcome:** Users earn coins automatically offline from normal app activity, see their coin total on the Dashboard, and can open Common/Rare/Epic chests from a new Settings section to reveal and collect cards with premium animations, sounds, history tracking, and optional bonus toggles—without changing existing app behavior or requiring any network.

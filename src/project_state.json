@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 3,
-  "summary": "Pullups Tracker: fully offline, ultra-premium pull-up tracking mobile app for personal use with elite futuristic UI, wheel-only numeric input (no keyboard), deep analytics, animated dashboard/history/graphs, rank system with metallic hex badges, sound effects + haptics, and optional manual Google Drive backup/restore.",
+  "projectStateVersion": 11,
+  "summary": "Pullups Tracker: fully offline, ultra-premium pull-up tracking app with wheel-only input, elite futuristic UI, deep analytics, animated dashboard/graphs, metallic hex rank system, SFX+haptics, optional manual Google Drive backup/restore, plus advanced offline intelligence layers (prediction, readiness/fatigue, milestones, insights, psychological feedback) and an offline coins + probabilistic chest shop system with premium animations and card wallet.",
   "architectural_notes": [
     "App must be fully offline-first; never require internet for core functionality.",
     "Persist all workout data in a local database; support unlimited lifetime records.",
@@ -14,9 +14,11 @@
     "Color palette must follow provided hex values for backgrounds, accents, ranks, text, status colors, wheel picker.",
     "Volume control must be the stickman pull-up interaction (no static slider), including physics, arm stretch, gravity drop, vibration."
   ],
-  "known_issues": [],
+  "known_issues": [
+    "Reported interaction/animation/selector issues: stickman volume control currently too static and wheel selector centering/spacing not correct (selected value touching lines / not centered)."
+  ],
   "isFixRequest": false,
-  "imageRequirements": "## Required Images\n- Metallic hexagon badge base (hex-badge-base.dim_512x512.png)\n- Bronze metal texture tile (metal-bronze.dim_1024x1024.png)\n- Silver metal texture tile (metal-silver.dim_1024x1024.png)\n- Gold metal texture tile (metal-gold.dim_1024x1024.png)\n- Platinum metal texture tile (metal-platinum.dim_1024x1024.png)\n- Diamond metal texture tile (metal-diamond.dim_1024x1024.png)\n- Elite white metal texture tile (metal-elite.dim_1024x1024.png)\n- Ascendant iridescent magenta metal texture tile (metal-ascendant.dim_1024x1024.png)\n- Minimal stickman hanging on pull-up bar illustration (stickman-pullup.dim_1024x512.png)\n- Subtle futuristic animated-style background plate (bg-frosted-gradient.dim_1440x2560.png)\n- Flame sprite sheet for streak animation (flame-sprite.dim_1024x1024.png)\n- Energy orb core texture (orb-core.dim_1024x1024.png)",
+  "imageRequirements": "## Required Images\n- 3D-styled coin icon with glow (coin-icon.dim_128x128.png)\n- Bronze chest illustration with soft glow (chest-common.dim_512x512.png)\n- Silver chest illustration with shimmering aura (chest-rare.dim_512x512.png)\n- Gold/amber chest illustration with particle accents (chest-epic.dim_512x512.png)\n- Luxury card front frame (card-frame.dim_600x840.png)\n- Luxury card back design with subtle holographic sheen (card-back.dim_600x840.png)",
   "existing_features": [
     {
       "id": "feature-implement-a-fully-offline-first-data-layer-that-stores-all-pull-up-logs-locally-on-the-device-no-internet-required-for-core-functionality-and-supports-unlimited-lifetime-data",
@@ -129,6 +131,390 @@
         "REQ-14"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-replace-the-current-settings-stickmanvolumecontrol-with-a-fully-interactive-animated-stickman-pull-up-volume-controller-a-fixed-anchored-pull-up-bar-at-the-top-bar-never-moves-a-moving-stickman-attached-to-the-bar-and-a-right-side-vertical-volume-slider-that-drives-the-stickman-s-pull-up-reverse-pull-up-motion",
+      "title": "Replace the current Settings \"StickmanVolumeControl\" with a fully interactive, animated stickman pull-up volume controller: a fixed/anchored pull-up bar at the top (bar never moves), a moving stickman attached to the bar, and a right-side vertical volume slider that drives the stickman’s pull-up/reverse-pull-up motion.",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-right-side-vertical-volume-slider-ui-with-the-exact-specified-luxury-glassmorphism-styling-width-64dp-rounded-corners-32dp-background-gradient-1f2937-111827-and-a-border-glow-color-22c55e-the-slider-must-only-move-its-knob-handle-and-must-not-drag-the-page",
+      "title": "Implement the right-side vertical volume slider UI with the exact specified luxury glassmorphism styling: width 64dp, rounded corners 32dp, background gradient #1f2937 → #111827, and a border glow color #22c55e. The slider must only move its knob/handle and must not drag the page.",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-make-the-slider-driven-volume-change-discrete-and-pull-up-based-sliding-up-triggers-pull-up-animations-and-increases-volume-by-exactly-2-per-completed-pull-up-sliding-down-triggers-reverse-pull-up-animations-and-decreases-volume-by-exactly-2-per-completed-pull-up",
+      "title": "Make the slider-driven volume change discrete and pull-up-based: sliding UP triggers pull-up animations and increases volume by exactly +2% per completed pull-up; sliding DOWN triggers reverse pull-up animations and decreases volume by exactly −2% per completed pull-up.",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-full-pull-up-motion-sequence-and-timing-for-each-pull-up-cycle-arms-bend-body-rises-chin-reaches-the-bar-slight-pause-of-0-2-seconds-at-the-top-then-lowering-smoothly-each-pull-up-cycle-duration-must-be-0-8-seconds-and-use-cubic-bezier-0-4-0-0-2-1-add-subtle-body-swing-physics-slight-leg-motion-and-a-grip-tightening-animation",
+      "title": "Implement the full pull-up motion sequence and timing for each pull-up cycle: arms bend, body rises, chin reaches the bar, slight pause of 0.2 seconds at the top, then lowering smoothly. Each pull-up cycle duration must be 0.8 seconds and use cubic-bezier(0.4,0,0.2,1). Add subtle body swing physics, slight leg motion, and a grip tightening animation.",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-upgrade-stickman-visuals-render-the-stickman-with-stroke-color-e5e7eb-and-stroke-width-4dp-add-a-glow-effect-when-volume-is-above-80-glow-color-22c55e-with-blur-radius-12dp-when-idle-no-slider-interaction-animate-breathing-with-a-subtle-up-down-movement-of-4dp-every-2-seconds",
+      "title": "Upgrade stickman visuals: render the stickman with stroke color #e5e7eb and stroke width 4dp; add a glow effect when volume is above 80% (glow color #22c55e with blur radius 12dp). When idle (no slider interaction), animate breathing with a subtle up/down movement of 4dp every 2 seconds.",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-sweat-particle-effects-when-volume-is-above-70-emit-small-fading-circles-with-color-22c55e-and-opacity-0-4-near-around-the-stickman-during-exertion-pull-up-motion",
+      "title": "Add sweat particle effects when volume is above 70%: emit small fading circles with color #22c55e and opacity 0.4 near/around the stickman during exertion (pull-up motion).",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-interaction-feedback-for-the-new-volume-controller-trigger-haptic-feedback-on-each-completed-pull-up-play-a-short-click-sound-tick-soft-wav-at-15-volume-on-each-completed-pull-up-lock-page-scroll-while-interacting-with-the-slider-to-prevent-dragging-conflicts",
+      "title": "Add interaction feedback for the new volume controller: trigger haptic feedback on each completed pull-up; play a short click sound \"tick_soft.wav\" at 15% volume on each completed pull-up; lock page scroll while interacting with the slider to prevent dragging conflicts.",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-volume-percentage-label-above-the-stickman-that-updates-with-an-animated-counting-effect-and-transitions-color-from-9ca3af-to-22c55e-as-the-volume-increases",
+      "title": "Add a volume percentage label above the stickman that updates with an animated counting effect and transitions color from #9ca3af to #22c55e as the volume increases.",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-and-upgrade-the-wheelpicker-number-selector-ui-so-the-selected-number-is-perfectly-centered-between-two-thin-horizontal-lines-not-touching-implement-a-3-row-visible-wheel-where-the-center-row-is-always-the-selected-value-with-equal-spacing-above-and-below-to-visually-isolate-the-center-value",
+      "title": "Fix and upgrade the WheelPicker number selector UI so the selected number is perfectly centered between two thin horizontal lines (not touching). Implement a 3-row visible wheel where the center row is always the selected value, with equal spacing above and below to visually isolate the center value.",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-the-exact-wheelpicker-typography-color-styling-center-selected-value-uses-size-28sp-bold-color-22c55e-non-selected-values-use-size-18sp-color-6b7280-with-opacity-0-6-horizontal-lines-use-color-374151-with-thickness-2dp",
+      "title": "Apply the exact WheelPicker typography/color styling: center (selected) value uses size 28sp, bold, color #22c55e; non-selected values use size 18sp, color #6b7280 with opacity 0.6. Horizontal lines use color #374151 with thickness 2dp.",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-improve-wheelpicker-physics-and-animation-add-smooth-inertia-scrolling-with-snap-to-center-behavior-and-scroll-resistance-physics-add-subtle-scale-animation-where-the-center-number-scales-to-1-15-and-the-others-scale-to-0-9-ensure-wheel-input-only-no-keyboard-and-prevent-page-dragging-conflicts-during-wheel-interaction",
+      "title": "Improve WheelPicker physics and animation: add smooth inertia scrolling with snap-to-center behavior and scroll resistance physics; add subtle scale animation where the center number scales to 1.15 and the others scale to 0.9; ensure wheel input only (no keyboard) and prevent page dragging conflicts during wheel interaction.",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-upgraded-volume-controller-and-wheelpicker-interactions-animations-remain-premium-and-performant-target-smooth-60fps-animation-use-hardware-accelerated-transforms-where-applicable-and-remove-any-interaction-conflicts-that-cause-page-dragging-while-the-slider-wheel-is-active",
+      "title": "Ensure the upgraded volume controller and WheelPicker interactions/animations remain premium and performant: target smooth 60fps animation, use hardware-accelerated transforms where applicable, and remove any interaction conflicts that cause page dragging while the slider/wheel is active.",
+      "reqIds": [
+        "REQ-26"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-an-offline-only-adaptive-strength-intelligence-engine-that-analyzes-the-entire-pull-up-history-to-compute-a-strength-trend-b-momentum-and-c-future-potential-and-produces-predicted-max-pull-ups-for-7-30-and-90-days-along-with-a-confidence-percentage-for-each-horizon",
+      "title": "Implement an offline-only Adaptive Strength Intelligence Engine that analyzes the entire pull-up history to compute (a) strength trend, (b) momentum, and (c) future potential, and produces predicted max pull-ups for 7, 30, and 90 days along with a confidence percentage for each horizon.",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-readiness-score-system-that-calculates-a-daily-readiness-score-based-on-last-training-sessions-streak-intensity-existing-fatigue-score-and-inferred-recovery-time-and-display-it-as-an-animated-circular-meter-with-status-labels-peak-ready-moderate-fatigued-critical-plus-a-recommendation-text-train-heavy-train-light-or-rest",
+      "title": "Add a Readiness Score system that calculates a daily readiness score based on last training sessions, streak intensity, existing fatigue score, and inferred recovery time, and display it as an animated circular meter with status labels: \"Peak\", \"Ready\", \"Moderate\", \"Fatigued\", \"Critical\" plus a recommendation text: \"Train heavy\", \"Train light\", or \"Rest\".",
+      "reqIds": [
+        "REQ-28"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-separate-fatigue-and-recovery-into-two-distinct-metrics-muscular-fatigue-and-nervous-system-load-each-with-different-recovery-decay-behavior-nervous-system-load-increases-after-high-intensity-sessions-and-decreases-slowly-over-time-muscular-fatigue-recovers-faster-and-render-them-as-two-visually-distinct-animated-glowing-ring-meters",
+      "title": "Separate fatigue and recovery into two distinct metrics—Muscular Fatigue and Nervous System Load—each with different recovery/decay behavior (nervous system load increases after high-intensity sessions and decreases slowly over time; muscular fatigue recovers faster), and render them as two visually distinct animated glowing ring meters.",
+      "reqIds": [
+        "REQ-29"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-session-quality-scoring-after-every-saved-session-compute-a-quality-score-from-0-100-based-on-consistency-improvement-and-fatigue-then-show-an-elite-result-presentation-smooth-number-animation-sound-effect-and-persist-the-quality-score-history-offline",
+      "title": "Add Session Quality scoring: after every saved session, compute a quality score from 0–100 based on consistency, improvement, and fatigue, then show an elite result presentation (smooth number animation + sound effect) and persist the quality score history offline.",
+      "reqIds": [
+        "REQ-30"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-an-offline-milestone-intelligence-system-that-detects-and-celebrates-milestones-including-first-10-reps-first-100-total-reps-best-streaks-and-unusual-improvements-display-an-elite-popup-animation-upon-detection-and-store-a-milestone-timeline-offline",
+      "title": "Implement an offline Milestone Intelligence system that detects and celebrates milestones including: first 10 reps, first 100 total reps, best streaks, and unusual improvements; display an elite popup animation upon detection and store a milestone timeline offline.",
+      "reqIds": [
+        "REQ-31"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-performance-pattern-detection-that-analyzes-historical-offline-data-to-identify-insights-including-best-training-time-of-day-best-rest-duration-and-most-effective-training-frequency-and-display-these-as-elite-intelligence-messages-within-the-analytics-screen",
+      "title": "Add Performance Pattern Detection that analyzes historical offline data to identify insights including best training time of day, best rest duration, and most effective training frequency, and display these as elite intelligence messages within the Analytics screen.",
+      "reqIds": [
+        "REQ-32"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-lifetime-strength-curve-graph-separate-from-the-existing-365-day-history-graph-showing-maximum-strength-progression-trend-across-the-entire-lifetime-dataset-with-smooth-animated-rendering",
+      "title": "Add a Lifetime Strength Curve Graph separate from the existing 365-day history graph, showing maximum strength progression trend across the entire lifetime dataset with smooth animated rendering.",
+      "reqIds": [
+        "REQ-33"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-consistency-intelligence-score-discipline-score-calculated-from-streak-stability-missed-days-and-recovery-balance-and-display-it-as-an-animated-percentage-with-a-short-english-explanation-of-what-it-represents",
+      "title": "Add a Consistency Intelligence Score (discipline score) calculated from streak stability, missed days, and recovery balance, and display it as an animated percentage with a short English explanation of what it represents.",
+      "reqIds": [
+        "REQ-34"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-psychological-pressure-system-when-the-user-misses-too-many-days-trigger-subtle-urgency-feedback-including-a-fading-streak-flame-visual-a-dimming-orb-energy-visual-and-a-soft-low-tone-sound-via-the-existing-sfx-system",
+      "title": "Implement a Psychological Pressure system: when the user misses too many days, trigger subtle urgency feedback including a fading streak flame visual, a dimming orb energy visual, and a soft low-tone sound via the existing SFX system.",
+      "reqIds": [
+        "REQ-35"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-elite-focus-mode-to-the-log-flow-while-logging-sets-reps-wheel-input-phase-the-background-dims-distractions-navigation-are-visually-suppressed-and-only-the-pull-up-input-interface-remains-prominent-play-a-deep-ambient-pulse-sound-effect-during-focus-mode-while-preserving-the-strict-no-keyboard-ux",
+      "title": "Add Elite Focus Mode to the Log flow: while logging sets/reps (wheel input phase), the background dims, distractions/navigation are visually suppressed, and only the pull-up input interface remains prominent; play a deep ambient pulse sound effect during focus mode while preserving the strict no-keyboard UX.",
+      "reqIds": [
+        "REQ-36"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-advanced-statistics-screen-that-includes-total-lifetime-reps-total-sessions-average-reps-per-session-most-productive-week-fastest-improvement-period-and-current-strength-velocity-integrate-it-into-the-existing-navigation-in-a-way-that-does-not-remove-or-rebuild-existing-screens",
+      "title": "Add an Advanced Statistics screen that includes: total lifetime reps, total sessions, average reps per session, most productive week, fastest improvement period, and current strength velocity; integrate it into the existing navigation in a way that does not remove or rebuild existing screens.",
+      "reqIds": [
+        "REQ-37"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-micro-progress-tracking-adaptive-orb-upgrade-and-elite-startup-sequence-a-the-smallest-improvements-e-g-1-rep-trigger-subtle-positive-feedback-animation-and-sound-b-the-dashboard-orb-reflects-both-daily-progress-and-long-term-strength-evolution-by-varying-intensity-glow-size-pulse-speed-based-on-performance-trend-c-on-app-open-play-an-elite-startup-sequence-where-the-hexagon-rank-appears-first-then-the-orb-activates-then-the-dashboard-content-loads-smoothly",
+      "title": "Add micro-progress tracking, adaptive orb upgrade, and elite startup sequence: (a) the smallest improvements (e.g., +1 rep) trigger subtle positive feedback animation and sound; (b) the Dashboard orb reflects both daily progress and long-term strength evolution by varying intensity/glow size/pulse speed based on performance trend; (c) on app open, play an elite startup sequence where the hexagon rank appears first, then the orb activates, then the Dashboard content loads smoothly.",
+      "reqIds": [
+        "REQ-38"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-upgrade-the-existing-rankbadge-visual-design-to-the-specified-elite-ultra-premium-3d-floating-hexagon-style-without-changing-rank-tier-logic-thresholds-or-promotion-rules-apply-the-provided-geometry-sizing-layering-shadows-aura-and-animations-perfect-geometric-hexagon-default-size-240px-double-layer-outline-3px-inner-solid-outer-blurred-glow-at-40-opacity-subtle-inner-gradient-fill-top-rank-color-18-opacity-bottom-darker-rank-color-8-opacity-center-mostly-dark-inset-shadow-rgba-0-0-0-0-6-blur-25px-offset-0-6px-external-shadow-rgba-0-0-0-0-8-blur-40px-offset-0-15px-ambient-aura-behind-hexagon-radial-glow-circle-340px-20-opacity-blur-60px-colored-by-rank-aura-primary-animated-energy-pulse-outline-glow-brightness-60-100-over-2-8s-ease-in-out-breathing-scale-1-00-1-035-over-4s-ease-in-out-holographic-micro-reflection-diagonal-sweep-layer-8-opacity-5s-infinite-ensure-the-badge-no-longer-looks-flat-and-reads-as-a-physical-glowing-object-floating-in-space",
+      "title": "Upgrade the existing RankBadge visual design to the specified elite ultra‑premium 3D floating hexagon style without changing rank tier logic, thresholds, or promotion rules. Apply the provided geometry, sizing, layering, shadows, aura, and animations: perfect geometric hexagon; default size 240px; double-layer outline (3px inner solid + outer blurred glow at 40% opacity); subtle inner gradient fill (top: rank color 18% opacity, bottom: darker rank color 8% opacity, center mostly dark); inset shadow (rgba(0,0,0,0.6) blur 25px offset 0 6px); external shadow (rgba(0,0,0,0.8) blur 40px offset 0 15px); ambient aura behind hexagon (radial glow circle 340px, 20% opacity, blur 60px, colored by rank aura/primary); animated energy pulse (outline glow brightness 60%↔100% over 2.8s ease-in-out); breathing scale (1.00↔1.035 over 4s ease-in-out); holographic micro reflection diagonal sweep layer (8% opacity, 5s infinite). Ensure the badge no longer looks flat and reads as a physical glowing object floating in space.",
+      "reqIds": [
+        "REQ-39"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-center-rank-symbol-inside-the-hexagon-to-match-the-specification-perfectly-centered-text-font-orbitron-bold-or-exo-2-bold-size-42px-pure-white-ffffff-with-text-glow-using-the-current-rank-color-blur-12px-80-opacity-ensure-the-center-remains-mostly-dark-to-preserve-the-luxury-look",
+      "title": "Update the center rank symbol inside the hexagon to match the specification: perfectly centered text; font Orbitron Bold or Exo 2 Bold; size 42px; pure white (#ffffff) with text glow using the current rank color (blur 12px, ~80% opacity). Ensure the center remains mostly dark to preserve the luxury look.",
+      "reqIds": [
+        "REQ-40"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-rankbadge-touch-interaction-feedback-on-tap-click-instantly-increase-perceived-brightness-to-140-and-scale-to-1-08-then-smoothly-return-to-normal-within-400ms-play-a-soft-energy-pulse-sound-on-tap-using-the-existing-sfx-system",
+      "title": "Implement RankBadge touch interaction feedback: on tap/click, instantly increase perceived brightness to ~140% and scale to 1.08, then smoothly return to normal within 400ms. Play a soft energy pulse sound on tap using the existing SFX system.",
+      "reqIds": [
+        "REQ-41"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-upgrade-the-rank-promotion-animation-visuals-rankpromotionoverlay-embedded-rankbadge-behavior-during-promotion-to-match-the-new-elite-style-when-rank-increases-the-hexagon-expands-to-1-25-scale-performs-a-strong-glow-flash-and-the-aura-expands-outward-then-settles-back-total-duration-900ms-play-the-elite-rank-up-sound-via-the-existing-sfx-system-and-keep-existing-haptics-behavior-intact",
+      "title": "Upgrade the rank promotion animation visuals (RankPromotionOverlay + embedded RankBadge behavior during promotion) to match the new elite style: when rank increases, the hexagon expands to 1.25 scale, performs a strong glow flash, and the aura expands outward, then settles back; total duration ~900ms. Play the elite rank-up sound via the existing SFX system and keep existing haptics behavior intact.",
+      "reqIds": [
+        "REQ-42"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-the-user-specified-rank-color-system-for-the-upgraded-badge-visuals-bronze-primary-ff8c42-aura-ffb37a-silver-primary-cfd8dc-aura-ffffff-gold-primary-ffd700-aura-fff3b0-platinum-primary-00e5ff-aura-6ff9ff-diamond-primary-7c4dff-aura-b388ff-master-primary-00ff95-aura-7dffc1-map-existing-app-rank-tiers-e-g-bronze-i-ii-iii-silver-i-ii-iii-etc-onto-these-groups-without-changing-tier-names-or-thresholds-use-the-deep-radial-background-gradient-behind-the-badge-center-0d1117-edges-000000-where-the-badge-is-presented-prominently",
+      "title": "Apply the user-specified rank color system for the upgraded badge visuals: Bronze primary #ff8c42 aura #ffb37a; Silver primary #cfd8dc aura #ffffff; Gold primary #ffd700 aura #fff3b0; Platinum primary #00e5ff aura #6ff9ff; Diamond primary #7c4dff aura #b388ff; Master primary #00ff95 aura #7dffc1. Map existing app rank tiers (e.g., Bronze I/II/III, Silver I/II/III, etc.) onto these groups without changing tier names or thresholds. Use the deep radial background gradient behind the badge (center #0d1117, edges #000000) where the badge is presented prominently.",
+      "reqIds": [
+        "REQ-43"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-an-offline-achievements-system-containing-exactly-50-achievements-as-provided-by-the-user-names-trophy-symbol-concepts-categorized-into-difficulty-filters-easy-medium-hard-legendary-each-achievement-must-have-a-unique-trophy-symbol-svg-canvas-vector-is-acceptable-reflecting-the-specified-concept-bar-clipboard-stopwatch-flames-fists-medals-shield-target-sun-warning-eye-mountain-flag-arrows-diamond-crown-spark-calendar-etc",
+      "title": "Create an offline Achievements system containing exactly 50 achievements as provided by the user (names + trophy symbol concepts), categorized into difficulty filters (easy, medium, hard, legendary). Each achievement must have a unique trophy symbol (SVG/canvas/vector is acceptable) reflecting the specified concept (bar, clipboard, stopwatch, flames, fists, medals, shield, target, sun, warning, eye, mountain, flag, arrows, diamond, crown, spark, calendar, etc.).",
+      "reqIds": [
+        "REQ-44"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-persist-achievements-locally-offline-first-including-unlock-state-and-timestamps-extend-the-existing-indexeddb-layer-frontend-src-lib-offlinedb-ts-to-store-achievement-definitions-unlock-records-and-to-include-achievements-in-export-import-backups-ensure-the-existing-backup-restore-flow-continues-to-work-and-now-includes-achievements-data",
+      "title": "Persist achievements locally (offline-first) including unlock state and timestamps. Extend the existing IndexedDB layer (frontend/src/lib/offlineDb.ts) to store achievement definitions/unlock records and to include achievements in export/import backups. Ensure the existing backup/restore flow continues to work and now includes achievements data.",
+      "reqIds": [
+        "REQ-45"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-achievement-unlock-detection-that-evaluates-existing-offline-data-and-events-e-g-when-a-session-is-saved-in-logscreen-when-milestones-are-detected-when-session-quality-is-computed-streak-changes-orb-fill-events-readiness-fatigue-thresholds-micro-progress-events-prediction-accuracy-events-and-other-listed-categories-unlock-the-appropriate-achievements-based-on-the-user-provided-list-intent-pull-up-totals-streaks-consistency-session-quality-milestones-orb-energy-readiness-fatigue-management-psychological-challenges-rare-accomplishments",
+      "title": "Implement achievement unlock detection that evaluates existing offline data and events (e.g., when a session is saved in LogScreen, when milestones are detected, when session quality is computed, streak changes, orb fill events, readiness/fatigue thresholds, micro-progress events, prediction accuracy events, and other listed categories). Unlock the appropriate achievements based on the user-provided list intent (pull-up totals, streaks, consistency, session quality, milestones, orb energy, readiness, fatigue management, psychological challenges, rare accomplishments).",
+      "reqIds": [
+        "REQ-46"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-achievement-unlock-popup-system-when-an-achievement-unlocks-show-a-smooth-animated-popup-from-center-with-bounce-fade-trophy-3d-glow-soft-shadows-subtle-shine-sweep-and-particle-flare-on-unlock-play-the-specified-reward-sound-effect-chime-pulse-subtle-deep-bass-using-the-existing-sfx-system-and-global-volume-control",
+      "title": "Add an Achievement unlock popup system: when an achievement unlocks, show a smooth animated popup from center with bounce + fade, trophy 3D glow/soft shadows/subtle shine sweep, and particle flare on unlock. Play the specified reward sound effect (chime + pulse + subtle deep bass) using the existing SFX system and global volume control.",
+      "reqIds": [
+        "REQ-47"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-an-achievements-cabinet-list-ui-a-scrollable-achievements-screen-section-with-filter-controls-easy-medium-hard-legendary-and-a-trophy-cabinet-presentation-each-trophy-item-must-support-hover-focus-glow-and-an-interactive-description-panel-no-freeform-text-input-use-the-provided-popup-color-direction-for-achievements-ui-elements-popup-background-0b0f14-highlight-00f0ff-secondary-glow-ffcc00",
+      "title": "Create an Achievements cabinet/list UI: a scrollable achievements screen/section with filter controls (easy, medium, hard, legendary) and a trophy cabinet presentation. Each trophy item must support hover/focus glow and an interactive description panel (no freeform text input). Use the provided popup color direction for achievements UI elements: popup background #0b0f14, highlight #00f0ff, secondary glow #ffcc00.",
+      "reqIds": [
+        "REQ-48"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-integrate-navigation-access-to-the-achievements-ui-without-removing-or-rebuilding-existing-screens-or-bottom-navigation-add-a-route-e-g-achievements-and-a-clear-entry-point-from-an-existing-screen-e-g-analytics-via-a-button-or-card",
+      "title": "Integrate navigation access to the Achievements UI without removing or rebuilding existing screens or bottom navigation. Add a route (e.g., /achievements) and a clear entry point from an existing screen (e.g., Analytics) via a button or card.",
+      "reqIds": [
+        "REQ-49"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-meet-the-performance-requirements-for-the-upgraded-rank-badge-and-achievements-visuals-all-animations-should-remain-smooth-at-60fps-on-typical-mobile-devices-use-gpu-accelerated-transforms-where-applicable-and-optimize-glow-blur-layers-to-avoid-noticeable-lag",
+      "title": "Meet the performance requirements for the upgraded rank badge and achievements visuals: all animations should remain smooth at ~60fps on typical mobile devices, use GPU-accelerated transforms where applicable, and optimize glow/blur layers to avoid noticeable lag.",
+      "reqIds": [
+        "REQ-50"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-extend-the-offline-data-layer-to-persist-a-coins-system-chest-opening-history-and-a-card-wallet-inventory-locally-on-device-without-removing-or-rebuilding-any-existing-offline-stores-sessions-settings-quality-milestones-achievements",
+      "title": "Extend the offline data layer to persist a Coins system, Chest opening history, and a Card wallet/inventory locally on-device, without removing or rebuilding any existing offline stores (sessions, settings, quality, milestones, achievements).",
+      "reqIds": [
+        "REQ-51"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-include-coins-balance-chest-history-and-card-wallet-inventory-in-the-existing-manual-export-import-backup-flow-the-json-file-the-user-can-store-in-google-drive-preserving-backwards-compatibility-with-older-backups-that-do-not-contain-these-fields",
+      "title": "Include coins balance, chest history, and card wallet/inventory in the existing manual export/import backup flow (the JSON file the user can store in Google Drive), preserving backwards compatibility with older backups that do not contain these fields.",
+      "reqIds": [
+        "REQ-52"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-an-offline-coins-awarding-system-that-automatically-grants-coins-after-a-saving-a-pull-up-session-b-detecting-milestones-c-streak-changes-bonuses-and-d-achievements-unlocking-coin-rewards-must-be-based-on-performance-and-must-not-require-network-access",
+      "title": "Implement an offline Coins awarding system that automatically grants coins after: (a) saving a pull-up session, (b) detecting milestones, (c) streak changes/bonuses, and (d) achievements unlocking; coin rewards must be based on performance and must not require network access.",
+      "reqIds": [
+        "REQ-53"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-coins-balance-ui-to-the-dashboard-show-total-coins-in-the-top-right-with-an-animated-rolling-counter-and-a-subtle-glow-burst-when-the-balance-increases-keep-the-existing-dashboard-layout-rank-badge-orb-fatigue-rings-streak-flame-and-psychological-pressure-feedback-intact",
+      "title": "Add a coins balance UI to the Dashboard: show total coins in the top-right with an animated rolling counter and a subtle glow burst when the balance increases; keep the existing Dashboard layout, rank badge, orb, fatigue rings, streak flame, and psychological pressure feedback intact.",
+      "reqIds": [
+        "REQ-54"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-chest-shop-section-inside-the-existing-settings-tab-that-displays-total-coin-balance-available-chest-options-common-rare-epic-with-their-coin-costs-and-a-history-list-of-opened-chests-do-not-remove-or-rebuild-existing-settings-sections-volume-control-daily-goal-backup-restore-danger-zone",
+      "title": "Create a Chest Shop section inside the existing Settings tab that displays: total coin balance, available chest options (Common, Rare, Epic) with their coin costs, and a history list of opened chests; do not remove or rebuild existing Settings sections (Volume Control, Daily Goal, Backup & Restore, Danger Zone).",
+      "reqIds": [
+        "REQ-55"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-chest-purchase-and-opening-interaction-flow-tap-a-chest-confirm-purchase-deduct-coins-immediately-then-play-a-premium-chest-opening-animation-shake-glow-and-reveal-each-card-one-by-one-flip-slide-with-highlight-glow-store-results-automatically-to-the-offline-wallet-and-chest-history",
+      "title": "Implement the chest purchase and opening interaction flow: tap a chest, confirm purchase, deduct coins immediately, then play a premium chest-opening animation (shake + glow) and reveal each card one by one (flip/slide) with highlight glow; store results automatically to the offline wallet and chest history.",
+      "reqIds": [
+        "REQ-56"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-exact-independent-probabilistic-draw-tables-for-each-chest-type-each-card-draw-is-independent-duplicates-in-the-same-chest-are-allowed-and-ensure-the-number-of-card-draws-per-chest-matches-the-specification-common-3-rare-5-epic-7",
+      "title": "Implement the exact independent probabilistic draw tables for each chest type (each card draw is independent; duplicates in the same chest are allowed) and ensure the number of card draws per chest matches the specification: Common (3), Rare (5), Epic (7).",
+      "reqIds": [
+        "REQ-57"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-tier-based-chest-visual-styling-and-effects-that-match-the-existing-luxury-cold-aesthetic-and-app-palette-0b0f14-background-00f0ff-accents-while-adding-distinct-tier-identity-common-bronze-soft-glow-rare-silver-shimmering-aura-epic-gold-amber-animated-particles-aura-sweep",
+      "title": "Apply tier-based chest visual styling and effects that match the existing luxury cold aesthetic and app palette (#0b0f14 background, #00f0ff accents) while adding distinct tier identity: Common (bronze + soft glow), Rare (silver + shimmering aura), Epic (gold/amber + animated particles + aura sweep).",
+      "reqIds": [
+        "REQ-58"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-extend-the-existing-sfx-system-to-support-chest-related-sounds-and-wire-them-into-the-chest-flow-common-chest-uses-a-soft-metallic-click-rare-uses-a-sparkle-jingle-epic-uses-an-epic-deep-pulse-bass-shimmer-additionally-play-a-per-card-reveal-sound-and-stronger-unique-feedback-for-high-value-reveals-rare-epic-moments",
+      "title": "Extend the existing SFX system to support chest-related sounds and wire them into the chest flow: Common chest uses a soft metallic click, Rare uses a sparkle/jingle, Epic uses an epic deep pulse/bass + shimmer; additionally, play a per-card reveal sound and stronger unique feedback for high-value reveals (rare/epic moments).",
+      "reqIds": [
+        "REQ-59"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-subtle-positive-feedback-animations-and-haptics-when-coins-are-awarded-and-when-a-chest-is-opened-add-stronger-feedback-for-special-reveals-rare-epic-high-value-cards-while-preserving-existing-haptic-patterns-and-gracefully-degrading-on-devices-without-vibration-support",
+      "title": "Add subtle positive feedback animations and haptics when coins are awarded and when a chest is opened; add stronger feedback for special reveals (rare/epic/high-value cards), while preserving existing haptic patterns and gracefully degrading on devices without vibration support.",
+      "reqIds": [
+        "REQ-60"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-keep-all-previous-app-functionality-unchanged-and-compatible-wheel-only-input-ux-existing-navigation-screens-hexagon-ranks-orb-energy-animations-stickman-volume-system-achievements-milestones-quality-overlays-psychological-pressure-feedback-and-performance-targets-smooth-60fps",
+      "title": "Keep all previous app functionality unchanged and compatible: wheel-only input UX, existing navigation/screens, hexagon ranks, orb energy animations, stickman volume system, achievements/milestones/quality overlays, psychological pressure feedback, and performance targets (smooth ~60fps).",
+      "reqIds": [
+        "REQ-61"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-optional-chest-modifiers-a-a-chest-streak-bonus-where-opening-multiple-chests-in-a-row-increases-chances-for-higher-value-cards-and-b-a-daily-first-chest-bonus-for-the-first-chest-opened-each-day-that-slightly-increases-chances-for-higher-value-outcomes-expose-clear-on-off-controls-within-the-chest-shop-section-and-ensure-defaults-are-off-unless-otherwise-specified",
+      "title": "Implement optional chest modifiers: (a) a chest streak bonus where opening multiple chests in a row increases chances for higher value cards, and (b) a daily first-chest bonus for the first chest opened each day that slightly increases chances for higher value outcomes; expose clear on/off controls within the Chest Shop section and ensure defaults are off unless otherwise specified.",
+      "reqIds": [
+        "REQ-62"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -189,6 +575,132 @@
     {
       "id": "AR-10",
       "summary": "Settings: stickman sound control, manual Google Drive backup/restore, and data reset with confirmation animation",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-11",
+      "summary": "Upgrade stickman volume control to anchored pull-up bar + right-side glassmorphism vertical slider driving synchronized pull-up/reverse animations (+2%/-2% per rep), particles >70%, glow >80%, idle breathing, haptics + tick_soft.wav, and scroll-lock while interacting",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Fix/improve wheel number picker: 3-row visible wheel with perfectly centered selected value between two lines, typography/colors per spec, inertia + snap-to-center + resistance physics, and center/outer scale animations (1.15/0.9)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Version upgrade approach: extend existing systems (no rebuild) while preserving full offline functionality, luxury feel, sound system, wheel input, and hexagon rank system",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Adaptive Strength Intelligence Engine: analyze full history to compute strength trend/momentum/future potential; predict max pullups in 7/30/90 days with rolling animation + confidence %, auto-updated after every session",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-15",
+      "summary": "Readiness Score system: daily readiness from recent sessions, streak intensity, fatigue score, recovery time; animated circular meter with labels (peak/ready/moderate/fatigued/critical) + recommendation text (train heavy/light/rest)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Fatigue & recovery separation: two animated meters (muscular fatigue vs nervous system load) with different decay/recovery rates; glowing ring visuals",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "Session Quality scoring: post-session quality score 0–100 based on consistency/improvement/fatigue; smooth number animation + SFX; store quality history",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-18",
+      "summary": "Milestone Intelligence system: detect/celebrate milestones (first 10 reps, first 100 total, best streaks, unusual improvements) with elite popup animation; store milestone timeline",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-19",
+      "summary": "Performance Pattern Detection: analyze historical data for insights (best time of day, best rest duration, most effective frequency) and show as elite intelligence messages in Analytics",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-20",
+      "summary": "Lifetime Strength Curve graph: separate animated graph showing max strength progression trend across entire lifetime",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-21",
+      "summary": "Consistency Intelligence score: discipline percentage based on streak stability, missed days, recovery balance; animated % with explanation",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-22",
+      "summary": "Psychological Pressure system: subtle urgency feedback when missing too many days (fading streak flame, dimming orb energy, soft low-tone sound)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-23",
+      "summary": "Elite Focus Mode for logging: dim background, remove distractions, show only pull-up input interface; add deep ambient pulse SFX",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-24",
+      "summary": "Advanced Statistics screen: total lifetime reps, total sessions, avg reps/session, most productive week, fastest improvement period, current strength velocity",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-25",
+      "summary": "Micro progress tracking: smallest improvements (e.g., +1 rep) trigger subtle positive feedback animation + sound reinforcement",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-26",
+      "summary": "Adaptive Orb system upgrade: orb represents daily progress + long-term strength evolution; intensity/glow size/pulse speed driven by performance trend",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-27",
+      "summary": "Elite startup sequence: on launch show hex rank first, then orb activation, then dashboard loads smoothly",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-28",
+      "summary": "Achievements system: 50 offline-stored achievements (easy→legendary) with unique trophy symbols/icons, animated unlock popups + SFX/visual flare, achievement cabinet/list with scroll + filters; optional Google Drive backup/restore of achievements",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-29",
+      "summary": "Hexagon rank badge visual/animation redesign (no logic/data changes): premium 3D floating hex with double-outline glow, gradient fill, inset/external shadows, ambient aura, pulse + breathing + holographic sweep, tap feedback, rank-up animation, and updated rank color palette",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-30",
+      "summary": "Offline Coins system: automatically award coins from sessions/milestones/streaks/achievements based on performance; store locally with optional Google Drive backup/restore; coins spendable in-app (initially chests); Dashboard top-right animated coin counter with subtle glow on increase",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-31",
+      "summary": "Offline Chest Shop in Settings: spend coins to open Common (250, 3 cards), Rare (500, 5 cards), Epic (1000, 7 cards) chests with defined independent probabilistic card-value tables; premium chest opening + per-card reveal animations, tier-based colors/aura + SFX, coin deduction + rolling counter update, store revealed cards in local wallet, maintain chest open history; optional chest streak bonus + daily first-chest bonus",
       "reqIds": [],
       "status": "pending"
     }

@@ -1,6 +1,7 @@
 import StickmanVolumeControl from '../components/StickmanVolumeControl';
 import BackupRestorePanel from '../components/BackupRestorePanel';
 import ResetDataDialog from '../components/ResetDataDialog';
+import ChestShopPanel from '../components/chests/ChestShopPanel';
 import { usePullupStore } from '../hooks/usePullupStore';
 import { Label } from '@/components/ui/label';
 import WheelPicker from '../components/WheelPicker';
@@ -55,6 +56,11 @@ export default function SettingsScreen() {
             </Button>
           </DialogContent>
         </Dialog>
+      </div>
+
+      <div className="glass-card border-app-border p-6 rounded-xl">
+        <h2 className="text-app-text-primary font-semibold mb-4">Chest Shop</h2>
+        <ChestShopPanel />
       </div>
 
       <div className="glass-card border-app-border p-6 rounded-xl">

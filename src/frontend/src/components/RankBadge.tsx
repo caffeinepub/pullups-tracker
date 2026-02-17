@@ -1,129 +1,147 @@
 import { RankInfo } from '../lib/types';
-import { useEffect, useRef } from 'react';
+import { useState } from 'react';
+import { useSfx } from '../hooks/useSfx';
 
 interface RankBadgeProps {
   rank: RankInfo;
-  size?: 'sm' | 'md' | 'lg';
-  showParticles?: boolean;
+  size?: number;
+  isPromoting?: boolean;
 }
 
-export default function RankBadge({ rank, size = 'md', showParticles = false }: RankBadgeProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+export default function RankBadge({ rank, size = 240, isPromoting = false }: RankBadgeProps) {
+  const [isTapped, setIsTapped] = useState(false);
+  const { play } = useSfx();
 
-  const sizeMap = {
-    sm: 80,
-    md: 120,
-    lg: 160,
+  const handleTap = () => {
+    setIsTapped(true);
+    play('tick-soft');
+    setTimeout(() => setIsTapped(false), 400);
   };
 
-  const dimension = sizeMap[size];
+  const hexagonPath = `
+    M ${size * 0.5} ${size * 0.067}
+    L ${size * 0.933} ${size * 0.25}
+    L ${size * 0.933} ${size * 0.75}
+    L ${size * 0.5} ${size * 0.933}
+    L ${size * 0.067} ${size * 0.75}
+    L ${size * 0.067} ${size * 0.25}
+    Z
+  `;
 
-  useEffect(() => {
-    if (!showParticles) return;
-    
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    canvas.width = dimension;
-    canvas.height = dimension;
-
-    const particles: Array<{ x: number; y: number; vx: number; vy: number; life: number }> = [];
-    
-    for (let i = 0; i < 20; i++) {
-      particles.push({
-        x: dimension / 2,
-        y: dimension / 2,
-        vx: (Math.random() - 0.5) * 2,
-        vy: (Math.random() - 0.5) * 2,
-        life: 1,
-      });
-    }
-
-    let animationFrame: number;
-
-    const animate = () => {
-      ctx.clearRect(0, 0, dimension, dimension);
-
-      particles.forEach(p => {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.life -= 0.01;
-
-        if (p.life > 0) {
-          ctx.fillStyle = `${rank.color}${Math.floor(p.life * 255).toString(16).padStart(2, '0')}`;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      });
-
-      animationFrame = requestAnimationFrame(animate);
-    };
-
-    animate();
-
-    return () => cancelAnimationFrame(animationFrame);
-  }, [showParticles, dimension, rank.color]);
+  const fontSize = size * 0.175;
 
   return (
-    <div className="relative inline-block" style={{ width: dimension, height: dimension }}>
-      {showParticles && (
-        <canvas
-          ref={canvasRef}
-          className="absolute inset-0 pointer-events-none"
-          style={{ filter: 'blur(1px)' }}
-        />
-      )}
-      
+    <div
+      className="relative inline-block cursor-pointer select-none"
+      style={{ width: size, height: size }}
+      onClick={handleTap}
+    >
+      {/* Ambient aura layer */}
       <div
-        className="relative w-full h-full rounded-lg overflow-hidden"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full animate-rank-pulse"
         style={{
-          clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)',
-          boxShadow: `0 0 20px ${rank.color}40, inset 0 0 20px ${rank.color}20`,
+          width: size * 1.417,
+          height: size * 1.417,
+          background: `radial-gradient(circle, ${rank.auraColor}33 0%, transparent 70%)`,
+          filter: 'blur(60px)',
+        }}
+      />
+
+      {/* External shadow for floating effect */}
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+        style={{
+          width: size,
+          height: size,
+          filter: 'drop-shadow(0 15px 40px rgba(0, 0, 0, 0.8))',
         }}
       >
-        <div
-          className="absolute inset-0 opacity-30"
-          style={{
-            backgroundImage: `url(${rank.metalTexture})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        />
-        
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `linear-gradient(135deg, ${rank.color}40 0%, transparent 50%, ${rank.color}20 100%)`,
-          }}
-        />
+        <svg
+          width={size}
+          height={size}
+          viewBox={`0 0 ${size} ${size}`}
+          className={`${isPromoting ? 'animate-rank-promotion' : 'animate-rank-breathe'} ${isTapped ? 'animate-rank-tap' : ''}`}
+        >
+          {/* Outer glow outline */}
+          <path
+            d={hexagonPath}
+            fill="none"
+            stroke={rank.auraColor}
+            strokeWidth={3}
+            opacity={0.4}
+            filter="url(#glow)"
+            className="animate-rank-pulse"
+          />
 
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center">
-            <div
-              className="font-bold uppercase tracking-wider"
-              style={{
-                fontSize: size === 'sm' ? '0.6rem' : size === 'md' ? '0.8rem' : '1rem',
-                color: rank.color,
-                textShadow: `0 0 10px ${rank.color}`,
-              }}
-            >
-              {rank.name}
-            </div>
-          </div>
-        </div>
+          {/* Inner solid outline */}
+          <path
+            d={hexagonPath}
+            fill="none"
+            stroke={rank.color}
+            strokeWidth={3}
+          />
 
-        <div
-          className="absolute inset-0 animate-shine"
-          style={{
-            background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%)',
-            transform: 'translateX(-100%)',
-            animation: 'shine 3s infinite',
-          }}
-        />
+          {/* Inner gradient fill */}
+          <defs>
+            <linearGradient id={`gradient-${rank.tier}`} x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor={rank.color} stopOpacity={0.18} />
+              <stop offset="100%" stopColor={rank.color} stopOpacity={0.08} />
+            </linearGradient>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="8" result="coloredBlur" />
+              <feMerge>
+                <feMergeNode in="coloredBlur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <filter id="inset-shadow">
+              <feGaussianBlur in="SourceAlpha" stdDeviation="12.5" />
+              <feOffset dx="0" dy="6" result="offsetblur" />
+              <feComponentTransfer>
+                <feFuncA type="linear" slope="0.6" />
+              </feComponentTransfer>
+              <feMerge>
+                <feMergeNode />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+
+          <path
+            d={hexagonPath}
+            fill={`url(#gradient-${rank.tier})`}
+            filter="url(#inset-shadow)"
+          />
+
+          {/* Holographic sweep */}
+          <path
+            d={hexagonPath}
+            fill="url(#sweep-gradient)"
+            opacity={0.08}
+            className="animate-holographic-sweep"
+          />
+
+          <defs>
+            <linearGradient id="sweep-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="transparent" />
+              <stop offset="50%" stopColor="white" />
+              <stop offset="100%" stopColor="transparent" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+
+      {/* Rank text */}
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center font-bold uppercase tracking-wider pointer-events-none"
+        style={{
+          fontSize: `${fontSize}px`,
+          color: '#ffffff',
+          textShadow: `0 0 12px ${rank.color}cc, 0 0 24px ${rank.color}66`,
+          fontFamily: "'Orbitron', 'Exo 2', sans-serif",
+        }}
+      >
+        {rank.name}
       </div>
     </div>
   );

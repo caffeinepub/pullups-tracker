@@ -2,12 +2,12 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-implement-a-fully-offline-first-data-layer-that-stores-all-pull-up-logs-locally-on-the-device-no-internet-required-for-core-functionality-and-supports-unlimited-lifetime-data",
-      "featureTitle": "Implement a fully offline-first data layer that stores all pull-up logs locally on the device (no internet required for core functionality) and supports unlimited lifetime data.",
+      "featureId": "feature-extend-the-offline-data-layer-to-persist-a-coins-system-chest-opening-history-and-a-card-wallet-inventory-locally-on-device-without-removing-or-rebuilding-any-existing-offline-stores-sessions-settings-quality-milestones-achievements",
+      "featureTitle": "Extend the offline data layer to persist a Coins system, Chest opening history, and a Card wallet/inventory locally on-device, without removing or rebuilding any existing offline stores (sessions, settings, quality, milestones, achievements).",
       "files": [
-        "frontend/src/lib/offlineDb.ts",
-        "frontend/src/lib/types.ts",
-        "frontend/src/main.tsx"
+        "frontend/src/lib/economy/chestsTypes.ts",
+        "frontend/src/lib/economy/economyStore.ts",
+        "frontend/src/lib/offlineDb.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -17,18 +17,16 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-1"
+        "REQ-51"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-manual-backup-and-restore-via-a-user-initiated-export-import-flow-that-can-be-stored-in-google-drive-by-the-user-no-automatic-sync-required-export-all-local-data-to-a-single-file-and-restore-from-that-file-with-clear-success-failure-states",
-      "featureTitle": "Add manual backup and restore via a user-initiated export/import flow that can be stored in Google Drive by the user (no automatic sync required): export all local data to a single file and restore from that file, with clear success/failure states.",
+      "featureId": "feature-include-coins-balance-chest-history-and-card-wallet-inventory-in-the-existing-manual-export-import-backup-flow-the-json-file-the-user-can-store-in-google-drive-preserving-backwards-compatibility-with-older-backups-that-do-not-contain-these-fields",
+      "featureTitle": "Include coins balance, chest history, and card wallet/inventory in the existing manual export/import backup flow (the JSON file the user can store in Google Drive), preserving backwards compatibility with older backups that do not contain these fields.",
       "files": [
-        "frontend/src/App.tsx",
         "frontend/src/components/BackupRestorePanel.tsx",
-        "frontend/src/lib/backup.ts",
-        "frontend/src/screens/SettingsScreen.tsx"
+        "frontend/src/lib/offlineDb.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -38,17 +36,17 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-2"
+        "REQ-52"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-enforce-a-strict-no-keyboard-anywhere-ux-remove-avoid-all-freeform-text-inputs-and-numeric-typing-all-numeric-values-sets-reps-duration-weight-any-number-must-be-chosen-via-a-vertical-wheel-picker-with-inertia-snapping-center-highlight-glow-and-tick-sound-feedback-notes-must-be-selectable-predefined-tags-only",
-      "featureTitle": "Enforce a strict 'no keyboard anywhere' UX: remove/avoid all freeform text inputs and numeric typing. All numeric values (sets, reps, duration, weight, any number) must be chosen via a vertical wheel picker with inertia, snapping, center highlight glow, and tick sound feedback; notes must be selectable predefined tags only.",
+      "featureId": "feature-implement-an-offline-coins-awarding-system-that-automatically-grants-coins-after-a-saving-a-pull-up-session-b-detecting-milestones-c-streak-changes-bonuses-and-d-achievements-unlocking-coin-rewards-must-be-based-on-performance-and-must-not-require-network-access",
+      "featureTitle": "Implement an offline Coins awarding system that automatically grants coins after: (a) saving a pull-up session, (b) detecting milestones, (c) streak changes/bonuses, and (d) achievements unlocking; coin rewards must be based on performance and must not require network access.",
       "files": [
-        "frontend/src/components/TagMultiSelect.tsx",
-        "frontend/src/components/WheelPicker.tsx",
-        "frontend/src/lib/predefinedTags.ts",
+        "frontend/src/hooks/usePullupStore.tsx",
+        "frontend/src/lib/economy/coinRewards.ts",
+        "frontend/src/lib/economy/economyService.ts",
         "frontend/src/screens/LogScreen.tsx"
       ],
       "components": [
@@ -59,45 +57,17 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-3"
+        "REQ-53"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-create-the-core-app-navigation-and-screens-dashboard-log-history-analytics-settings-with-icon-based-minimal-navigation-and-smooth-transitions-between-screens-blur-depth-animation",
-      "featureTitle": "Create the core app navigation and screens: Dashboard, Log, History, Analytics, Settings, with icon-based minimal navigation and smooth transitions between screens (blur/depth animation).",
-      "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/AppShell.tsx",
-        "frontend/src/components/BottomNav.tsx",
-        "frontend/src/screens/AnalyticsScreen.tsx",
-        "frontend/src/screens/DashboardScreen.tsx",
-        "frontend/src/screens/HistoryScreen.tsx",
-        "frontend/src/screens/SettingsScreen.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-4"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-dashboard-show-today-s-total-pullups-as-a-large-animated-rolling-counter-show-current-rank-as-an-animated-metallic-hexagon-badge-show-streak-flame-animation-show-fatigue-indicator-ring-show-an-orb-style-energy-core-that-fills-as-the-user-progresses-toward-a-goal-apply-subtle-animated-gradient-background-with-depth-blur",
-      "featureTitle": "Dashboard: show today's total pullups as a large animated rolling counter; show current rank as an animated metallic hexagon badge; show streak flame animation; show fatigue indicator ring; show an orb-style energy core that fills as the user progresses toward a goal; apply subtle animated gradient background with depth blur.",
+      "featureId": "feature-add-a-coins-balance-ui-to-the-dashboard-show-total-coins-in-the-top-right-with-an-animated-rolling-counter-and-a-subtle-glow-burst-when-the-balance-increases-keep-the-existing-dashboard-layout-rank-badge-orb-fatigue-rings-streak-flame-and-psychological-pressure-feedback-intact",
+      "featureTitle": "Add a coins balance UI to the Dashboard: show total coins in the top-right with an animated rolling counter and a subtle glow burst when the balance increases; keep the existing Dashboard layout, rank badge, orb, fatigue rings, streak flame, and psychological pressure feedback intact.",
       "files": [
         "frontend/src/assets/generated.ts",
-        "frontend/src/components/EnergyOrb.tsx",
-        "frontend/src/components/FatigueRing.tsx",
-        "frontend/src/components/FrostedBackground.tsx",
-        "frontend/src/components/RankBadge.tsx",
-        "frontend/src/components/RollingCounter.tsx",
-        "frontend/src/components/StreakFlame.tsx",
+        "frontend/src/components/coins/CoinBalanceBadge.tsx",
+        "frontend/src/index.css",
         "frontend/src/screens/DashboardScreen.tsx"
       ],
       "components": [
@@ -108,130 +78,16 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-5"
+        "REQ-54"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-log-screen-implement-a-premium-logging-flow-using-wheel-pickers-to-select-number-of-sets-and-reps-per-set-with-optional-duration-and-optional-weight-include-predefined-tags-for-notes-on-save-persist-the-session-play-a-premium-confirmation-sound-trigger-haptics-and-show-a-pulse-confirmation-animation",
-      "featureTitle": "Log Screen: implement a premium logging flow using wheel pickers to select number of sets and reps per set, with optional duration and optional weight; include predefined tags for notes; on save, persist the session, play a premium confirmation sound, trigger haptics, and show a pulse confirmation animation.",
+      "featureId": "feature-create-a-chest-shop-section-inside-the-existing-settings-tab-that-displays-total-coin-balance-available-chest-options-common-rare-epic-with-their-coin-costs-and-a-history-list-of-opened-chests-do-not-remove-or-rebuild-existing-settings-sections-volume-control-daily-goal-backup-restore-danger-zone",
+      "featureTitle": "Create a Chest Shop section inside the existing Settings tab that displays: total coin balance, available chest options (Common, Rare, Epic) with their coin costs, and a history list of opened chests; do not remove or rebuild existing Settings sections (Volume Control, Daily Goal, Backup & Restore, Danger Zone).",
       "files": [
-        "frontend/src/components/SessionBuilder.tsx",
-        "frontend/src/lib/animations.ts",
-        "frontend/src/lib/haptics.ts",
-        "frontend/src/screens/LogScreen.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-6"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-history-screen-display-the-last-365-days-of-pull-up-totals-in-a-smooth-animated-graph-that-draws-left-to-right-on-open-allow-tapping-a-day-to-view-details-show-weekly-average-monthly-total-and-personal-records-derived-from-the-stored-data",
-      "featureTitle": "History Screen: display the last 365 days of pull-up totals in a smooth animated graph that draws left-to-right on open; allow tapping a day to view details; show weekly average, monthly total, and personal records derived from the stored data.",
-      "files": [
-        "frontend/src/components/DayDetailsSheet.tsx",
-        "frontend/src/components/HistoryGraph365.tsx",
-        "frontend/src/lib/stats.ts",
-        "frontend/src/screens/HistoryScreen.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-7"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-analytics-screen-compute-and-display-max-pullups-ever-current-streak-longest-streak-daily-average-fatigue-score-consistency-score-and-rank-progress-based-on-local-data-include-a-personal-record-celebration-visual-sfx-haptic-when-a-new-record-is-achieved",
-      "featureTitle": "Analytics Screen: compute and display max pullups ever, current streak, longest streak, daily average, fatigue score, consistency score, and rank progress based on local data; include a personal record celebration (visual + SFX + haptic) when a new record is achieved.",
-      "files": [
-        "frontend/src/components/MetricCard.tsx",
-        "frontend/src/components/RecordCelebration.tsx",
-        "frontend/src/lib/analytics.ts",
-        "frontend/src/screens/AnalyticsScreen.tsx",
-        "frontend/src/screens/LogScreen.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-8"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-rank-system-implement-the-full-rank-ladder-bronze-iii-ascendant-with-animated-metallic-hexagon-badges-including-metal-texture-inner-glow-moving-shine-reflection-particle-aura-and-a-promotion-animation-explosion-impact-rank-progress-must-update-based-on-the-user-s-accumulated-performance-and-be-visible-on-dashboard-and-analytics",
-      "featureTitle": "Rank system: implement the full rank ladder (Bronze III → Ascendant) with animated metallic hexagon badges including metal texture, inner glow, moving shine reflection, particle aura, and a promotion animation (explosion/impact). Rank progress must update based on the user’s accumulated performance and be visible on Dashboard and Analytics.",
-      "files": [
-        "frontend/src/components/RankBadge.tsx",
-        "frontend/src/components/RankPromotionOverlay.tsx",
-        "frontend/src/hooks/useRankProgress.ts",
-        "frontend/src/lib/ranks.ts",
-        "frontend/src/screens/AnalyticsScreen.tsx",
-        "frontend/src/screens/DashboardScreen.tsx",
-        "frontend/src/screens/LogScreen.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-9"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-sound-effects-system-no-music-add-and-wire-sfx-for-button-click-wheel-tick-data-save-chime-rank-promotion-impact-streak-ignition-flame-metal-touch-and-deep-bass-pulse-on-personal-record-provide-a-global-volume-control-that-affects-all-sfx",
-      "featureTitle": "Sound effects system (no music): add and wire SFX for button click, wheel tick, data save chime, rank promotion impact, streak ignition flame, metal touch, and deep bass pulse on personal record; provide a global volume control that affects all SFX.",
-      "files": [
-        "frontend/src/components/BottomNav.tsx",
-        "frontend/src/components/RankPromotionOverlay.tsx",
-        "frontend/src/components/WheelPicker.tsx",
-        "frontend/src/lib/sfx.ts",
-        "frontend/src/main.tsx",
-        "frontend/src/screens/AnalyticsScreen.tsx",
-        "frontend/src/screens/DashboardScreen.tsx",
-        "frontend/src/screens/LogScreen.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-10"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-settings-implement-an-interactive-stickman-pull-up-volume-control-no-static-slider-where-the-user-drags-a-stickman-upward-on-a-pull-up-bar-to-increase-volume-reaching-100-triggers-an-automatic-drop-and-resets-volume-to-0-with-physics-like-animation-arm-stretch-gravity-drop-and-a-special-vibration-at-max-pull-also-include-reset-data-with-a-premium-confirmation-animation",
-      "featureTitle": "Settings: implement an interactive stickman pull-up volume control (no static slider) where the user drags a stickman upward on a pull-up bar to increase volume; reaching 100% triggers an automatic drop and resets volume to 0, with physics-like animation (arm stretch, gravity drop) and a special vibration at max pull; also include Reset Data with a premium confirmation animation.",
-      "files": [
-        "frontend/src/components/ResetDataDialog.tsx",
-        "frontend/src/components/StickmanVolumeControl.tsx",
-        "frontend/src/lib/reset.ts",
+        "frontend/src/assets/generated.ts",
+        "frontend/src/components/chests/ChestShopPanel.tsx",
         "frontend/src/screens/SettingsScreen.tsx"
       ],
       "components": [
@@ -242,19 +98,20 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-11"
+        "REQ-55"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-apply-the-specified-luxury-visual-system-across-the-entire-app-glass-morphism-soft-shadows-depth-layers-minimal-cold-futuristic-feel-using-the-exact-provided-color-palette-for-backgrounds-cards-accents-buttons-wheel-picker-text-and-rank-colors-ensure-the-ui-feels-alive-with-pervasive-motion-and-responsive-micro-interactions",
-      "featureTitle": "Apply the specified luxury visual system across the entire app (glass morphism, soft shadows, depth layers, minimal cold futuristic feel) using the exact provided color palette for backgrounds, cards, accents, buttons, wheel picker, text, and rank colors; ensure the UI feels 'alive' with pervasive motion and responsive micro-interactions.",
+      "featureId": "feature-implement-the-chest-purchase-and-opening-interaction-flow-tap-a-chest-confirm-purchase-deduct-coins-immediately-then-play-a-premium-chest-opening-animation-shake-glow-and-reveal-each-card-one-by-one-flip-slide-with-highlight-glow-store-results-automatically-to-the-offline-wallet-and-chest-history",
+      "featureTitle": "Implement the chest purchase and opening interaction flow: tap a chest, confirm purchase, deduct coins immediately, then play a premium chest-opening animation (shake + glow) and reveal each card one by one (flip/slide) with highlight glow; store results automatically to the offline wallet and chest history.",
       "files": [
-        "frontend/src/components/AppShell.tsx",
-        "frontend/src/components/BottomNav.tsx",
-        "frontend/src/components/WheelPicker.tsx",
+        "frontend/src/assets/generated.ts",
+        "frontend/src/components/chests/CardReveal.tsx",
+        "frontend/src/components/chests/ChestOpenDialog.tsx",
+        "frontend/src/components/chests/ChestShopPanel.tsx",
         "frontend/src/index.css",
-        "frontend/tailwind.config.js"
+        "frontend/src/lib/economy/chestOpenFlow.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -264,19 +121,17 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-12"
+        "REQ-56"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-implement-haptic-feedback-patterns-using-the-platform-vibration-capability-where-available-light-vibration-on-button-press-medium-on-save-strong-on-rank-promotion-and-special-vibration-on-volume-max-pull-ensure-the-app-degrades-gracefully-when-vibration-is-unsupported",
-      "featureTitle": "Implement haptic feedback patterns using the platform vibration capability where available: light vibration on button press, medium on save, strong on rank promotion, and special vibration on volume max pull; ensure the app degrades gracefully when vibration is unsupported.",
+      "featureId": "feature-implement-the-exact-independent-probabilistic-draw-tables-for-each-chest-type-each-card-draw-is-independent-duplicates-in-the-same-chest-are-allowed-and-ensure-the-number-of-card-draws-per-chest-matches-the-specification-common-3-rare-5-epic-7",
+      "featureTitle": "Implement the exact independent probabilistic draw tables for each chest type (each card draw is independent; duplicates in the same chest are allowed) and ensure the number of card draws per chest matches the specification: Common (3), Rare (5), Epic (7).",
       "files": [
-        "frontend/src/components/BottomNav.tsx",
-        "frontend/src/components/RankPromotionOverlay.tsx",
-        "frontend/src/components/StickmanVolumeControl.tsx",
-        "frontend/src/lib/haptics.ts",
-        "frontend/src/screens/LogScreen.tsx"
+        "frontend/src/lib/economy/chestOpenFlow.ts",
+        "frontend/src/lib/economy/drawCards.ts",
+        "frontend/src/lib/economy/drawTables.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -286,18 +141,18 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-13"
+        "REQ-57"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-ensure-performance-and-smoothness-animations-and-interactions-wheel-inertia-counters-graph-drawing-transitions-must-remain-responsive-with-no-noticeable-lag-on-typical-mobile-devices-avoid-unnecessary-network-requests-and-heavy-rerenders",
-      "featureTitle": "Ensure performance and smoothness: animations and interactions (wheel inertia, counters, graph drawing, transitions) must remain responsive with no noticeable lag on typical mobile devices; avoid unnecessary network requests and heavy rerenders.",
+      "featureId": "feature-apply-tier-based-chest-visual-styling-and-effects-that-match-the-existing-luxury-cold-aesthetic-and-app-palette-0b0f14-background-00f0ff-accents-while-adding-distinct-tier-identity-common-bronze-soft-glow-rare-silver-shimmering-aura-epic-gold-amber-animated-particles-aura-sweep",
+      "featureTitle": "Apply tier-based chest visual styling and effects that match the existing luxury cold aesthetic and app palette (#0b0f14 background, #00f0ff accents) while adding distinct tier identity: Common (bronze + soft glow), Rare (silver + shimmering aura), Epic (gold/amber + animated particles + aura sweep).",
       "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/HistoryGraph365.tsx",
-        "frontend/src/components/RollingCounter.tsx",
-        "frontend/src/components/WheelPicker.tsx"
+        "frontend/src/components/chests/ChestOpenDialog.tsx",
+        "frontend/src/components/chests/ChestShopPanel.tsx",
+        "frontend/src/components/chests/ChestTile.tsx",
+        "frontend/src/index.css"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -307,7 +162,90 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-14"
+        "REQ-58"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-extend-the-existing-sfx-system-to-support-chest-related-sounds-and-wire-them-into-the-chest-flow-common-chest-uses-a-soft-metallic-click-rare-uses-a-sparkle-jingle-epic-uses-an-epic-deep-pulse-bass-shimmer-additionally-play-a-per-card-reveal-sound-and-stronger-unique-feedback-for-high-value-reveals-rare-epic-moments",
+      "featureTitle": "Extend the existing SFX system to support chest-related sounds and wire them into the chest flow: Common chest uses a soft metallic click, Rare uses a sparkle/jingle, Epic uses an epic deep pulse/bass + shimmer; additionally, play a per-card reveal sound and stronger unique feedback for high-value reveals (rare/epic moments).",
+      "files": [
+        "frontend/src/components/chests/ChestOpenDialog.tsx",
+        "frontend/src/components/coins/CoinBalanceBadge.tsx",
+        "frontend/src/lib/sfx.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-59"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-subtle-positive-feedback-animations-and-haptics-when-coins-are-awarded-and-when-a-chest-is-opened-add-stronger-feedback-for-special-reveals-rare-epic-high-value-cards-while-preserving-existing-haptic-patterns-and-gracefully-degrading-on-devices-without-vibration-support",
+      "featureTitle": "Add subtle positive feedback animations and haptics when coins are awarded and when a chest is opened; add stronger feedback for special reveals (rare/epic/high-value cards), while preserving existing haptic patterns and gracefully degrading on devices without vibration support.",
+      "files": [
+        "frontend/src/components/chests/ChestOpenDialog.tsx",
+        "frontend/src/components/coins/CoinBalanceBadge.tsx",
+        "frontend/src/index.css",
+        "frontend/src/lib/haptics.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-60"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-keep-all-previous-app-functionality-unchanged-and-compatible-wheel-only-input-ux-existing-navigation-screens-hexagon-ranks-orb-energy-animations-stickman-volume-system-achievements-milestones-quality-overlays-psychological-pressure-feedback-and-performance-targets-smooth-60fps",
+      "featureTitle": "Keep all previous app functionality unchanged and compatible: wheel-only input UX, existing navigation/screens, hexagon ranks, orb energy animations, stickman volume system, achievements/milestones/quality overlays, psychological pressure feedback, and performance targets (smooth ~60fps).",
+      "files": [
+        "frontend/src/components/chests/ChestOpenDialog.tsx",
+        "frontend/src/components/chests/ChestShopPanel.tsx",
+        "frontend/src/screens/DashboardScreen.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-61"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-optional-chest-modifiers-a-a-chest-streak-bonus-where-opening-multiple-chests-in-a-row-increases-chances-for-higher-value-cards-and-b-a-daily-first-chest-bonus-for-the-first-chest-opened-each-day-that-slightly-increases-chances-for-higher-value-outcomes-expose-clear-on-off-controls-within-the-chest-shop-section-and-ensure-defaults-are-off-unless-otherwise-specified",
+      "featureTitle": "Implement optional chest modifiers: (a) a chest streak bonus where opening multiple chests in a row increases chances for higher value cards, and (b) a daily first-chest bonus for the first chest opened each day that slightly increases chances for higher value outcomes; expose clear on/off controls within the Chest Shop section and ensure defaults are off unless otherwise specified.",
+      "files": [
+        "frontend/src/components/chests/ChestOpenDialog.tsx",
+        "frontend/src/components/chests/ChestShopPanel.tsx",
+        "frontend/src/lib/economy/drawCards.ts",
+        "frontend/src/lib/economy/modifiers.ts",
+        "frontend/src/lib/offlineDb.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-62"
       ],
       "confidence": "high"
     }

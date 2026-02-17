@@ -11,4 +11,10 @@ export const ASSETS = {
   bgFrostedGradient: '/assets/generated/bg-frosted-gradient.dim_1440x2560.png',
   flameSprite: '/assets/generated/flame-sprite.dim_1024x1024.png',
   orbCore: '/assets/generated/orb-core.dim_1024x1024.png',
+  coinIcon: '/assets/generated/coin-icon.dim_128x128.png',
+  chestCommon: '/assets/generated/chest-common.dim_512x512.png',
+  chestRare: '/assets/generated/chest-rare.dim_512x512.png',
+  chestEpic: '/assets/generated/chest-epic.dim_512x512.png',
+  cardFrame: '/assets/generated/card-frame.dim_600x840.png',
+  cardBack: '/assets/generated/card-back.dim_600x840.png',
 };

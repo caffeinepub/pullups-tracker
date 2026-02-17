@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import WheelPicker from './WheelPicker';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { useFocusMode } from '../hooks/useFocusMode';
+import { useSfx } from '../hooks/useSfx';
 
 interface SessionBuilderProps {
   onComplete: (sets: Array<{ reps: number; weight?: number }>, duration?: number) => void;
@@ -16,6 +18,21 @@ export default function SessionBuilder({ onComplete }: SessionBuilderProps) {
   const [showRepsPicker, setShowRepsPicker] = useState(false);
   const [showWeightPicker, setShowWeightPicker] = useState(false);
   const [showDurationPicker, setShowDurationPicker] = useState(false);
+  
+  const { enterFocusMode, exitFocusMode } = useFocusMode();
+  const { play, stop } = useSfx();
+
+  const isAnyPickerOpen = showSetsPicker || showRepsPicker || showWeightPicker || showDurationPicker;
+
+  useEffect(() => {
+    if (isAnyPickerOpen) {
+      enterFocusMode();
+      play('focus-ambient-pulse');
+    } else {
+      exitFocusMode();
+      stop('focus-ambient-pulse');
+    }
+  }, [isAnyPickerOpen, enterFocusMode, exitFocusMode, play, stop]);
 
   const handleComplete = () => {
     const sets = Array(numSets).fill(null).map(() => ({

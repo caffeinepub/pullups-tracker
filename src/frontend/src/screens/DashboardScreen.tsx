@@ -1,91 +1,98 @@
-import { useMemo, useEffect, useState } from 'react';
 import { usePullupStore } from '../hooks/usePullupStore';
 import { useRankProgress } from '../hooks/useRankProgress';
 import { getTodayTotal, getStreakInfo } from '../lib/stats';
 import { calculateFatigueScore } from '../lib/analytics';
-import RollingCounter from '../components/RollingCounter';
+import { calculateReadiness } from '../lib/intelligence/readiness';
 import RankBadge from '../components/RankBadge';
-import StreakFlame from '../components/StreakFlame';
-import FatigueRing from '../components/FatigueRing';
-import EnergyOrb from '../components/EnergyOrb';
-import { Progress } from '@/components/ui/progress';
-import { useSfx } from '../hooks/useSfx';
+import RollingCounter from '../components/RollingCounter';
+import CoinBalanceBadge from '../components/coins/CoinBalanceBadge';
+import { Flame, Zap, Battery } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 export default function DashboardScreen() {
   const { sessions, settings } = usePullupStore();
-  const { currentRank, nextRank, progress } = useRankProgress();
-  const { play } = useSfx();
-  const [hasPlayedStreak, setHasPlayedStreak] = useState(false);
-
-  const todayTotal = useMemo(() => getTodayTotal(sessions), [sessions]);
-  const streakInfo = useMemo(() => getStreakInfo(sessions), [sessions]);
-  const fatigueScore = useMemo(() => calculateFatigueScore(sessions), [sessions]);
-  const goalProgress = useMemo(() => {
-    return Math.min(todayTotal / settings.dailyGoal, 1);
-  }, [todayTotal, settings.dailyGoal]);
+  const { currentRank } = useRankProgress();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (streakInfo.current > 0 && !hasPlayedStreak) {
-      play('streak-flame');
-      setHasPlayedStreak(true);
-    }
-  }, [streakInfo.current, hasPlayedStreak, play]);
+    setMounted(true);
+  }, []);
+
+  const todayTotal = getTodayTotal(sessions);
+  const streakInfo = getStreakInfo(sessions);
+  const fatigue = calculateFatigueScore(sessions);
+  const readiness = calculateReadiness(sessions);
+
+  const goalProgress = Math.min((todayTotal / settings.dailyGoal) * 100, 100);
 
   return (
-    <div className="min-h-screen p-6 space-y-8">
-      <div className="text-center space-y-2">
-        <h1 className="text-app-text-secondary text-sm uppercase tracking-wider">Today's Total</h1>
-        <div className="text-7xl font-bold text-app-accent">
-          <RollingCounter value={todayTotal} />
-        </div>
-        <p className="text-app-text-secondary">pull-ups</p>
-      </div>
+    <div className="min-h-screen relative overflow-hidden">
+      <div 
+        className="absolute inset-0 bg-gradient-radial from-app-bg-secondary/30 to-app-bg-primary"
+        style={{ 
+          background: 'radial-gradient(circle at 50% 30%, rgba(0, 240, 255, 0.08) 0%, rgba(11, 15, 20, 1) 70%)'
+        }}
+      />
 
-      <div className="flex justify-center items-center gap-8">
-        <div className="text-center">
-          <RankBadge rank={currentRank} size="lg" showParticles={progress > 0.9} />
-          <div className="mt-4 space-y-2">
-            <div className="text-app-text-secondary text-xs">Rank Progress</div>
-            <Progress value={progress * 100} className="w-32" />
-            {nextRank && (
-              <div className="text-app-text-secondary text-xs">
-                Next: {nextRank.name}
-              </div>
-            )}
+      <CoinBalanceBadge />
+
+      <div className="relative z-10 p-6 space-y-8">
+        <div className={`
+          flex flex-col items-center pt-12
+          ${mounted ? 'animate-fade-in-up' : 'opacity-0'}
+        `}>
+          <RankBadge rank={currentRank} size={200} />
+        </div>
+
+        <div className={`
+          text-center space-y-2
+          ${mounted ? 'animate-fade-in-up animation-delay-200' : 'opacity-0'}
+        `}>
+          <p className="text-app-text-secondary text-sm uppercase tracking-wider">
+            Today's Total
+          </p>
+          <div className="text-6xl font-bold text-app-accent">
+            <RollingCounter value={todayTotal} />
+          </div>
+          <div className="text-app-text-secondary">
+            / {settings.dailyGoal} pull-ups
+          </div>
+          <div className="w-64 mx-auto h-2 bg-app-bg-secondary rounded-full overflow-hidden mt-4">
+            <div 
+              className="h-full bg-gradient-to-r from-app-accent to-app-secondary-accent transition-all duration-500"
+              style={{ width: `${goalProgress}%` }}
+            />
           </div>
         </div>
-      </div>
 
-      <div className="grid grid-cols-3 gap-4">
-        <div className="glass-card border-app-border p-4 rounded-xl text-center">
-          <div className="text-app-text-secondary text-xs mb-2">Streak</div>
-          <div className="flex justify-center">
-            <StreakFlame streak={streakInfo.current} size={50} />
+        <div className={`
+          grid grid-cols-3 gap-4 max-w-2xl mx-auto
+          ${mounted ? 'animate-fade-in-up animation-delay-400' : 'opacity-0'}
+        `}>
+          <div className="glass-card border-app-border p-4 rounded-xl text-center">
+            <Flame className="w-8 h-8 text-orange-500 mx-auto mb-2" />
+            <div className="text-2xl font-bold text-app-text-primary">
+              {streakInfo.current}
+            </div>
+            <div className="text-xs text-app-text-secondary">Day Streak</div>
+          </div>
+
+          <div className="glass-card border-app-border p-4 rounded-xl text-center">
+            <Battery className="w-8 h-8 text-red-500 mx-auto mb-2" />
+            <div className="text-2xl font-bold text-app-text-primary">
+              {Math.round(fatigue)}%
+            </div>
+            <div className="text-xs text-app-text-secondary">Fatigue</div>
+          </div>
+
+          <div className="glass-card border-app-border p-4 rounded-xl text-center">
+            <Zap className="w-8 h-8 text-app-accent mx-auto mb-2" />
+            <div className="text-2xl font-bold text-app-text-primary">
+              {Math.round(readiness.score)}%
+            </div>
+            <div className="text-xs text-app-text-secondary">Readiness</div>
           </div>
         </div>
-
-        <div className="glass-card border-app-border p-4 rounded-xl text-center">
-          <div className="text-app-text-secondary text-xs mb-2">Fatigue</div>
-          <div className="flex justify-center">
-            <FatigueRing score={fatigueScore} size={80} />
-          </div>
-        </div>
-
-        <div className="glass-card border-app-border p-4 rounded-xl text-center">
-          <div className="text-app-text-secondary text-xs mb-2">Goal</div>
-          <div className="flex justify-center">
-            <EnergyOrb progress={goalProgress} size={80} />
-          </div>
-        </div>
-      </div>
-
-      <div className="glass-card border-app-border p-6 rounded-xl">
-        <div className="text-app-text-secondary text-sm mb-2">Daily Goal</div>
-        <div className="flex items-baseline gap-2">
-          <span className="text-3xl font-bold text-app-text-primary">{todayTotal}</span>
-          <span className="text-app-text-secondary">/ {settings.dailyGoal}</span>
-        </div>
-        <Progress value={goalProgress * 100} className="mt-3" />
       </div>
     </div>
   );

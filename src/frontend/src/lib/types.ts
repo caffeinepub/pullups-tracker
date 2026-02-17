@@ -27,6 +27,7 @@ export interface RankInfo {
   tier: number;
   name: string;
   color: string;
+  auraColor: string;
   metalTexture: string;
   threshold: number;
 }

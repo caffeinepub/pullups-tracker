@@ -1,597 +1,443 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Pullups Tracker (Offline, wheel-only, luxury UI, ranks, analytics, backup/restore)",
+  "title": "Pullups Tracker — Offline Coins + Chest Shop (Settings) with Premium Animations",
   "requirements": [
     {
-      "id": "REQ-1",
-      "summary": "Implement an offline-first local data layer for unlimited pull-up logs with no dependency on network calls.",
+      "id": "REQ-51",
+      "summary": "Extend offline IndexedDB storage to persist Coins, chest opening history, and card wallet/inventory without impacting existing stores.",
       "acceptanceCriteria": [
-        "Creating, editing, and viewing logs works with the network disconnected.",
-        "All data persists across browser refreshes and app restarts using local device storage (not the backend).",
-        "The app does not block any core screen behind network calls."
+        "Coins balance persists across refreshes and browser restarts.",
+        "Each opened chest is stored in a chest history list with timestamp, chest type, coin cost, and the revealed card values for that chest.",
+        "Each revealed card is stored in a wallet/inventory list with timestamp, chest type, and value.",
+        "Existing stored data (sessions/settings/quality/milestones/achievements) remains intact and readable after the update."
       ],
       "file_operations": [
         {
           "path": "frontend/src/lib/offlineDb.ts",
-          "operation": "create",
-          "description": "Create a local-only persistence module (e.g., IndexedDB-backed) for logs, derived aggregates, and user settings; ensure operations are resilient and do not require any backend capability."
+          "operation": "modify",
+          "description": "Add new IndexedDB stores and migration for coins balance, chest history, and card wallet; add read/write helper methods while preserving existing stores and data."
         },
         {
           "path": "frontend/src/lib/types.ts",
-          "operation": "create",
-          "description": "Define TypeScript types for pull-up sessions, sets, tags, settings, rank state, and computed metrics used throughout the app to keep the offline data layer consistent."
-        },
-        {
-          "path": "frontend/src/hooks/usePullupStore.ts",
-          "operation": "create",
-          "description": "Create a React hook/state layer that reads/writes exclusively to the offline DB, exposes optimistic updates, and provides selectors for dashboard/history/analytics without forcing network requests."
-        },
-        {
-          "path": "frontend/src/main.tsx",
           "operation": "modify",
-          "description": "Wire the app-wide offline store provider (and any needed initialization) so core screens can render immediately from local storage and never block on network calls."
+          "description": "Add TypeScript types for Coins state, ChestOpen record, and CardWallet item; extend settings types only as needed for chest modifiers defaults (no keyboard-driven inputs)."
+        },
+        {
+          "path": "frontend/src/lib/economy/chestsTypes.ts",
+          "operation": "create",
+          "description": "Define chest tiers (Common/Rare/Epic), costs, draw counts, and persisted record shapes for history/wallet."
+        },
+        {
+          "path": "frontend/src/lib/economy/economyStore.ts",
+          "operation": "create",
+          "description": "Centralize offline economy operations (get/set coins, append chest history, append wallet items) via offlineDb to keep the rest of the app decoupled."
         }
       ]
     },
     {
-      "id": "REQ-2",
-      "summary": "Add a manual user-initiated backup export/import flow with clear success/failure states and safe restore semantics.",
+      "id": "REQ-52",
+      "summary": "Include coins, chest history, and card wallet in Settings Backup & Restore export/import with backward compatibility.",
       "acceptanceCriteria": [
-        "Settings includes actions to Export Backup and Restore Backup.",
-        "Export produces a downloadable file containing all logs and settings needed to restore the app state.",
-        "Restore imports a previously exported file and fully reconstructs the local database.",
-        "If the imported file is invalid/corrupt, the app shows an error and does not partially overwrite existing data."
+        "Exported backup JSON includes coins balance, chest history, and card wallet/inventory in addition to existing data.",
+        "Importing an older backup (missing coins/chests/cards) completes successfully and initializes coins/chests/cards to empty/default values.",
+        "Importing a newer backup restores coins/chests/cards exactly (counts, timestamps, and values).",
+        "Backup & Restore UI remains in Settings and continues to show success/failure states."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/lib/backup.ts",
-          "operation": "create",
-          "description": "Implement serialization (export) and validation + transactional restore (import) helpers for the offline DB; ensure invalid backups fail without partially overwriting existing data."
+          "path": "frontend/src/lib/offlineDb.ts",
+          "operation": "modify",
+          "description": "Extend exportData/importData to include coins, chestHistory, and cardWallet; keep backward compatibility by defaulting missing fields on import."
         },
         {
-          "path": "frontend/src/screens/SettingsScreen.tsx",
-          "operation": "create",
-          "description": "Implement Settings actions for Export Backup and Restore Backup with explicit success/failure UI states; use shadcn-ui dialog/toast primitives for confirmations/alerts. Verify the component's usage instructions before implementing."
+          "path": "frontend/src/lib/backup.ts",
+          "operation": "modify",
+          "description": "Ensure backup helpers continue to export/import through offlineDb while surfacing any new validation errors cleanly (no new navigation or keyboard UI)."
         },
         {
           "path": "frontend/src/components/BackupRestorePanel.tsx",
-          "operation": "create",
-          "description": "Create a dedicated Settings subcomponent to encapsulate export/download and restore/file-picker flow, including progress/guard rails and non-destructive error handling; use shadcn-ui components for consistent premium UI. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "create",
-          "description": "Create the app shell and register Settings in the navigation so the backup/restore UI is reachable from within the app."
+          "operation": "modify",
+          "description": "Keep Settings Backup & Restore UX intact while confirming success/failure states still work with the expanded backup payload."
         }
       ]
     },
     {
-      "id": "REQ-3",
-      "summary": "Enforce a strict no-keyboard UX by replacing all inputs with wheel pickers and tag selection (no typing anywhere).",
+      "id": "REQ-53",
+      "summary": "Award coins fully offline during session save flow based on performance, milestones, streak changes/bonuses, and achievements unlocks.",
       "acceptanceCriteria": [
-        "No screen uses editable text fields, textareas, or numeric inputs that trigger the OS keyboard.",
-        "Logging sets/reps/duration/weight is possible only through wheel pickers.",
-        "Wheel picker has inertial scrolling, snaps to discrete values, highlights the centered selection, and plays a tick SFX on selection changes.",
-        "Notes are selectable tags (multi-select) and do not allow arbitrary text entry."
+        "Coins increase automatically as part of the Log save flow (no extra user action required).",
+        "Coins can also increase when milestones are detected and when achievements unlock (in the same offline flow).",
+        "Awarding coins never blocks or breaks existing flows (session save, milestone overlay, achievement popups, rank promotion, PR celebration, quality overlay).",
+        "All coin events work fully offline."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/WheelPicker.tsx",
+          "path": "frontend/src/lib/economy/coinRewards.ts",
           "operation": "create",
-          "description": "Create a vertical wheel picker component supporting inertial scrolling, snapping to discrete values, a centered highlight glow, and change callbacks suitable for all numeric selections (sets, reps, duration, weight)."
+          "description": "Implement deterministic, offline-only coin reward calculation based on session performance signals already computed in the Log flow (reps/quality/milestones/streak/achievements)."
         },
         {
-          "path": "frontend/src/components/TagMultiSelect.tsx",
+          "path": "frontend/src/lib/economy/economyService.ts",
           "operation": "create",
-          "description": "Create a predefined tag multi-select component (no freeform text) for session notes; use shadcn-ui chips/badges/buttons styling patterns (compose, do not edit immutable sources). Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/lib/predefinedTags.ts",
-          "operation": "create",
-          "description": "Define the fixed list of selectable note tags and any grouping needed for the no-keyboard notes system."
+          "description": "Implement a small service that applies calculated coin rewards to persisted balance, emitting an in-app event payload usable by UI feedback (no network)."
         },
         {
           "path": "frontend/src/screens/LogScreen.tsx",
-          "operation": "create",
-          "description": "Implement logging UI using WheelPicker for all numeric fields and TagMultiSelect for notes; ensure there are no text/numeric inputs that can trigger the OS keyboard."
+          "operation": "modify",
+          "description": "Hook coin awarding into the existing session save flow after session/quality/milestones/achievements are computed; ensure it never blocks existing overlays/popups and works offline."
+        },
+        {
+          "path": "frontend/src/hooks/usePullupStore.tsx",
+          "operation": "modify",
+          "description": "Expose current coins balance and a way for screens/components to refresh it after offline updates, without changing existing session/settings behavior."
         }
       ]
     },
     {
-      "id": "REQ-4",
-      "summary": "Create the core navigation and five screens with icon-based minimal UI and smooth blur/depth transitions.",
+      "id": "REQ-54",
+      "summary": "Add animated coin balance UI to Dashboard top-right with rolling counter and glow burst on increases.",
       "acceptanceCriteria": [
-        "All five sections are accessible via a consistent navigation component.",
-        "Transitions between screens include smooth blur/depth motion (no abrupt route changes).",
-        "No placeholder sections; each screen renders real data from local storage."
+        "Dashboard shows a clearly visible coin balance in the top-right corner.",
+        "Coin value changes animate smoothly (rolling/counting effect).",
+        "When coins increase, the coin UI plays a subtle glow/highlight animation without impacting other Dashboard animations.",
+        "No keyboard input is introduced."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/AppShell.tsx",
+          "path": "frontend/src/components/coins/CoinBalanceBadge.tsx",
           "operation": "create",
-          "description": "Create the main layout shell with minimal icon-based navigation and a content area designed for blur/depth transitions; use shadcn-ui base primitives where appropriate (compose only). Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/components/BottomNav.tsx",
-          "operation": "create",
-          "description": "Implement a consistent icon-based minimal navigation component for Dashboard/Log/History/Analytics/Settings with premium press micro-interactions; use shadcn-ui button primitives (compose only). Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/components/ScreenTransition.tsx",
-          "operation": "create",
-          "description": "Implement a reusable transition wrapper that applies blur/depth animations when switching between sections to avoid abrupt screen changes."
-        },
-        {
-          "path": "frontend/src/screens/DashboardScreen.tsx",
-          "operation": "create",
-          "description": "Create Dashboard screen rendering real local data and luxury widgets (wired in later requirements)."
-        },
-        {
-          "path": "frontend/src/screens/HistoryScreen.tsx",
-          "operation": "create",
-          "description": "Create History screen rendering real local data and graph/details (wired in later requirements)."
-        },
-        {
-          "path": "frontend/src/screens/AnalyticsScreen.tsx",
-          "operation": "create",
-          "description": "Create Analytics screen rendering real local data and metric cards (wired in later requirements)."
-        },
-        {
-          "path": "frontend/src/screens/SettingsScreen.tsx",
-          "operation": "modify",
-          "description": "Ensure Settings screen exists and is wired into navigation; integrate panels for backup/restore, volume control, and reset data without any keyboard-triggering inputs."
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Wire AppShell, BottomNav, and all five screens with smooth transitions so each section is reachable and renders immediately from offline data."
-        }
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "summary": "Build the luxury animated Dashboard with rolling counter, rank badge, streak flame, fatigue ring, energy orb, and animated frosted background.",
-      "acceptanceCriteria": [
-        "Today’s pull-ups total updates immediately after logging and animates upward with a rolling counter effect.",
-        "Rank badge is shown as a metallic hexagon with animated shine and inner glow.",
-        "Streak is displayed with a flame animation that responds to streak state.",
-        "Fatigue indicator renders as a ring with an animated progress/level display driven by computed fatigue score.",
-        "Orb energy core fill level reflects progress toward a configurable daily goal and animates smoothly."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/assets/generated.ts",
-          "operation": "create",
-          "description": "Centralize references to generated image assets for use across the UI, including: frontend/public/assets/generated/hex-badge-base.dim_512x512.png, frontend/public/assets/generated/metal-bronze.dim_1024x1024.png, frontend/public/assets/generated/metal-silver.dim_1024x1024.png, frontend/public/assets/generated/metal-gold.dim_1024x1024.png, frontend/public/assets/generated/metal-platinum.dim_1024x1024.png, frontend/public/assets/generated/metal-diamond.dim_1024x1024.png, frontend/public/assets/generated/metal-elite.dim_1024x1024.png, frontend/public/assets/generated/metal-ascendant.dim_1024x1024.png, frontend/public/assets/generated/bg-frosted-gradient.dim_1440x2560.png, frontend/public/assets/generated/flame-sprite.dim_1024x1024.png, frontend/public/assets/generated/orb-core.dim_1024x1024.png."
-        },
-        {
-          "path": "frontend/src/components/RollingCounter.tsx",
-          "operation": "create",
-          "description": "Implement a performant rolling counter component for today’s total that animates upward on value changes without jank."
-        },
-        {
-          "path": "frontend/src/components/RankBadge.tsx",
-          "operation": "create",
-          "description": "Implement the metallic hexagon rank badge component using frontend/public/assets/generated/hex-badge-base.dim_512x512.png and the appropriate metal texture tiles; include animated shine and inner glow."
-        },
-        {
-          "path": "frontend/src/components/StreakFlame.tsx",
-          "operation": "create",
-          "description": "Implement streak flame animation using the sprite sheet frontend/public/assets/generated/flame-sprite.dim_1024x1024.png, responsive to streak state."
-        },
-        {
-          "path": "frontend/src/components/FatigueRing.tsx",
-          "operation": "create",
-          "description": "Implement an animated ring indicator component driven by computed fatigue score; optimize rendering (e.g., SVG/canvas) for mobile smoothness."
-        },
-        {
-          "path": "frontend/src/components/EnergyOrb.tsx",
-          "operation": "create",
-          "description": "Implement an orb-style energy core widget using frontend/public/assets/generated/orb-core.dim_1024x1024.png with smooth fill animation toward daily goal."
-        },
-        {
-          "path": "frontend/src/components/FrostedBackground.tsx",
-          "operation": "create",
-          "description": "Implement the subtle animated gradient/depth blur background, incorporating frontend/public/assets/generated/bg-frosted-gradient.dim_1440x2560.png as a background plate."
+          "description": "Create a compact top-right coin badge using the existing RollingCounter for smooth value transitions and a lightweight glow burst animation on increases."
         },
         {
           "path": "frontend/src/screens/DashboardScreen.tsx",
           "operation": "modify",
-          "description": "Compose RollingCounter, RankBadge, StreakFlame, FatigueRing, EnergyOrb, and FrostedBackground into the Dashboard, wired to live offline data updates."
-        }
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "summary": "Implement the premium wheel-based Log flow with optional fields, predefined tags, save persistence, SFX, haptics, and a pulse confirmation animation.",
-      "acceptanceCriteria": [
-        "A user can log a session with multiple sets (each with reps) using wheel pickers only.",
-        "Optional duration and weight can be included via wheel pickers (and omitted).",
-        "A save action writes to local storage and immediately updates dashboard totals.",
-        "On successful save, the app plays the save chime SFX, triggers medium haptic vibration (when supported), and shows a pulse animation confirmation."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/SessionBuilder.tsx",
-          "operation": "create",
-          "description": "Create a wheel-only session builder UI that lets users select number of sets and reps per set (and optional duration/weight) using WheelPicker; no keyboard-triggering inputs allowed."
+          "description": "Wire CoinBalanceBadge into the Dashboard layout (top-right) without altering existing rank/orb/rings/flame/pressure behaviors and keeping animations smooth."
         },
-        {
-          "path": "frontend/src/lib/haptics.ts",
-          "operation": "create",
-          "description": "Implement a small utility for vibration patterns (light/medium/strong/special) with graceful degradation when vibration is unsupported."
-        },
-        {
-          "path": "frontend/src/lib/animations.ts",
-          "operation": "create",
-          "description": "Create reusable animation helpers (e.g., pulse confirmation, blur/depth easing tokens) to keep UI motion consistent and performant."
-        },
-        {
-          "path": "frontend/src/screens/LogScreen.tsx",
-          "operation": "modify",
-          "description": "Wire SessionBuilder + TagMultiSelect to offline save; on successful save trigger save chime SFX, medium haptic, and pulse confirmation animation, and ensure dashboard totals update immediately from local state."
-        }
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "summary": "Create History with a 365-day animated graph, tappable day details, and computed weekly/monthly/record summaries from local data.",
-      "acceptanceCriteria": [
-        "Graph renders exactly 365 days (or fewer if the user has less history) and animates the line drawing on screen entry.",
-        "User can tap/click on any day data point and see a details panel with that day’s sessions/sets.",
-        "Weekly average and monthly total are computed from stored logs and displayed.",
-        "Personal records (e.g., highest daily total, highest single-session total) are computed and displayed."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/HistoryGraph365.tsx",
-          "operation": "create",
-          "description": "Implement a smooth animated 365-day graph (SVG/canvas) that draws left-to-right on entry and supports tapping points to select a day."
-        },
-        {
-          "path": "frontend/src/components/DayDetailsSheet.tsx",
-          "operation": "create",
-          "description": "Implement a day details panel (sheet/dialog) showing sessions/sets for the selected day; use shadcn-ui sheet/dialog primitives (compose only). Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/lib/stats.ts",
-          "operation": "create",
-          "description": "Add pure deterministic helpers to compute daily totals, weekly average, monthly total, and personal record values from offline logs."
-        },
-        {
-          "path": "frontend/src/screens/HistoryScreen.tsx",
-          "operation": "modify",
-          "description": "Wire HistoryGraph365 and DayDetailsSheet to offline data, and render weekly/monthly/PR summaries derived from stored logs (no placeholder values)."
-        }
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "summary": "Implement Analytics metrics and trigger personal record celebration (visual + SFX + haptic) when new records are achieved.",
-      "acceptanceCriteria": [
-        "All metrics render from local data (no hardcoded sample values).",
-        "Fatigue score and consistency score are deterministic and update as data changes (provide an in-UI info/description of the formula).",
-        "When a new personal record is logged, the app triggers a celebration animation, plays the PR bass pulse SFX, and triggers a strong/special vibration where supported."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/lib/analytics.ts",
-          "operation": "create",
-          "description": "Implement deterministic calculations for max pullups ever, streaks, daily average, fatigue score, consistency score, and rank progress from offline logs; include human-readable formula descriptions for UI display."
-        },
-        {
-          "path": "frontend/src/components/MetricCard.tsx",
-          "operation": "create",
-          "description": "Create a premium metric card component for analytics display; use shadcn-ui card primitives (compose only). Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/components/RecordCelebration.tsx",
-          "operation": "create",
-          "description": "Implement the PR celebration visuals/animation trigger surface; it should be invokable when the app detects a new record after saving a session."
-        },
-        {
-          "path": "frontend/src/screens/AnalyticsScreen.tsx",
-          "operation": "modify",
-          "description": "Render all analytics metrics from local data and include in-UI formula explanations for fatigue and consistency; wire RecordCelebration to PR detection."
-        },
-        {
-          "path": "frontend/src/screens/LogScreen.tsx",
-          "operation": "modify",
-          "description": "After saving a session, detect whether a new personal record was achieved and trigger the PR celebration (visual + deep bass pulse SFX + strong/special haptic)."
-        }
-      ]
-    },
-    {
-      "id": "REQ-9",
-      "summary": "Implement full rank ladder with animated metallic hex badges, particle aura, promotion animation, and rank progress shown on Dashboard and Analytics.",
-      "acceptanceCriteria": [
-        "All listed ranks exist and can be reached as the user’s tracked performance increases.",
-        "Badge visuals include metallic texture + moving shine + inner glow + particle aura.",
-        "When rank changes upward, the promotion animation plays and the rank promotion impact SFX triggers with strong haptics (where supported).",
-        "Rank progress is shown as a clear progress indicator toward the next rank."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/lib/ranks.ts",
-          "operation": "create",
-          "description": "Define the full rank ladder (Bronze III → Ascendant), thresholds, and progress computation rules based on accumulated offline performance."
-        },
-        {
-          "path": "frontend/src/components/ParticleAura.tsx",
-          "operation": "create",
-          "description": "Implement a lightweight particle aura effect (canvas/SVG) that can be attached to RankBadge without degrading mobile performance."
-        },
-        {
-          "path": "frontend/src/components/RankPromotionOverlay.tsx",
-          "operation": "create",
-          "description": "Implement the rank promotion animation overlay (explosion/impact feel) that can be triggered when rank increases."
-        },
-        {
-          "path": "frontend/src/components/RankBadge.tsx",
-          "operation": "modify",
-          "description": "Enhance RankBadge to include metal texture, inner glow, moving shine reflection, and integrate ParticleAura; ensure the appropriate metal texture tile is used per rank from: frontend/public/assets/generated/metal-bronze.dim_1024x1024.png, frontend/public/assets/generated/metal-silver.dim_1024x1024.png, frontend/public/assets/generated/metal-gold.dim_1024x1024.png, frontend/public/assets/generated/metal-platinum.dim_1024x1024.png, frontend/public/assets/generated/metal-diamond.dim_1024x1024.png, frontend/public/assets/generated/metal-elite.dim_1024x1024.png, frontend/public/assets/generated/metal-ascendant.dim_1024x1024.png."
-        },
-        {
-          "path": "frontend/src/hooks/useRankProgress.ts",
-          "operation": "create",
-          "description": "Create a hook that computes current rank, progress to next rank, and detects promotions based on offline logs and rank rules."
-        },
-        {
-          "path": "frontend/src/screens/DashboardScreen.tsx",
-          "operation": "modify",
-          "description": "Show current rank and a clear progress indicator toward the next rank using offline-derived rank state."
-        },
-        {
-          "path": "frontend/src/screens/AnalyticsScreen.tsx",
-          "operation": "modify",
-          "description": "Display rank progress and details in Analytics, using the same rank computation and RankBadge visuals as Dashboard."
-        },
-        {
-          "path": "frontend/src/screens/LogScreen.tsx",
-          "operation": "modify",
-          "description": "On save, detect upward rank changes and trigger RankPromotionOverlay plus rank promotion impact SFX and strong haptics."
-        }
-      ]
-    },
-    {
-      "id": "REQ-10",
-      "summary": "Add a sound effects (SFX-only) system with required SFX events and a global volume control affecting all SFX.",
-      "acceptanceCriteria": [
-        "No music/audio loops are present anywhere in the app.",
-        "Each listed SFX is present as an audio asset and is triggered at the correct interaction/event.",
-        "Global volume affects all SFX consistently.",
-        "Audio playback failures are handled gracefully (no crashes)."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/public/assets/sfx/button-click.mp3",
-          "operation": "create",
-          "description": "Add the button click SFX asset (SFX-only, no music)."
-        },
-        {
-          "path": "frontend/public/assets/sfx/wheel-tick.mp3",
-          "operation": "create",
-          "description": "Add the wheel tick SFX asset (SFX-only, no music)."
-        },
-        {
-          "path": "frontend/public/assets/sfx/save-chime.mp3",
-          "operation": "create",
-          "description": "Add the data save chime SFX asset (SFX-only, no music)."
-        },
-        {
-          "path": "frontend/public/assets/sfx/rank-promotion-impact.mp3",
-          "operation": "create",
-          "description": "Add the rank promotion impact SFX asset (SFX-only, no music)."
-        },
-        {
-          "path": "frontend/public/assets/sfx/streak-ignition-flame.mp3",
-          "operation": "create",
-          "description": "Add the streak ignition flame SFX asset (SFX-only, no music)."
-        },
-        {
-          "path": "frontend/public/assets/sfx/metal-touch.mp3",
-          "operation": "create",
-          "description": "Add the metal touch SFX asset (SFX-only, no music)."
-        },
-        {
-          "path": "frontend/public/assets/sfx/pr-bass-pulse.mp3",
-          "operation": "create",
-          "description": "Add the deep bass pulse SFX asset for personal record celebration (SFX-only, no music)."
-        },
-        {
-          "path": "frontend/src/lib/sfx.ts",
-          "operation": "create",
-          "description": "Implement an SFX manager (no music, no loops) that loads the listed SFX assets, applies a global volume multiplier, and fails gracefully if playback is blocked/unavailable."
-        },
-        {
-          "path": "frontend/src/hooks/useSfx.ts",
-          "operation": "create",
-          "description": "Create a hook/provider to expose SFX playback functions and global volume state to the app."
-        },
-        {
-          "path": "frontend/src/main.tsx",
-          "operation": "modify",
-          "description": "Wire the SFX provider globally so all screens/components can trigger SFX consistently and respect global volume."
-        },
-        {
-          "path": "frontend/src/components/WheelPicker.tsx",
-          "operation": "modify",
-          "description": "Trigger the wheel tick SFX on selection changes via the global SFX system while preserving smooth scrolling performance."
-        },
-        {
-          "path": "frontend/src/components/BottomNav.tsx",
-          "operation": "modify",
-          "description": "Trigger button click (and optionally metal touch where thematically appropriate) SFX on navigation taps through the global SFX system; use shadcn-ui button primitives (compose only). Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/screens/LogScreen.tsx",
-          "operation": "modify",
-          "description": "Trigger save chime SFX on successful save; ensure no crashes if audio playback fails."
-        },
-        {
-          "path": "frontend/src/screens/DashboardScreen.tsx",
-          "operation": "modify",
-          "description": "Trigger streak ignition flame SFX when streak transitions into an ignited/active state (as defined by streak computation)."
-        },
-        {
-          "path": "frontend/src/screens/AnalyticsScreen.tsx",
-          "operation": "modify",
-          "description": "Trigger PR bass pulse SFX when RecordCelebration is fired."
-        },
-        {
-          "path": "frontend/src/components/RankPromotionOverlay.tsx",
-          "operation": "modify",
-          "description": "Trigger rank promotion impact SFX when the promotion animation plays."
-        }
-      ]
-    },
-    {
-      "id": "REQ-11",
-      "summary": "Implement Settings stickman pull-up volume control (no slider) with physics-like animation, max-pull reset behavior, and Reset Data with premium confirmation animation.",
-      "acceptanceCriteria": [
-        "Settings includes the stickman volume control and no traditional slider UI is used for volume.",
-        "Dragging upward increases volume continuously; releasing behaves naturally with physics-like easing.",
-        "When volume reaches 100%, the stickman drops automatically, volume resets to 0, and the special max-pull vibration triggers (when supported).",
-        "Reset Data requires confirmation and plays a distinct confirmation animation before wiping local storage.",
-        "After reset, all screens reflect an empty state without errors."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/StickmanVolumeControl.tsx",
-          "operation": "create",
-          "description": "Implement the interactive stickman pull-up volume control using frontend/public/assets/generated/stickman-pullup.dim_1024x512.png; support drag-to-increase, physics-like easing, and the max-pull auto-drop reset behavior (volume -> 0)."
-        },
-        {
-          "path": "frontend/src/screens/SettingsScreen.tsx",
-          "operation": "modify",
-          "description": "Integrate StickmanVolumeControl and bind it to the global SFX volume state; implement Reset Data with confirmation UI and a premium confirmation animation using shadcn-ui dialog primitives (compose only). Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/lib/reset.ts",
-          "operation": "create",
-          "description": "Implement a safe local reset helper that wipes offline DB + settings and triggers a UI refresh so all screens show empty-state correctly."
-        },
-        {
-          "path": "frontend/src/components/ResetDataDialog.tsx",
-          "operation": "create",
-          "description": "Create a premium confirmation flow component for Reset Data, including a distinct confirmation animation before invoking the reset helper; use shadcn-ui dialog primitives (compose only). Verify the component's usage instructions before implementing."
-        }
-      ]
-    },
-    {
-      "id": "REQ-12",
-      "summary": "Apply the luxury glassmorphism visual system and exact palette across the app with pervasive motion and premium micro-interactions.",
-      "acceptanceCriteria": [
-        "All major UI surfaces (app background, cards, buttons, text, accents) use the provided hex colors as the authoritative palette.",
-        "Wheel picker styling matches the provided wheel picker palette (background, selected/unselected colors, center glow).",
-        "Buttons have pressed depth animation and use the specified normal/pressed colors.",
-        "Micro-interactions are present across navigation and primary controls (press, hover/active states where applicable) without introducing jank."
-      ],
-      "file_operations": [
         {
           "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Add minimal CSS keyframes/utilities for coin increase glow burst that aligns with the existing cold luxury palette and avoids heavy effects impacting ~60fps."
+        },
+        {
+          "path": "frontend/src/assets/generated.ts",
+          "operation": "modify",
+          "description": "Add generated asset path export for the coin icon at frontend/public/assets/generated/coin-icon.dim_128x128.png so the Dashboard coin UI can display it."
+        },
+        {
+          "path": "frontend/public/assets/generated/coin-icon.dim_128x128.png",
           "operation": "create",
-          "description": "Create global styles using Tailwind + CSS variables to encode the authoritative palette, glassmorphism surfaces, soft shadows, depth layers, and motion tokens; ensure wheel picker and buttons match the specified palette and pressed states."
-        },
-        {
-          "path": "frontend/tailwind.config.js",
-          "operation": "modify",
-          "description": "Extend theme tokens (colors/shadows/animations) to support the luxury palette and consistent depth/blur/motion styling across screens without introducing heavy custom CSS."
-        },
-        {
-          "path": "frontend/src/components/AppShell.tsx",
-          "operation": "modify",
-          "description": "Apply global layout styling (glass panels, depth layers, minimal cold futuristic feel) and ensure transitions/micro-interactions feel 'alive' without jank."
-        },
-        {
-          "path": "frontend/src/components/WheelPicker.tsx",
-          "operation": "modify",
-          "description": "Apply wheel picker palette styling (background, selected/unselected, center highlight glow) and pressed/active micro-interactions without using any keyboard-triggering inputs."
-        },
-        {
-          "path": "frontend/src/components/BottomNav.tsx",
-          "operation": "modify",
-          "description": "Ensure navigation visuals are minimal/icon-based, glassy, and responsive with pressed depth animation using shadcn-ui primitives (compose only). Verify the component's usage instructions before implementing."
+          "description": "Add the generated image asset file (wired via frontend/src/assets/generated.ts): frontend/public/assets/generated/coin-icon.dim_128x128.png."
         }
       ]
     },
     {
-      "id": "REQ-13",
-      "summary": "Add haptic feedback patterns (light/medium/strong/special) with graceful fallback when unsupported.",
+      "id": "REQ-55",
+      "summary": "Add a Chest Shop section inside Settings showing coin balance, chest options with costs, and scrollable chest history while preserving existing Settings panels.",
       "acceptanceCriteria": [
-        "Button presses trigger light haptic feedback (when supported).",
-        "Saving a log triggers medium haptic feedback (when supported).",
-        "Rank promotion triggers strong haptic feedback (when supported).",
-        "Volume max pull event triggers the special vibration (when supported).",
-        "When vibration is unsupported, no errors occur and the UX remains usable."
+        "Settings contains a new Chest Shop panel/section while keeping all existing panels present and functional.",
+        "Chest Shop section shows current coin balance.",
+        "Chest Shop section lists three chest types with clear costs: Common 250, Rare 500, Epic 1000.",
+        "Chest Shop section shows a scrollable history of opened chests (most recent first) with timestamp and results."
       ],
       "file_operations": [
+        {
+          "path": "frontend/src/components/chests/ChestShopPanel.tsx",
+          "operation": "create",
+          "description": "Create a Settings panel for Chest Shop using shadcn-ui primitives (e.g., Button/Dialog/Separator/ScrollArea/Switch where appropriate) to display coin balance, three chest options, and history. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/screens/SettingsScreen.tsx",
+          "operation": "modify",
+          "description": "Insert the new ChestShopPanel into the existing Settings screen while keeping Volume Control, Daily Goal, Backup & Restore, and Danger Zone panels intact and functional."
+        },
+        {
+          "path": "frontend/src/assets/generated.ts",
+          "operation": "modify",
+          "description": "Add generated asset path exports for chest illustrations: frontend/public/assets/generated/chest-common.dim_512x512.png, frontend/public/assets/generated/chest-rare.dim_512x512.png, frontend/public/assets/generated/chest-epic.dim_512x512.png."
+        },
+        {
+          "path": "frontend/public/assets/generated/chest-common.dim_512x512.png",
+          "operation": "create",
+          "description": "Add the generated image asset file (wired via frontend/src/assets/generated.ts): frontend/public/assets/generated/chest-common.dim_512x512.png."
+        },
+        {
+          "path": "frontend/public/assets/generated/chest-rare.dim_512x512.png",
+          "operation": "create",
+          "description": "Add the generated image asset file (wired via frontend/src/assets/generated.ts): frontend/public/assets/generated/chest-rare.dim_512x512.png."
+        },
+        {
+          "path": "frontend/public/assets/generated/chest-epic.dim_512x512.png",
+          "operation": "create",
+          "description": "Add the generated image asset file (wired via frontend/src/assets/generated.ts): frontend/public/assets/generated/chest-epic.dim_512x512.png."
+        }
+      ]
+    },
+    {
+      "id": "REQ-56",
+      "summary": "Implement chest purchase/open flow with confirm, immediate coin deduction, premium opening animation, sequential card reveals, and offline persistence to wallet/history.",
+      "acceptanceCriteria": [
+        "Attempting to open a chest with insufficient coins is blocked with a clear error/toast and no state changes.",
+        "On confirmation, coins are deducted immediately and the UI reflects the new balance.",
+        "A chest-opening overlay/modal sequence plays before card results are fully shown.",
+        "Cards are revealed sequentially (not all at once) with a flip/slide animation and a highlight glow.",
+        "After completion, the revealed cards are persisted into the offline wallet and the chest opening is appended to history."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/chests/ChestOpenDialog.tsx",
+          "operation": "create",
+          "description": "Implement the chest open confirm + animation overlay flow using shadcn-ui Dialog (and buttons) with no text inputs; orchestrate shake/glow then sequential card reveal steps. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/chests/CardReveal.tsx",
+          "operation": "create",
+          "description": "Create a premium card reveal component (flip/slide + highlight glow) that can be driven sequentially by the chest opening flow; uses generated card frame/back assets. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/chests/ChestShopPanel.tsx",
+          "operation": "modify",
+          "description": "Wire chest selection to open ChestOpenDialog; on confirm, validate coins, deduct immediately, then run opening sequence and refresh balance/history UI."
+        },
+        {
+          "path": "frontend/src/lib/economy/chestOpenFlow.ts",
+          "operation": "create",
+          "description": "Implement the core chest opening transaction logic (check balance, deduct, draw cards, persist wallet + history) as an offline-only function callable from UI."
+        },
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Add CSS animations for chest shake, tier glow, aura sweep, and card flip/slide reveal with performance-friendly keyframes (no layout thrash)."
+        },
+        {
+          "path": "frontend/src/assets/generated.ts",
+          "operation": "modify",
+          "description": "Add generated asset path exports for card visuals: frontend/public/assets/generated/card-frame.dim_600x840.png and frontend/public/assets/generated/card-back.dim_600x840.png."
+        },
+        {
+          "path": "frontend/public/assets/generated/card-frame.dim_600x840.png",
+          "operation": "create",
+          "description": "Add the generated image asset file (wired via frontend/src/assets/generated.ts): frontend/public/assets/generated/card-frame.dim_600x840.png."
+        },
+        {
+          "path": "frontend/public/assets/generated/card-back.dim_600x840.png",
+          "operation": "create",
+          "description": "Add the generated image asset file (wired via frontend/src/assets/generated.ts): frontend/public/assets/generated/card-back.dim_600x840.png."
+        }
+      ]
+    },
+    {
+      "id": "REQ-57",
+      "summary": "Implement exact independent probabilistic draw tables per chest type with correct draw counts and duplicates allowed.",
+      "acceptanceCriteria": [
+        "Common chest: 3 independent draws; each draw uses: 10rs=20%, 20rs=30%, 30rs=50%.",
+        "Rare chest: 5 independent draws; each draw uses: 20rs=10%, 40rs=15%, 60rs=20%, 80rs=25%, 100rs=30%.",
+        "Epic chest: 7 independent draws; each draw uses: 50rs=25%, 80rs=30%, 100rs=20%, 120rs=30% total (15%+15% treated as 120rs), 150rs=30% total (5%+5%+5% treated as 150rs), 180rs=10% total (5%+5% treated as 180rs).",
+        "Within a single chest opening, the same value can appear multiple times (no uniqueness constraint).",
+        "The app always produces exactly 3/5/7 card values for Common/Rare/Epic respectively."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/lib/economy/drawTables.ts",
+          "operation": "create",
+          "description": "Encode the exact base probability tables per chest tier and provide a reusable weighted-draw helper where each draw is independent and duplicates are allowed."
+        },
+        {
+          "path": "frontend/src/lib/economy/drawCards.ts",
+          "operation": "create",
+          "description": "Implement draw logic that returns exactly 3/5/7 values for Common/Rare/Epic respectively, using the base tables (and later modifiers) with independent draws."
+        },
+        {
+          "path": "frontend/src/lib/economy/chestOpenFlow.ts",
+          "operation": "modify",
+          "description": "Use the drawCards helper to generate revealed values per chest tier and persist the resulting values exactly as drawn."
+        }
+      ]
+    },
+    {
+      "id": "REQ-58",
+      "summary": "Apply tier-based chest styling/effects matching the luxury cold aesthetic with distinct Common/Rare/Epic identities and opening effects.",
+      "acceptanceCriteria": [
+        "Chest Shop UI uses glass morphism panels, depth shadows, and minimal futuristic styling consistent with the rest of the app.",
+        "Common chest visuals read as bronze with a soft glow.",
+        "Rare chest visuals read as silver with a shimmering aura effect.",
+        "Epic chest visuals read as gold/amber with animated particles and an aura sweep during opening/reveal.",
+        "No existing RankBadge/Orb/Stickman/WheelPicker styling is removed or degraded."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/chests/ChestTile.tsx",
+          "operation": "create",
+          "description": "Create a chest option tile component that renders tier-specific visuals (bronze/silver/gold-amber) and supports hover/tap effects without breaking wheel-only UX; uses generated chest images. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/chests/ChestShopPanel.tsx",
+          "operation": "modify",
+          "description": "Use ChestTile for Common/Rare/Epic options and ensure the panel styling matches existing glass cards and palette (#0b0f14 background vibe, #00f0ff accents)."
+        },
+        {
+          "path": "frontend/src/components/chests/ChestOpenDialog.tsx",
+          "operation": "modify",
+          "description": "Add tier-specific opening/reveal effects: Common soft glow, Rare shimmer aura, Epic particles + aura sweep during opening/reveal sequence."
+        },
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Add tier effect styles (bronze glow, silver shimmer, epic particle + aura sweep) using lightweight CSS animations consistent with existing luxury cold aesthetic."
+        }
+      ]
+    },
+    {
+      "id": "REQ-59",
+      "summary": "Extend global SFX system for chest opening and per-card reveal sounds (tier-specific + special high-value feedback) controlled by existing volume setting.",
+      "acceptanceCriteria": [
+        "New chest SFX can be played via the existing global volume control.",
+        "Common chest opening plays the specified soft metallic click-style SFX.",
+        "Rare chest opening plays the specified sparkle/jingle-style SFX.",
+        "Epic chest opening plays the specified epic deep pulse/bass + shimmer-style SFX.",
+        "Each card reveal plays a short reveal sound; high-value reveals trigger stronger/unique audio feedback without overlapping excessively or breaking other SFX."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/lib/sfx.ts",
+          "operation": "modify",
+          "description": "Add new SfxType entries and sound file mappings for chest-common-open, chest-rare-open, chest-epic-open, card-reveal, card-reveal-high, and coin-award; keep existing volume handling unchanged."
+        },
+        {
+          "path": "frontend/src/components/chests/ChestOpenDialog.tsx",
+          "operation": "modify",
+          "description": "Wire tier-specific opening SFX and per-card reveal SFX using the existing useSfx hook, including a stronger unique sound for high-value reveals."
+        },
+        {
+          "path": "frontend/src/components/coins/CoinBalanceBadge.tsx",
+          "operation": "modify",
+          "description": "Optionally play a subtle coin-award SFX on increases via useSfx while respecting the global volume control."
+        },
+        {
+          "path": "frontend/public/assets/sfx/chest-common-open.mp3",
+          "operation": "create",
+          "description": "Add a soft metallic click-style SFX file for Common chest opening at frontend/public/assets/sfx/chest-common-open.mp3."
+        },
+        {
+          "path": "frontend/public/assets/sfx/chest-rare-open.mp3",
+          "operation": "create",
+          "description": "Add a sparkle/jingle-style SFX file for Rare chest opening at frontend/public/assets/sfx/chest-rare-open.mp3."
+        },
+        {
+          "path": "frontend/public/assets/sfx/chest-epic-open.mp3",
+          "operation": "create",
+          "description": "Add an epic deep pulse/bass + shimmer SFX file for Epic chest opening at frontend/public/assets/sfx/chest-epic-open.mp3."
+        },
+        {
+          "path": "frontend/public/assets/sfx/card-reveal.mp3",
+          "operation": "create",
+          "description": "Add a short per-card reveal SFX file at frontend/public/assets/sfx/card-reveal.mp3."
+        },
+        {
+          "path": "frontend/public/assets/sfx/card-reveal-high.mp3",
+          "operation": "create",
+          "description": "Add a stronger unique SFX file for high-value reveals at frontend/public/assets/sfx/card-reveal-high.mp3."
+        },
+        {
+          "path": "frontend/public/assets/sfx/coin-award.mp3",
+          "operation": "create",
+          "description": "Add a subtle coin award SFX file at frontend/public/assets/sfx/coin-award.mp3."
+        }
+      ]
+    },
+    {
+      "id": "REQ-60",
+      "summary": "Add subtle coin award feedback (animation + haptics) and stronger tier/high-value feedback during chest opening while degrading gracefully without vibration support.",
+      "acceptanceCriteria": [
+        "Coin award events trigger a subtle UI feedback (e.g., glow/pulse on coin counter) and a light/appropriate haptic where supported.",
+        "Opening a chest triggers a stronger but premium feedback moment (visual + optional haptic) aligned with the tier.",
+        "High-value card reveals trigger a noticeably stronger effect than normal reveals (visual + sound; haptic where supported).",
+        "No keyboard input is introduced."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/coins/CoinBalanceBadge.tsx",
+          "operation": "modify",
+          "description": "Trigger a subtle pulse/glow animation and light haptic (via existing haptics utility) when the balance increases, without affecting other Dashboard animations."
+        },
+        {
+          "path": "frontend/src/components/chests/ChestOpenDialog.tsx",
+          "operation": "modify",
+          "description": "Trigger tier-aligned haptics on chest open confirmation/opening and stronger haptics on high-value card reveals while gracefully handling devices without vibration."
+        },
         {
           "path": "frontend/src/lib/haptics.ts",
           "operation": "modify",
-          "description": "Expand/confirm vibration patterns for light, medium, strong, and special events; ensure all calls are guarded so unsupported devices degrade gracefully."
+          "description": "If needed, add a minimal additional pattern mapping for chest moments while preserving existing patterns and behavior; keep graceful degradation when vibration is unsupported."
         },
         {
-          "path": "frontend/src/components/HapticButton.tsx",
-          "operation": "create",
-          "description": "Create a small wrapper around shadcn-ui button behavior to trigger light haptic on press while preserving accessibility; compose shadcn-ui (do not edit immutable sources). Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/components/BottomNav.tsx",
+          "path": "frontend/src/index.css",
           "operation": "modify",
-          "description": "Use HapticButton (or equivalent press handling) so navigation taps trigger light haptics when supported."
-        },
-        {
-          "path": "frontend/src/screens/LogScreen.tsx",
-          "operation": "modify",
-          "description": "Trigger medium haptic on successful save and strong/special haptics for PR and rank events as specified."
-        },
-        {
-          "path": "frontend/src/components/RankPromotionOverlay.tsx",
-          "operation": "modify",
-          "description": "Trigger strong haptic feedback when rank promotion animation plays (where supported)."
-        },
-        {
-          "path": "frontend/src/components/StickmanVolumeControl.tsx",
-          "operation": "modify",
-          "description": "Trigger the special max-pull vibration when volume reaches 100% and the auto-drop reset occurs (where supported)."
+          "description": "Add/adjust CSS utilities for subtle positive feedback pulses and stronger highlight effects for special reveals, staying within the existing palette and performance expectations."
         }
       ]
     },
     {
-      "id": "REQ-14",
-      "summary": "Ensure smooth performance for animations/interactions and keep core functionality offline without unnecessary network activity.",
+      "id": "REQ-61",
+      "summary": "Preserve all existing app functionality, wheel-only UX, styling, and performance while integrating the new offline economy features.",
       "acceptanceCriteria": [
-        "Core interactions (wheel scroll, save, navigation) respond immediately without blocking the main thread for noticeable durations.",
-        "The app remains functional offline and does not continuously attempt background network calls for core features.",
-        "No screen depends on backend calls to render core data."
+        "All existing screens and features remain accessible and function as before.",
+        "No regressions to wheel picker behavior, stickman slider scroll-lock, rank badge animations, or existing SFX/haptics.",
+        "Chest/coin animations remain smooth and do not cause noticeable lag on typical mobile devices.",
+        "Everything works offline; no new network dependencies are introduced for core functionality."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/WheelPicker.tsx",
+          "path": "frontend/src/components/chests/ChestShopPanel.tsx",
           "operation": "modify",
-          "description": "Optimize wheel inertial scrolling and snapping using requestAnimationFrame-driven updates, minimal React state churn, and memoization to keep interactions responsive on mobile."
+          "description": "Audit interactions to ensure no text inputs are introduced and no new navigation tabs/routes are added; ensure all actions are tap-based and consistent with existing UX."
         },
         {
-          "path": "frontend/src/components/HistoryGraph365.tsx",
+          "path": "frontend/src/components/chests/ChestOpenDialog.tsx",
           "operation": "modify",
-          "description": "Ensure graph draw animation is efficient (batched rendering, avoid heavy rerenders) and only recalculates when underlying data changes."
+          "description": "Ensure animation sequencing uses lightweight transitions and avoids heavy re-renders; keep overlays compatible with existing focus/scroll behavior."
         },
         {
-          "path": "frontend/src/components/RollingCounter.tsx",
+          "path": "frontend/src/screens/DashboardScreen.tsx",
           "operation": "modify",
-          "description": "Ensure the counter animation is lightweight and does not trigger expensive layout/reflow loops; prefer transform-based animation where feasible."
+          "description": "Ensure coin UI integration does not disrupt existing layout/animations; keep updates efficient to preserve smooth ~60fps."
+        }
+      ]
+    },
+    {
+      "id": "REQ-62",
+      "summary": "Add optional chest modifiers (streak bonus, daily first-chest bonus) with Settings controls, transparent active indicators, and offline persistence (defaults off).",
+      "acceptanceCriteria": [
+        "Chest Shop UI provides toggles/controls for enabling/disabling chest streak bonus and daily first-chest bonus.",
+        "When disabled, chest outcomes follow the base probability tables exactly.",
+        "When enabled, the bonus rules apply consistently and transparently (the UI indicates when a bonus is active for an opening).",
+        "Bonus state and relevant counters/timestamps persist offline across refreshes."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/lib/economy/modifiers.ts",
+          "operation": "create",
+          "description": "Define modifier rules, persisted modifier state (toggles + counters/timestamps), and logic to compute when bonuses are active for a given opening."
         },
         {
-          "path": "frontend/src/hooks/usePullupStore.ts",
+          "path": "frontend/src/lib/economy/drawCards.ts",
           "operation": "modify",
-          "description": "Add selectors/caching to prevent unnecessary rerenders across Dashboard/History/Analytics when unrelated parts of the offline store change; ensure no background network calls are initiated for core features."
+          "description": "Apply optional modifier logic only when enabled; guarantee base tables are used exactly when modifiers are off."
         },
         {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/lib/offlineDb.ts",
           "operation": "modify",
-          "description": "Confirm all core screens render from offline state immediately and transitions remain smooth; avoid introducing any blocking network-dependent initialization for core flows."
+          "description": "Persist modifier toggle state and any required counters/timestamps in offline storage alongside coins/chest history/card wallet (defaults off on first run / old backups)."
+        },
+        {
+          "path": "frontend/src/components/chests/ChestShopPanel.tsx",
+          "operation": "modify",
+          "description": "Add on/off controls for streak bonus and daily first-chest bonus using shadcn-ui Switch/Label and indicate when a bonus is active for an opening. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/chests/ChestOpenDialog.tsx",
+          "operation": "modify",
+          "description": "Display a clear, non-text-input indicator during opening when a modifier is active (streak/daily), and ensure it affects only the current opening as specified."
         }
       ]
     }

@@ -3,11 +3,16 @@ import { ThemeProvider } from 'next-themes';
 import { Toaster } from '@/components/ui/sonner';
 import { SfxProvider } from './hooks/useSfx';
 import { PullupStoreProvider } from './hooks/usePullupStore';
+import { FocusModeProvider } from './hooks/useFocusMode';
+import { AchievementsProvider } from './hooks/useAchievements';
+import { AchievementUnlockProvider } from './components/achievements/AchievementUnlockProvider';
 import AppShell from './components/AppShell';
 import DashboardScreen from './screens/DashboardScreen';
 import LogScreen from './screens/LogScreen';
 import HistoryScreen from './screens/HistoryScreen';
 import AnalyticsScreen from './screens/AnalyticsScreen';
+import AdvancedStatsScreen from './screens/AdvancedStatsScreen';
+import AchievementsScreen from './screens/AchievementsScreen';
 import SettingsScreen from './screens/SettingsScreen';
 
 const rootRoute = createRootRoute({
@@ -38,6 +43,18 @@ const analyticsRoute = createRoute({
   component: AnalyticsScreen,
 });
 
+const advancedStatsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/advanced-stats',
+  component: AdvancedStatsScreen,
+});
+
+const achievementsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/achievements',
+  component: AchievementsScreen,
+});
+
 const settingsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/settings',
@@ -49,6 +66,8 @@ const routeTree = rootRoute.addChildren([
   logRoute,
   historyRoute,
   analyticsRoute,
+  advancedStatsRoute,
+  achievementsRoute,
   settingsRoute,
 ]);
 
@@ -65,8 +84,14 @@ export default function App() {
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
       <PullupStoreProvider>
         <SfxProvider>
-          <RouterProvider router={router} />
-          <Toaster />
+          <FocusModeProvider>
+            <AchievementsProvider>
+              <AchievementUnlockProvider>
+                <RouterProvider router={router} />
+                <Toaster />
+              </AchievementUnlockProvider>
+            </AchievementsProvider>
+          </FocusModeProvider>
         </SfxProvider>
       </PullupStoreProvider>
     </ThemeProvider>

@@ -1,198 +1,91 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-16T20:14:55.343Z",
-  "summary": "The diff adds a new frontend app shell with 5 routes/screens, several dashboard/analytics UI components (counter, badge, graph, rings/orb), a backup/restore panel, a bottom nav with SFX+haptics on tap, and an empty Motoko backend actor. Many core requirements (offline data layer details, wheel picker behavior, full analytics/rank logic, and some required SFX/haptics/animations) cannot be verified from the shown files and appear missing or incomplete based on available evidence.",
+  "generatedAt": "2026-02-16T21:46:58.492Z",
+  "summary": "Diff adds an offline economy layer (coins, chest history, wallet, modifiers), a Dashboard coin badge with rolling counter and glow, a Settings “Chest Shop” panel with chest tiles/modifier toggles, chest open dialog with staged animation + sequential card reveals, new SFX types, and haptic patterns. However, some requirements are not fully met (notably Epic probability table, insufficient-funds blocking behavior, and unverified backup/coin-award integration).",
   "missing_requirements": [
     {
-      "id": "REQ-1",
-      "requirement": "Implement a fully offline-first local data layer (local device storage; unlimited lifetime data; no blocking screens behind network calls).",
-      "reason": "The diff shows a PullupStoreProvider usage, but no evidence of an actual persistent local storage implementation (e.g., IndexedDB/localStorage schema, CRUD for create/edit/view) or explicit offline guarantees in the provided file excerpts.",
+      "id": "REQ-52",
+      "requirement": "Include coins balance, chest history, and card wallet/inventory in the existing manual export/import backup flow (JSON), preserving backwards compatibility with older backups.",
+      "reason": "The UI text in BackupRestorePanel mentions coins/chest history/card wallet, but the diff summary does not include changes to the actual backup export/import implementation (e.g., frontend/src/lib/backup) to prove new fields are exported/imported and older backups are handled with defaults.",
       "evidence": [
-        "frontend/src/App.tsx",
-        "backend/main.mo"
+        "frontend/src/components/BackupRestorePanel.tsx (mentions coins/chest history/card wallet in copy)"
       ]
     },
     {
-      "id": "REQ-2",
-      "requirement": "Manual backup/restore export/import with full reconstruction and corrupt-file protection (no partial overwrite).",
-      "reason": "UI for export/import is present, but the actual backup logic is not shown. From the excerpt, restore triggers a full page reload and does not demonstrate the required 'invalid/corrupt file' protection behavior (no partial overwrite) or that export includes all logs + settings needed to restore state.",
+      "id": "REQ-53",
+      "requirement": "Implement an offline Coins awarding system that automatically grants coins after saving a session, milestone detection, streak changes/bonuses, and achievement unlocks (offline).",
+      "reason": "The diff adds coin reward calculation and an awardCoins service, and LogScreen imports awardCoins, but the provided LogScreen changes are truncated before showing any call sites/hooking into save/milestone/achievement flows. Evidence is insufficient to confirm coins are actually awarded during these events without breaking existing flows.",
       "evidence": [
-        "frontend/src/components/BackupRestorePanel.tsx"
+        "frontend/src/lib/economy/coinRewards.ts",
+        "frontend/src/lib/economy/economyService.ts",
+        "frontend/src/screens/LogScreen.tsx (truncated; shows import of awardCoins)"
       ]
     },
     {
-      "id": "REQ-3",
-      "requirement": "Wheel-only numeric input with inertia, snapping, center highlight glow, and tick SFX; notes via predefined tags only; no keyboard-triggering inputs anywhere.",
-      "reason": "SessionBuilder references a WheelPicker, but the WheelPicker implementation and its inertial/snapping/highlight/tick SFX behavior is not shown. Also, no evidence is shown for the notes/tags-only UI on the Log screen; and a file input exists for restore (not keyboard, but still an input element).",
+      "id": "REQ-56",
+      "requirement": "Block chest opening with insufficient coins with a clear error/toast and no state changes.",
+      "reason": "ChestTile disables clicking when coins are insufficient, but ChestOpenDialog’s confirm handler transitions to the “opening” stage, plays SFX, and triggers haptics before calling openChest (which is where insufficient coins is detected). This means user-visible state changes (stage, animation, audio/haptics) can still occur before the insufficient-coins error is shown.",
       "evidence": [
-        "frontend/src/components/SessionBuilder.tsx",
-        "frontend/src/components/BackupRestorePanel.tsx"
+        "frontend/src/components/chests/ChestTile.tsx (disabled when !canAfford)",
+        "frontend/src/components/chests/ChestOpenDialog.tsx (handleConfirm sets stage='opening' and plays SFX/haptic before openChest)",
+        "frontend/src/lib/economy/chestOpenFlow.ts (deductCoins fails -> 'Insufficient coins')"
       ]
     },
     {
-      "id": "REQ-4",
-      "requirement": "Smooth transitions between screens with blur/depth motion (no abrupt route changes).",
-      "reason": "Routes and navigation are implemented, but there is no evidence of transition animations between screens (router navigation appears immediate; no transition wrapper/animation logic is shown).",
+      "id": "REQ-57",
+      "requirement": "Implement exact independent probabilistic draw tables per chest tier, especially Epic table per specification (120rs=30%, 150rs=30%, 180rs=10% totals), with correct draw counts 3/5/7.",
+      "reason": "Common and Rare tables match the spec, and card counts are set to 3/5/7. However the Epic DRAW_TABLES do not match the specified probabilities: code uses 120=0.15, 150=0.05, 180=0.05, which conflicts with required totals (120=0.30, 150=0.30, 180=0.10).",
       "evidence": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/AppShell.tsx",
-        "frontend/src/components/BottomNav.tsx"
+        "frontend/src/lib/economy/drawTables.ts (epic probabilities)",
+        "frontend/src/lib/economy/chestsTypes.ts (cardCount 7)",
+        "frontend/src/lib/economy/drawCards.ts (draw loop uses cardCount)"
       ]
     },
     {
-      "id": "REQ-5",
-      "requirement": "Dashboard includes rolling counter, metallic hex badge with shine/glow, streak flame animation, fatigue ring driven by computed fatigue score, and orb energy core driven by goal progress with smooth animation.",
-      "reason": "Component building blocks exist (RollingCounter, RankBadge, StreakFlame, FatigueRing, EnergyOrb, FrostedBackground), but the diff does not show DashboardScreen wiring them to real computed data from local storage, nor a configurable daily goal, nor fatigue computation.",
+      "id": "REQ-58",
+      "requirement": "Epic chest visuals/effects: gold/amber + animated particles + aura sweep during opening/reveal; tier-based premium styling for all tiers consistent with palette.",
+      "reason": "Tier colors and basic glow effects are present (e.g., CardReveal borderColor/glow, glass panels/cards), but the diff summary does not show implementation of Epic-specific animated particles and aura sweep effects (e.g., dedicated CSS/animations tied to 'epic' during opening/reveal).",
       "evidence": [
-        "frontend/src/components/RollingCounter.tsx",
-        "frontend/src/components/RankBadge.tsx",
-        "frontend/src/components/StreakFlame.tsx",
-        "frontend/src/components/FatigueRing.tsx",
-        "frontend/src/components/EnergyOrb.tsx",
-        "frontend/src/components/FrostedBackground.tsx"
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "requirement": "Log screen premium flow: multi-set logging via wheel pickers; optional duration/weight; predefined tags; on save: persist locally, play save chime SFX, medium haptic, pulse confirmation animation.",
-      "reason": "SessionBuilder covers sets/reps/weight/duration selection, but the save flow is not shown (no persistence, save SFX, medium haptic, or pulse confirmation animation evidenced in the excerpts). Notes/tags are also not evidenced.",
-      "evidence": [
-        "frontend/src/components/SessionBuilder.tsx"
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "requirement": "History screen: 365-day animated graph drawing left-to-right; tap day for details; show weekly average, monthly total, and personal records.",
-      "reason": "HistoryGraph365 animates drawing and supports clicking a day, and DayDetailsSheet exists. However, there is no evidence that the History screen enforces exactly last 365 days of totals, nor that weekly average/monthly total/personal records are computed and displayed.",
-      "evidence": [
-        "frontend/src/components/HistoryGraph365.tsx",
-        "frontend/src/components/DayDetailsSheet.tsx"
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "requirement": "Analytics metrics computed from local data (with fatigue/consistency formula description) and PR celebration (visual + SFX + haptic).",
-      "reason": "RecordCelebration exists and triggers SFX + haptic, but there is no evidence of AnalyticsScreen computing/rendering the required metrics from local data or providing in-UI formula descriptions for fatigue/consistency.",
-      "evidence": [
-        "frontend/src/components/RecordCelebration.tsx",
-        "frontend/src/App.tsx"
-      ]
-    },
-    {
-      "id": "REQ-9",
-      "requirement": "Full rank ladder (Bronze III → Ascendant) with metallic hex badges (texture, inner glow, moving shine, particle aura) and promotion animation with SFX + strong haptics; rank progress indicator on Dashboard and Analytics.",
-      "reason": "RankBadge provides texture overlay, inner glow, and a shine animation; optional particles exist. RankPromotionOverlay exists and triggers SFX + strong haptic. But the diff does not show the full rank ladder definitions, rank progress computation/indicator, or that badges correspond to all ranks (Bronze III through Ascendant).",
-      "evidence": [
-        "frontend/src/components/RankBadge.tsx",
-        "frontend/src/components/RankPromotionOverlay.tsx"
-      ]
-    },
-    {
-      "id": "REQ-10",
-      "requirement": "SFX system (no music) with specific SFX events/assets and global volume control affecting all SFX; graceful failure handling.",
-      "reason": "useSfx is referenced and volume is used in StickmanVolumeControl, and some events play named sounds (e.g., 'button-click', 'rank-promotion', 'pr-bass'). However, the diff does not show the SFX asset set, wiring for all required SFX (wheel tick, save chime, streak ignition, metal touch, etc.), global volume application to all sounds, or failure handling.",
-      "evidence": [
-        "frontend/src/components/BottomNav.tsx",
-        "frontend/src/components/RankPromotionOverlay.tsx",
-        "frontend/src/components/RecordCelebration.tsx",
-        "frontend/src/components/StickmanVolumeControl.tsx"
-      ]
-    },
-    {
-      "id": "REQ-11",
-      "requirement": "Stickman pull-up volume control with physics-like animation and auto-drop at 100% resetting volume to 0 + special vibration; also Reset Data with premium confirmation animation.",
-      "reason": "StickmanVolumeControl supports dragging, updates volume, and triggers a 'special' haptic at max and resets volume to 0, but no clear physics-like drop animation is evidenced beyond a short timeout reset, and no SFX interactions are shown. ResetDataDialog shows a standard alert dialog confirmation but does not evidence a distinct/premium confirmation animation before wiping local storage.",
-      "evidence": [
-        "frontend/src/components/StickmanVolumeControl.tsx",
-        "frontend/src/components/ResetDataDialog.tsx"
-      ]
-    },
-    {
-      "id": "REQ-12",
-      "requirement": "Apply the specified luxury visual system and exact palette across the app with pervasive micro-interactions (buttons pressed depth, wheel picker palette, etc.).",
-      "reason": "Several components use glass-like class names (e.g., 'glass-card', 'glass-panel') and a frosted animated background, but the diff does not include the authoritative palette definitions or evidence that the exact specified palette is applied across all surfaces, including wheel picker styling specifics and pressed-depth button animations.",
-      "evidence": [
-        "frontend/src/components/FrostedBackground.tsx",
-        "frontend/src/components/BottomNav.tsx",
-        "frontend/src/components/BackupRestorePanel.tsx",
-        "frontend/src/components/SessionBuilder.tsx"
-      ]
-    },
-    {
-      "id": "REQ-13",
-      "requirement": "Haptic patterns: light on button press, medium on save, strong on rank promotion, special on volume max; graceful degradation when unsupported.",
-      "reason": "Light haptic on nav, strong on rank promotion, strong on record celebration, and special on volume max are shown. Medium haptic on save is not evidenced, and no graceful-degradation handling is shown in the provided excerpts (implementation likely in lib/haptics but not shown).",
-      "evidence": [
-        "frontend/src/components/BottomNav.tsx",
-        "frontend/src/components/RankPromotionOverlay.tsx",
-        "frontend/src/components/RecordCelebration.tsx",
-        "frontend/src/components/StickmanVolumeControl.tsx"
-      ]
-    },
-    {
-      "id": "REQ-14",
-      "requirement": "Performance and smoothness: responsive wheel inertia/counters/graph/transitions; avoid unnecessary network requests; no screen depends on backend for core data.",
-      "reason": "Some animations are implemented with requestAnimationFrame, but there is no evidence of wheel inertia performance, navigation transitions, or explicit avoidance of network calls. Backend is an empty actor, but the diff does not show that all screens render core data without backend calls.",
-      "evidence": [
-        "frontend/src/components/RollingCounter.tsx",
-        "frontend/src/components/HistoryGraph365.tsx",
-        "frontend/src/components/FrostedBackground.tsx",
-        "backend/main.mo"
+        "frontend/src/components/chests/CardReveal.tsx (basic radial glow)",
+        "frontend/src/components/chests/ChestTile.tsx (adds class 'chest-tile-epic' but no corresponding CSS shown)",
+        "frontend/src/components/chests/ChestOpenDialog.tsx (truncated; no evidence of particles/aura sweep)"
       ]
     }
   ],
-  "hallucinated_features": [],
-  "confidence": 0.55,
+  "hallucinated_features": [
+    {
+      "description": "Introduced a runtime dependency on Google Fonts via CSS @import, which can require network access at runtime.",
+      "reason": "BuildRequest requires core functionality to remain fully offline with no network required; importing fonts from https://fonts.googleapis.com may trigger network requests and is not explicitly requested for the coins/chest feature.",
+      "evidence": [
+        "frontend/src/index.css (@import url('https://fonts.googleapis.com/...') )"
+      ]
+    }
+  ],
+  "confidence": 0.74,
   "changed_files": [
-    "all_files_summary.json",
-    "backend/main.mo",
     "frontend-file-summaries.txt",
-    "frontend/index.css",
-    "frontend/index.html",
-    "frontend/src/App.tsx",
     "frontend/src/assets/generated.ts",
-    "frontend/src/components/AppShell.tsx",
     "frontend/src/components/BackupRestorePanel.tsx",
-    "frontend/src/components/BottomNav.tsx",
-    "frontend/src/components/DayDetailsSheet.tsx",
-    "frontend/src/components/EnergyOrb.tsx",
-    "frontend/src/components/FatigueRing.tsx",
-    "frontend/src/components/FrostedBackground.tsx",
-    "frontend/src/components/HistoryGraph365.tsx",
-    "frontend/src/components/MetricCard.tsx",
-    "frontend/src/components/RankBadge.tsx",
-    "frontend/src/components/RankPromotionOverlay.tsx",
-    "frontend/src/components/RecordCelebration.tsx",
-    "frontend/src/components/ResetDataDialog.tsx",
-    "frontend/src/components/RollingCounter.tsx",
-    "frontend/src/components/SessionBuilder.tsx",
-    "frontend/src/components/StickmanVolumeControl.tsx",
-    "frontend/src/components/StreakFlame.tsx",
-    "frontend/src/components/TagMultiSelect.tsx",
-    "frontend/src/components/WheelPicker.tsx",
-    "frontend/src/hooks/useActor.ts",
-    "frontend/src/hooks/useInternetIdentity.ts",
+    "frontend/src/components/chests/CardReveal.tsx",
+    "frontend/src/components/chests/ChestOpenDialog.tsx",
+    "frontend/src/components/chests/ChestShopPanel.tsx",
+    "frontend/src/components/chests/ChestTile.tsx",
+    "frontend/src/components/coins/CoinBalanceBadge.tsx",
     "frontend/src/hooks/usePullupStore.tsx",
-    "frontend/src/hooks/useQueries.ts",
-    "frontend/src/hooks/useRankProgress.ts",
-    "frontend/src/hooks/useSfx.tsx",
     "frontend/src/index.css",
-    "frontend/src/lib/analytics.ts",
-    "frontend/src/lib/animations.ts",
-    "frontend/src/lib/backup.ts",
+    "frontend/src/lib/economy/chestOpenFlow.ts",
+    "frontend/src/lib/economy/chestsTypes.ts",
+    "frontend/src/lib/economy/coinRewards.ts",
+    "frontend/src/lib/economy/drawCards.ts",
+    "frontend/src/lib/economy/drawTables.ts",
+    "frontend/src/lib/economy/economyService.ts",
+    "frontend/src/lib/economy/economyStore.ts",
+    "frontend/src/lib/economy/modifiers.ts",
     "frontend/src/lib/haptics.ts",
     "frontend/src/lib/offlineDb.ts",
-    "frontend/src/lib/predefinedTags.ts",
-    "frontend/src/lib/ranks.ts",
-    "frontend/src/lib/reset.ts",
     "frontend/src/lib/sfx.ts",
-    "frontend/src/lib/stats.ts",
-    "frontend/src/lib/types.ts",
-    "frontend/src/main.tsx",
-    "frontend/src/screens/AnalyticsScreen.tsx",
     "frontend/src/screens/DashboardScreen.tsx",
-    "frontend/src/screens/HistoryScreen.tsx",
     "frontend/src/screens/LogScreen.tsx",
     "frontend/src/screens/SettingsScreen.tsx",
     "frontend/tailwind.config.js",

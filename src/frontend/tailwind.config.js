@@ -48,6 +48,18 @@ export default {
                 card: {
                     DEFAULT: 'oklch(var(--card))',
                     foreground: 'oklch(var(--card-foreground))'
+                },
+                app: {
+                    'bg-primary': 'oklch(var(--app-bg-primary))',
+                    'bg-secondary': 'oklch(var(--app-bg-secondary))',
+                    'text-primary': 'oklch(var(--app-text-primary))',
+                    'text-secondary': 'oklch(var(--app-text-secondary))',
+                    'accent': 'oklch(var(--app-accent) / <alpha-value>)',
+                    'secondary-accent': 'oklch(var(--app-secondary-accent) / <alpha-value>)',
+                    'border': 'oklch(var(--app-border))',
+                    'success': 'oklch(var(--app-success) / <alpha-value>)',
+                    'warning': 'oklch(var(--app-warning) / <alpha-value>)',
+                    'destructive': 'oklch(var(--app-destructive) / <alpha-value>)'
                 }
             },
             borderRadius: {

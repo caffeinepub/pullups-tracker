@@ -1,321 +1,290 @@
 {
   "kind": "build_request",
-  "title": "Pullups Tracker: Offline luxury pull-up logging with wheel-only input, elite animations, ranks, analytics, and manual backup/restore",
+  "title": "Add Offline Coins + Probabilistic Chest Shop (Settings) with Premium Animations",
   "projectName": "Pullups Tracker",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-1",
-      "text": "Implement a fully offline-first data layer that stores all pull-up logs locally on the device (no internet required for core functionality) and supports unlimited lifetime data.",
+      "id": "REQ-51",
+      "text": "Extend the offline data layer to persist a Coins system, Chest opening history, and a Card wallet/inventory locally on-device, without removing or rebuilding any existing offline stores (sessions, settings, quality, milestones, achievements).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-2"
+          "msg-3"
         ],
         "quotes": [
-          "build a fully offline... it must store all data locally... never require internet for core function.",
-          "offline storage: use local database store unlimited lifetime data"
+          "coins stored in-app locally, optional backup to google drive.",
+          "coins, chest history, card inventory stored locally in app"
         ]
       },
       "acceptanceCriteria": [
-        "Creating, editing, and viewing logs works with the network disconnected.",
-        "All data persists across browser refreshes and app restarts using local device storage (not the backend).",
-        "The app does not block any core screen behind network calls."
+        "Coins balance persists across refreshes and browser restarts.",
+        "Each opened chest is stored in a chest history list with timestamp, chest type, coin cost, and the revealed card values for that chest.",
+        "Each revealed card is stored in a wallet/inventory list with timestamp, chest type, and value.",
+        "Existing stored data (sessions/settings/quality/milestones/achievements) remains intact and readable after the update."
       ]
     },
     {
-      "id": "REQ-2",
-      "text": "Add manual backup and restore via a user-initiated export/import flow that can be stored in Google Drive by the user (no automatic sync required): export all local data to a single file and restore from that file, with clear success/failure states.",
+      "id": "REQ-52",
+      "text": "Include coins balance, chest history, and card wallet/inventory in the existing manual export/import backup flow (the JSON file the user can store in Google Drive), preserving backwards compatibility with older backups that do not contain these fields.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-2"
+          "msg-3"
         ],
         "quotes": [
-          "optional manual google drive backup and restore"
+          "optional backup to google drive.",
+          "optional google drive backup and restore"
         ]
       },
       "acceptanceCriteria": [
-        "Settings includes actions to Export Backup and Restore Backup.",
-        "Export produces a downloadable file containing all logs and settings needed to restore the app state.",
-        "Restore imports a previously exported file and fully reconstructs the local database.",
-        "If the imported file is invalid/corrupt, the app shows an error and does not partially overwrite existing data."
+        "Exported backup JSON includes coins balance, chest history, and card wallet/inventory in addition to existing data.",
+        "Importing an older backup (missing coins/chests/cards) completes successfully and initializes coins/chests/cards to empty/default values.",
+        "Importing a newer backup restores coins/chests/cards exactly (counts, timestamps, and values).",
+        "Backup & Restore UI remains in Settings and continues to show success/failure states."
       ]
     },
     {
-      "id": "REQ-3",
-      "text": "Enforce a strict 'no keyboard anywhere' UX: remove/avoid all freeform text inputs and numeric typing. All numeric values (sets, reps, duration, weight, any number) must be chosen via a vertical wheel picker with inertia, snapping, center highlight glow, and tick sound feedback; notes must be selectable predefined tags only.",
+      "id": "REQ-53",
+      "text": "Implement an offline Coins awarding system that automatically grants coins after: (a) saving a pull-up session, (b) detecting milestones, (c) streak changes/bonuses, and (d) achievements unlocking; coin rewards must be based on performance and must not require network access.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-2"
+          "msg-3"
         ],
         "quotes": [
-          "input system must NOT use keyboard anywhere... a vertical wheel picker must appear... no typing allowed anywhere in the app.",
-          "optional notes using predefined selectable tags only, no typing"
+          "every pullup session, milestone, streak, or achievement can reward coins automatically based on performance."
         ]
       },
       "acceptanceCriteria": [
-        "No screen uses editable text fields, textareas, or numeric inputs that trigger the OS keyboard.",
-        "Logging sets/reps/duration/weight is possible only through wheel pickers.",
-        "Wheel picker has inertial scrolling, snaps to discrete values, highlights the centered selection, and plays a tick SFX on selection changes.",
-        "Notes are selectable tags (multi-select) and do not allow arbitrary text entry."
+        "Coins increase automatically as part of the Log save flow (no extra user action required).",
+        "Coins can also increase when milestones are detected and when achievements unlock (in the same offline flow).",
+        "Awarding coins never blocks or breaks existing flows (session save, milestone overlay, achievement popups, rank promotion, PR celebration, quality overlay).",
+        "All coin events work fully offline."
       ]
     },
     {
-      "id": "REQ-4",
-      "text": "Create the core app navigation and screens: Dashboard, Log, History, Analytics, Settings, with icon-based minimal navigation and smooth transitions between screens (blur/depth animation).",
+      "id": "REQ-54",
+      "text": "Add a coins balance UI to the Dashboard: show total coins in the top-right with an animated rolling counter and a subtle glow burst when the balance increases; keep the existing Dashboard layout, rank badge, orb, fatigue rings, streak flame, and psychological pressure feedback intact.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-2"
+          "msg-3"
         ],
         "quotes": [
-          "main sections: dashboard screen... log screen... history screen... analytics screen... settings...",
-          "ui style: ... minimal text icon based navigation",
-          "screen transition blur animation"
+          "coins UI: show total coins in dashboard top-right, animated counter, subtle glow when coins increase."
         ]
       },
       "acceptanceCriteria": [
-        "All five sections are accessible via a consistent navigation component.",
-        "Transitions between screens include smooth blur/depth motion (no abrupt route changes).",
-        "No placeholder sections; each screen renders real data from local storage."
+        "Dashboard shows a clearly visible coin balance in the top-right corner.",
+        "Coin value changes animate smoothly (rolling/counting effect).",
+        "When coins increase, the coin UI plays a subtle glow/highlight animation without impacting other Dashboard animations.",
+        "No keyboard input is introduced."
       ]
     },
     {
-      "id": "REQ-5",
-      "text": "Dashboard: show today's total pullups as a large animated rolling counter; show current rank as an animated metallic hexagon badge; show streak flame animation; show fatigue indicator ring; show an orb-style energy core that fills as the user progresses toward a goal; apply subtle animated gradient background with depth blur.",
+      "id": "REQ-55",
+      "text": "Create a Chest Shop section inside the existing Settings tab that displays: total coin balance, available chest options (Common, Rare, Epic) with their coin costs, and a history list of opened chests; do not remove or rebuild existing Settings sections (Volume Control, Daily Goal, Backup & Restore, Danger Zone).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-2"
+          "msg-3"
         ],
         "quotes": [
-          "dashboard screen: show today total pullups in large animated number counter... show current rank as animated metallic hexagon badge... streak flame animation... fatigue indicator ring... pullup orb energy core... background must have subtle gradient animation and depth blur."
+          "chest system\nintegrated inside settings tab.",
+          "chest section includes total coins balance, available chests, and history of opened chests"
         ]
       },
       "acceptanceCriteria": [
-        "Today’s pull-ups total updates immediately after logging and animates upward with a rolling counter effect.",
-        "Rank badge is shown as a metallic hexagon with animated shine and inner glow.",
-        "Streak is displayed with a flame animation that responds to streak state.",
-        "Fatigue indicator renders as a ring with an animated progress/level display driven by computed fatigue score.",
-        "Orb energy core fill level reflects progress toward a configurable daily goal and animates smoothly."
+        "Settings contains a new Chest Shop panel/section while keeping all existing panels present and functional.",
+        "Chest Shop section shows current coin balance.",
+        "Chest Shop section lists three chest types with clear costs: Common 250, Rare 500, Epic 1000.",
+        "Chest Shop section shows a scrollable history of opened chests (most recent first) with timestamp and results."
       ]
     },
     {
-      "id": "REQ-6",
-      "text": "Log Screen: implement a premium logging flow using wheel pickers to select number of sets and reps per set, with optional duration and optional weight; include predefined tags for notes; on save, persist the session, play a premium confirmation sound, trigger haptics, and show a pulse confirmation animation.",
+      "id": "REQ-56",
+      "text": "Implement the chest purchase and opening interaction flow: tap a chest, confirm purchase, deduct coins immediately, then play a premium chest-opening animation (shake + glow) and reveal each card one by one (flip/slide) with highlight glow; store results automatically to the offline wallet and chest history.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-2"
+          "msg-3"
         ],
         "quotes": [
-          "log screen: user logs pullups using wheel selectors... select: number of sets reps per set optional weight optional notes using predefined selectable tags only, no typing",
-          "after saving, play premium confirmation sound and pulse animation.",
-          "haptic feedback: ... medium vibration on save"
+          "tap chest → confirm purchase → play opening animation → cards revealed one by one → coins deducted immediately",
+          "animations for chest opening: shake chest, glow, slowly reveal each card with flip/slide animation.",
+          "cards reveal with animation + highlight glow, stored automatically in user wallet inside the app."
         ]
       },
       "acceptanceCriteria": [
-        "A user can log a session with multiple sets (each with reps) using wheel pickers only.",
-        "Optional duration and weight can be included via wheel pickers (and omitted).",
-        "A save action writes to local storage and immediately updates dashboard totals.",
-        "On successful save, the app plays the save chime SFX, triggers medium haptic vibration (when supported), and shows a pulse animation confirmation."
+        "Attempting to open a chest with insufficient coins is blocked with a clear error/toast and no state changes.",
+        "On confirmation, coins are deducted immediately and the UI reflects the new balance.",
+        "A chest-opening overlay/modal sequence plays before card results are fully shown.",
+        "Cards are revealed sequentially (not all at once) with a flip/slide animation and a highlight glow.",
+        "After completion, the revealed cards are persisted into the offline wallet and the chest opening is appended to history."
       ]
     },
     {
-      "id": "REQ-7",
-      "text": "History Screen: display the last 365 days of pull-up totals in a smooth animated graph that draws left-to-right on open; allow tapping a day to view details; show weekly average, monthly total, and personal records derived from the stored data.",
+      "id": "REQ-57",
+      "text": "Implement the exact independent probabilistic draw tables for each chest type (each card draw is independent; duplicates in the same chest are allowed) and ensure the number of card draws per chest matches the specification: Common (3), Rare (5), Epic (7).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-2"
+          "msg-3"
         ],
         "quotes": [
-          "history screen: show last 365 days data in smooth animated graph. graph lines draw from left to right when opened. user can tap any day to see details. include weekly average, monthly total, and personal records."
+          "here are the probability tables for all three chests,",
+          "all draws should be independent, meaning the same value can appear more than once in one chest."
         ]
       },
       "acceptanceCriteria": [
-        "Graph renders exactly 365 days (or fewer if the user has less history) and animates the line drawing on screen entry.",
-        "User can tap/click on any day data point and see a details panel with that day’s sessions/sets.",
-        "Weekly average and monthly total are computed from stored logs and displayed.",
-        "Personal records (e.g., highest daily total, highest single-session total) are computed and displayed."
+        "Common chest: 3 independent draws; each draw uses: 10rs=20%, 20rs=30%, 30rs=50%.",
+        "Rare chest: 5 independent draws; each draw uses: 20rs=10%, 40rs=15%, 60rs=20%, 80rs=25%, 100rs=30%.",
+        "Epic chest: 7 independent draws; each draw uses: 50rs=25%, 80rs=30%, 100rs=20%, 120rs=30% total (15%+15% treated as 120rs), 150rs=30% total (5%+5%+5% treated as 150rs), 180rs=10% total (5%+5% treated as 180rs).",
+        "Within a single chest opening, the same value can appear multiple times (no uniqueness constraint).",
+        "The app always produces exactly 3/5/7 card values for Common/Rare/Epic respectively."
       ]
     },
     {
-      "id": "REQ-8",
-      "text": "Analytics Screen: compute and display max pullups ever, current streak, longest streak, daily average, fatigue score, consistency score, and rank progress based on local data; include a personal record celebration (visual + SFX + haptic) when a new record is achieved.",
+      "id": "REQ-58",
+      "text": "Apply tier-based chest visual styling and effects that match the existing luxury cold aesthetic and app palette (#0b0f14 background, #00f0ff accents) while adding distinct tier identity: Common (bronze + soft glow), Rare (silver + shimmering aura), Epic (gold/amber + animated particles + aura sweep).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-2"
+          "msg-3"
         ],
         "quotes": [
-          "analytics screen: show: max pullups ever current streak longest streak daily average fatigue score consistency score rank progress",
-          "psychological features: ... personal record celebration ... consistency scoring",
-          "sound effects: ... deep bass pulse on personal record",
-          "haptic feedback: ... strong vibration on rank promotion"
+          "colors & aura:\ncommon → bronze + soft glow\nrare → silver + shimmering aura\nepic → gold/amber + animated particles + aura sweep",
+          "maintain all previous app colors and styles: #0b0f14 background, #00f0ff accents, hexagon metallic textures, glowing auras, smooth transitions, haptic feedback"
         ]
       },
       "acceptanceCriteria": [
-        "All metrics render from local data (no hardcoded sample values).",
-        "Fatigue score and consistency score are deterministic and update as data changes (provide an in-UI info/description of the formula).",
-        "When a new personal record is logged, the app triggers a celebration animation, plays the PR bass pulse SFX, and triggers a strong/special vibration where supported."
+        "Chest Shop UI uses glass morphism panels, depth shadows, and minimal futuristic styling consistent with the rest of the app.",
+        "Common chest visuals read as bronze with a soft glow.",
+        "Rare chest visuals read as silver with a shimmering aura effect.",
+        "Epic chest visuals read as gold/amber with animated particles and an aura sweep during opening/reveal.",
+        "No existing RankBadge/Orb/Stickman/WheelPicker styling is removed or degraded."
       ]
     },
     {
-      "id": "REQ-9",
-      "text": "Rank system: implement the full rank ladder (Bronze III → Ascendant) with animated metallic hexagon badges including metal texture, inner glow, moving shine reflection, particle aura, and a promotion animation (explosion/impact). Rank progress must update based on the user’s accumulated performance and be visible on Dashboard and Analytics.",
+      "id": "REQ-59",
+      "text": "Extend the existing SFX system to support chest-related sounds and wire them into the chest flow: Common chest uses a soft metallic click, Rare uses a sparkle/jingle, Epic uses an epic deep pulse/bass + shimmer; additionally, play a per-card reveal sound and stronger unique feedback for high-value reveals (rare/epic moments).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-2"
+          "msg-3"
         ],
         "quotes": [
-          "rank system: ranks with animated metallic hexagon badges: bronze iii ... elite ascendant",
-          "each rank hexagon must include: metal texture inner glow moving shine reflection particle aura promotion animation",
-          "rank promotion explosion animation",
-          "rank promotion impact"
+          "sounds:\ncommon → soft metallic click\nrare → sparkle/jingle\nepic → epic deep pulse, bass, and shimmer sound",
+          "epic card or rare card reveal triggers stronger animation and unique sound effect"
         ]
       },
       "acceptanceCriteria": [
-        "All listed ranks exist and can be reached as the user’s tracked performance increases.",
-        "Badge visuals include metallic texture + moving shine + inner glow + particle aura.",
-        "When rank changes upward, the promotion animation plays and the rank promotion impact SFX triggers with strong haptics (where supported).",
-        "Rank progress is shown as a clear progress indicator toward the next rank."
+        "New chest SFX can be played via the existing global volume control.",
+        "Common chest opening plays the specified soft metallic click-style SFX.",
+        "Rare chest opening plays the specified sparkle/jingle-style SFX.",
+        "Epic chest opening plays the specified epic deep pulse/bass + shimmer-style SFX.",
+        "Each card reveal plays a short reveal sound; high-value reveals trigger stronger/unique audio feedback without overlapping excessively or breaking other SFX."
       ]
     },
     {
-      "id": "REQ-10",
-      "text": "Sound effects system (no music): add and wire SFX for button click, wheel tick, data save chime, rank promotion impact, streak ignition flame, metal touch, and deep bass pulse on personal record; provide a global volume control that affects all SFX.",
+      "id": "REQ-60",
+      "text": "Add subtle positive feedback animations and haptics when coins are awarded and when a chest is opened; add stronger feedback for special reveals (rare/epic/high-value cards), while preserving existing haptic patterns and gracefully degrading on devices without vibration support.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-2"
+          "msg-3"
         ],
         "quotes": [
-          "sound system: no music allowed. only sound effects.",
-          "include sounds: button click wheel tick data save chime rank promotion impact streak ignition flame metal touch deep bass pulse on personal record"
+          "receiving coins and opening chests triggers subtle positive feedback animations and sounds",
+          "epic card or rare card reveal triggers stronger animation and unique sound effect",
+          "haptic feedback"
         ]
       },
       "acceptanceCriteria": [
-        "No music/audio loops are present anywhere in the app.",
-        "Each listed SFX is present as an audio asset and is triggered at the correct interaction/event.",
-        "Global volume affects all SFX consistently.",
-        "Audio playback failures are handled gracefully (no crashes)."
+        "Coin award events trigger a subtle UI feedback (e.g., glow/pulse on coin counter) and a light/appropriate haptic where supported.",
+        "Opening a chest triggers a stronger but premium feedback moment (visual + optional haptic) aligned with the tier.",
+        "High-value card reveals trigger a noticeably stronger effect than normal reveals (visual + sound; haptic where supported).",
+        "No keyboard input is introduced."
       ]
     },
     {
-      "id": "REQ-11",
-      "text": "Settings: implement an interactive stickman pull-up volume control (no static slider) where the user drags a stickman upward on a pull-up bar to increase volume; reaching 100% triggers an automatic drop and resets volume to 0, with physics-like animation (arm stretch, gravity drop) and a special vibration at max pull; also include Reset Data with a premium confirmation animation.",
+      "id": "REQ-61",
+      "text": "Keep all previous app functionality unchanged and compatible: wheel-only input UX, existing navigation/screens, hexagon ranks, orb energy animations, stickman volume system, achievements/milestones/quality overlays, psychological pressure feedback, and performance targets (smooth ~60fps).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-2"
+          "msg-3"
         ],
         "quotes": [
-          "volume control must be interactive stickman pullup system... user drags stickman upward to increase volume... when reaching 100 percent volume stickman drops automatically and volume resets to 0... no static slider allowed... physics animation, arm stretch, gravity drop, and vibration feedback",
-          "settings: ... sound control with stickman system ... reset data option with confirmation animation",
-          "haptic feedback: ... special vibration on volume max pull"
+          "do not rebuild existing systems. extend the app with a coins system and probabilistic chest shop fully offline, ultra-premium, interactive, and animated, while keeping all previous functionality, hexagon ranks, wheel input, sound system, and psychological feedback.",
+          "fully compatible with existing stickman pullup volume system, wheel input, hexagon ranks, and orb energy animations",
+          "no placeholder elements; all chest, coin, and card mechanics fully functional offline"
         ]
       },
       "acceptanceCriteria": [
-        "Settings includes the stickman volume control and no traditional slider UI is used for volume.",
-        "Dragging upward increases volume continuously; releasing behaves naturally with physics-like easing.",
-        "When volume reaches 100%, the stickman drops automatically, volume resets to 0, and the special max-pull vibration triggers (when supported).",
-        "Reset Data requires confirmation and plays a distinct confirmation animation before wiping local storage.",
-        "After reset, all screens reflect an empty state without errors."
+        "All existing screens and features remain accessible and function as before.",
+        "No regressions to wheel picker behavior, stickman slider scroll-lock, rank badge animations, or existing SFX/haptics.",
+        "Chest/coin animations remain smooth and do not cause noticeable lag on typical mobile devices.",
+        "Everything works offline; no new network dependencies are introduced for core functionality."
       ]
     },
     {
-      "id": "REQ-12",
-      "text": "Apply the specified luxury visual system across the entire app (glass morphism, soft shadows, depth layers, minimal cold futuristic feel) using the exact provided color palette for backgrounds, cards, accents, buttons, wheel picker, text, and rank colors; ensure the UI feels 'alive' with pervasive motion and responsive micro-interactions.",
+      "id": "REQ-62",
+      "text": "Implement optional chest modifiers: (a) a chest streak bonus where opening multiple chests in a row increases chances for higher value cards, and (b) a daily first-chest bonus for the first chest opened each day that slightly increases chances for higher value outcomes; expose clear on/off controls within the Chest Shop section and ensure defaults are off unless otherwise specified.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-2"
+          "msg-3"
         ],
         "quotes": [
-          "app must feel elite, futuristic, minimal, cold, and extremely smooth...",
-          "color system: ... (full palette)",
-          "ui style: glass morphism soft shadows depth layers minimal text",
-          "animations everywhere: ..."
+          "optional: chest streak bonus (opening multiple chests in a row increases chances for higher value cards)",
+          "optional: daily bonus chest for first chest of the day, slightly higher chance of epic card"
         ]
       },
       "acceptanceCriteria": [
-        "All major UI surfaces (app background, cards, buttons, text, accents) use the provided hex colors as the authoritative palette.",
-        "Wheel picker styling matches the provided wheel picker palette (background, selected/unselected colors, center glow).",
-        "Buttons have pressed depth animation and use the specified normal/pressed colors.",
-        "Micro-interactions are present across navigation and primary controls (press, hover/active states where applicable) without introducing jank."
-      ]
-    },
-    {
-      "id": "REQ-13",
-      "text": "Implement haptic feedback patterns using the platform vibration capability where available: light vibration on button press, medium on save, strong on rank promotion, and special vibration on volume max pull; ensure the app degrades gracefully when vibration is unsupported.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-2"
-        ],
-        "quotes": [
-          "haptic feedback: light vibration on button medium vibration on save strong vibration on rank promotion special vibration on volume max pull"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Button presses trigger light haptic feedback (when supported).",
-        "Saving a log triggers medium haptic feedback (when supported).",
-        "Rank promotion triggers strong haptic feedback (when supported).",
-        "Volume max pull event triggers the special vibration (when supported).",
-        "When vibration is unsupported, no errors occur and the UX remains usable."
-      ]
-    },
-    {
-      "id": "REQ-14",
-      "text": "Ensure performance and smoothness: animations and interactions (wheel inertia, counters, graph drawing, transitions) must remain responsive with no noticeable lag on typical mobile devices; avoid unnecessary network requests and heavy rerenders.",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-2"
-        ],
-        "quotes": [
-          "performance: must be extremely smooth no lag instant response",
-          "never require internet for core function"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Core interactions (wheel scroll, save, navigation) respond immediately without blocking the main thread for noticeable durations.",
-        "The app remains functional offline and does not continuously attempt background network calls for core features.",
-        "No screen depends on backend calls to render core data."
+        "Chest Shop UI provides toggles/controls for enabling/disabling chest streak bonus and daily first-chest bonus.",
+        "When disabled, chest outcomes follow the base probability tables exactly.",
+        "When enabled, the bonus rules apply consistently and transparently (the UI indicates when a bonus is active for an opening).",
+        "Bonus state and relevant counters/timestamps persist offline across refreshes."
       ]
     }
   ],
   "constraints": [
-    "Do not require internet connectivity for any core tracking, viewing, or analytics functionality.",
-    "Do not use any keyboard-triggering inputs anywhere in the app; numeric input must be wheel-based and notes must be tag-based only.",
-    "No music is allowed; only sound effects.",
-    "Frontend UI component sources under immutablePaths must not be edited directly; compose them instead.",
-    "Backend must remain a single Motoko actor; do not introduce additional backend services."
+    "Do not rebuild existing systems; only extend the app while preserving all prior functionality and screens.",
+    "Core functionality must remain fully offline; no network required to award coins, open chests, or view wallet/history.",
+    "Maintain strict 'no keyboard anywhere' UX (no freeform text inputs for this feature).",
+    "Preserve existing luxury cold aesthetic and palette, specifically including #0b0f14 background and #00f0ff accents.",
+    "Use and extend the existing SFX system and global volume control for any new sounds.",
+    "Keep interactions smooth and performant; animations should remain responsive on typical mobile devices.",
+    "Do not modify files listed as immutable in SYSTEM_CONTEXT (compose with existing components instead).",
+    "Backend must remain single-actor; do not introduce new backend services (prefer frontend offline storage for this system)."
   ],
   "nonGoals": [
-    "Automatic Google Drive synchronization or background cloud sync (only manual export/import suitable for Drive storage).",
-    "Third-party authentication with Google OAuth for Drive APIs (not required for the manual backup approach).",
-    "Social/sharing features, leaderboards, or multi-user accounts (app is for personal use only)."
+    "Online sync, automatic cloud sync, or any backend-hosted economy features.",
+    "Real-money purchases, payments, or external wallet integrations.",
+    "Adding new navigation tabs or removing/replacing existing screens.",
+    "Changing rank thresholds/tier logic, wheel picker mechanics, stickman volume mechanics, or achievements definitions beyond what is necessary to hook coin rewards."
   ],
   "imageRequirements": {
     "required": [
-      "Metallic hexagon badge base (hex-badge-base.dim_512x512.png)",
-      "Bronze metal texture tile (metal-bronze.dim_1024x1024.png)",
-      "Silver metal texture tile (metal-silver.dim_1024x1024.png)",
-      "Gold metal texture tile (metal-gold.dim_1024x1024.png)",
-      "Platinum metal texture tile (metal-platinum.dim_1024x1024.png)",
-      "Diamond metal texture tile (metal-diamond.dim_1024x1024.png)",
-      "Elite white metal texture tile (metal-elite.dim_1024x1024.png)",
-      "Ascendant iridescent magenta metal texture tile (metal-ascendant.dim_1024x1024.png)",
-      "Minimal stickman hanging on pull-up bar illustration (stickman-pullup.dim_1024x512.png)",
-      "Subtle futuristic animated-style background plate (bg-frosted-gradient.dim_1440x2560.png)",
-      "Flame sprite sheet for streak animation (flame-sprite.dim_1024x1024.png)",
-      "Energy orb core texture (orb-core.dim_1024x1024.png)"
+      "3D-styled coin icon with glow (coin-icon.dim_128x128.png)",
+      "Bronze chest illustration with soft glow (chest-common.dim_512x512.png)",
+      "Silver chest illustration with shimmering aura (chest-rare.dim_512x512.png)",
+      "Gold/amber chest illustration with particle accents (chest-epic.dim_512x512.png)",
+      "Luxury card front frame (card-frame.dim_600x840.png)",
+      "Luxury card back design with subtle holographic sheen (card-back.dim_600x840.png)"
     ],
     "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
   }
 }

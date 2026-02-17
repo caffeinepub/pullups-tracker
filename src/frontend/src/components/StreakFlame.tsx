@@ -2,10 +2,15 @@ import { useEffect, useRef } from 'react';
 
 interface StreakFlameProps {
   streak: number;
+  intensityMultiplier?: number;
   size?: number;
 }
 
-export default function StreakFlame({ streak, size = 60 }: StreakFlameProps) {
+export default function StreakFlame({ 
+  streak, 
+  intensityMultiplier = 1,
+  size = 60 
+}: StreakFlameProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -25,16 +30,18 @@ export default function StreakFlame({ streak, size = 60 }: StreakFlameProps) {
       ctx.clearRect(0, 0, size, size);
 
       if (streak > 0) {
-        const intensity = Math.min(streak / 30, 1);
+        const baseIntensity = Math.min(streak / 30, 1);
+        const intensity = baseIntensity * intensityMultiplier;
         
         for (let i = 0; i < 3; i++) {
           const offset = Math.sin(frame * 0.1 + i) * 5;
           const flameHeight = size * 0.7 * intensity;
           
           const gradient = ctx.createLinearGradient(size / 2, size, size / 2, size - flameHeight);
-          gradient.addColorStop(0, '#ff6b00');
-          gradient.addColorStop(0.5, '#ff9500');
-          gradient.addColorStop(1, '#ffcc00');
+          const alpha = Math.floor(intensityMultiplier * 255).toString(16).padStart(2, '0');
+          gradient.addColorStop(0, `#ff6b00${alpha}`);
+          gradient.addColorStop(0.5, `#ff9500${alpha}`);
+          gradient.addColorStop(1, `#ffcc00${alpha}`);
 
           ctx.fillStyle = gradient;
           ctx.beginPath();
@@ -58,7 +65,7 @@ export default function StreakFlame({ streak, size = 60 }: StreakFlameProps) {
     animate();
 
     return () => cancelAnimationFrame(animationFrame);
-  }, [streak, size]);
+  }, [streak, intensityMultiplier, size]);
 
   return (
     <div className="relative inline-block">

@@ -5,9 +5,11 @@ import { offlineDb } from '../lib/offlineDb';
 interface PullupStoreContextType {
   sessions: PullupSession[];
   settings: UserSettings;
+  coins: number;
   addSession: (session: Omit<PullupSession, 'id' | 'timestamp' | 'totalReps'>) => Promise<void>;
   refreshSessions: () => Promise<void>;
   updateSettings: (settings: Partial<UserSettings>) => Promise<void>;
+  refreshCoins: () => Promise<void>;
 }
 
 const PullupStoreContext = createContext<PullupStoreContextType | undefined>(undefined);
@@ -15,11 +17,17 @@ const PullupStoreContext = createContext<PullupStoreContextType | undefined>(und
 export function PullupStoreProvider({ children }: { children: ReactNode }) {
   const [sessions, setSessions] = useState<PullupSession[]>([]);
   const [settings, setSettings] = useState<UserSettings>({ volume: 0.7, dailyGoal: 50 });
+  const [coins, setCoins] = useState<number>(0);
   const [initialized, setInitialized] = useState(false);
 
   const refreshSessions = useCallback(async () => {
     const allSessions = await offlineDb.getAllSessions();
     setSessions(allSessions.sort((a, b) => b.timestamp - a.timestamp));
+  }, []);
+
+  const refreshCoins = useCallback(async () => {
+    const currentCoins = await offlineDb.getCoins();
+    setCoins(currentCoins);
   }, []);
 
   useEffect(() => {
@@ -28,10 +36,11 @@ export function PullupStoreProvider({ children }: { children: ReactNode }) {
       await refreshSessions();
       const loadedSettings = await offlineDb.getSettings();
       setSettings(loadedSettings);
+      await refreshCoins();
       setInitialized(true);
     };
     init();
-  }, [refreshSessions]);
+  }, [refreshSessions, refreshCoins]);
 
   const addSession = async (sessionData: Omit<PullupSession, 'id' | 'timestamp' | 'totalReps'>) => {
     const totalReps = sessionData.sets.reduce((sum, set) => sum + set.reps, 0);
@@ -57,7 +66,7 @@ export function PullupStoreProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <PullupStoreContext.Provider value={{ sessions, settings, addSession, refreshSessions, updateSettings }}>
+    <PullupStoreContext.Provider value={{ sessions, settings, coins, addSession, refreshSessions, updateSettings, refreshCoins }}>
       {children}
     </PullupStoreContext.Provider>
   );
