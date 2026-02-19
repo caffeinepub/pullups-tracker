@@ -5,7 +5,7 @@ interface RollingCounterProps {
   duration?: number;
 }
 
-export default function RollingCounter({ value, duration = 1000 }: RollingCounterProps) {
+export default function RollingCounter({ value, duration = 400 }: RollingCounterProps) {
   const [displayValue, setDisplayValue] = useState(value);
   const animationRef = useRef<number | undefined>(undefined);
 

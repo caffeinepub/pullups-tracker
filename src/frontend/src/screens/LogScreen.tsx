@@ -1,15 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { usePullupStore } from '../hooks/usePullupStore';
 import { useRankProgress } from '../hooks/useRankProgress';
+import { usePSTSync } from '../hooks/usePSTSync';
+import { formatPSTDateForDisplay } from '../lib/pstDate';
 import { getLifetimeTotal, getPersonalRecords, getStreakInfo } from '../lib/stats';
 import { calculateSessionQuality } from '../lib/intelligence/sessionQuality';
 import { detectMilestones } from '../lib/intelligence/milestones';
 import { detectMicroProgress } from '../lib/intelligence/microProgress';
-import { calculateFatigueScore } from '../lib/analytics';
-import { calculateReadiness } from '../lib/intelligence/readiness';
 import { offlineDb } from '../lib/offlineDb';
-import { checkAndUnlockAchievements, getAchievementById } from '../lib/achievements/service';
-import { useAchievementUnlock } from '../components/achievements/AchievementUnlockProvider';
 import { awardCoins } from '../lib/economy/economyService';
 import SessionBuilder from '../components/SessionBuilder';
 import TagMultiSelect from '../components/TagMultiSelect';
@@ -27,8 +25,8 @@ import { Milestone } from '../lib/intelligence/milestones';
 export default function LogScreen() {
   const { sessions, addSession, refreshCoins } = usePullupStore();
   const { checkForPromotion } = useRankProgress();
+  const { currentPSTDate, onDateChange } = usePSTSync();
   const { play } = useSfx();
-  const { showAchievement } = useAchievementUnlock();
   
   const [step, setStep] = useState<'builder' | 'tags'>('builder');
   const [sessionData, setSessionData] = useState<any>(null);
@@ -38,6 +36,29 @@ export default function LogScreen() {
   const [sessionQuality, setSessionQuality] = useState<number | null>(null);
   const [currentMilestone, setCurrentMilestone] = useState<Milestone | null>(null);
   const [microProgressMsg, setMicroProgressMsg] = useState<string | null>(null);
+  const [displayDate, setDisplayDate] = useState(formatPSTDateForDisplay(currentPSTDate));
+  const [dateKey, setDateKey] = useState(currentPSTDate);
+
+  // Update display date when PST date changes
+  useEffect(() => {
+    setDisplayDate(formatPSTDateForDisplay(currentPSTDate));
+    setDateKey(currentPSTDate);
+  }, [currentPSTDate]);
+
+  // Listen for midnight transitions
+  useEffect(() => {
+    const cleanup = onDateChange((newDate) => {
+      // Play soft transition sound
+      play('date-transition');
+      setDisplayDate(formatPSTDateForDisplay(newDate));
+      setDateKey(newDate);
+      
+      // Refresh sessions to show new day
+      window.location.reload();
+    });
+
+    return cleanup;
+  }, [onDateChange, play]);
 
   const handleSessionComplete = (sets: any[], duration?: number) => {
     setSessionData({ sets, duration });
@@ -54,12 +75,13 @@ export default function LogScreen() {
       sets: sessionData.sets,
       duration: sessionData.duration,
       tags: selectedTags,
+      pstDate: currentPSTDate, // Save with current PST date
     };
 
     await addSession(newSession);
 
     const allSessions = await offlineDb.getAllSessions();
-    const savedSession = allSessions[0];
+    const savedSession = allSessions[allSessions.length - 1];
 
     const qualityResult = calculateSessionQuality(savedSession, sessions);
     await offlineDb.addSessionQuality({
@@ -76,58 +98,34 @@ export default function LogScreen() {
 
     const microProgress = detectMicroProgress(savedSession, sessions);
 
-    // Check achievements
+    // Check for personal records
     const streakInfo = getStreakInfo(allSessions);
     const newRecords = getPersonalRecords(allSessions);
-    const qualityRecords = await offlineDb.getAllQualityRecords();
-    const fatigue = calculateFatigueScore(allSessions);
-    const readinessResult = calculateReadiness(allSessions);
-
-    const achievementContext = {
-      totalReps: getLifetimeTotal(allSessions),
-      sessions: allSessions,
-      currentStreak: streakInfo.current,
-      longestStreak: streakInfo.longest,
-      maxDailyTotal: newRecords.maxDailyTotal,
-      maxSingleSession: newRecords.maxSingleSession,
-      maxSingleSet: newRecords.maxSingleSet,
-      qualityRecords,
-      milestones: allMilestones,
-      fatigue,
-      readiness: readinessResult.score,
-    };
-
-    const newUnlocks = await checkAndUnlockAchievements(achievementContext);
+    const isPR = 
+      newRecords.maxDailyTotal > previousRecords.maxDailyTotal ||
+      newRecords.maxSingleSession > previousRecords.maxSingleSession ||
+      newRecords.maxSingleSet > previousRecords.maxSingleSet;
 
     // Award coins
-    const isPR = newRecords.maxDailyTotal > previousRecords.maxDailyTotal ||
-                 newRecords.maxSingleSession > previousRecords.maxSingleSession ||
-                 newRecords.maxSingleSet > previousRecords.maxSingleSet;
-
-    await awardCoins({
+    const coinsAwarded = await awardCoins({
       session: savedSession,
       qualityScore: qualityResult.score,
       newMilestones,
-      newAchievements: newUnlocks,
       streakBonus: streakInfo.current,
       isPR,
     });
 
     await refreshCoins();
 
-    play('save-chime');
-    triggerHaptic('medium');
-
-    const newTotal = previousTotal + sessionData.sets.reduce((sum: number, s: any) => sum + s.reps, 0);
+    // Check for rank promotion
+    const newTotal = getLifetimeTotal(allSessions);
     const promotion = checkForPromotion(previousTotal, newTotal);
-
     if (promotion) {
       setPromotedRank(promotion);
     }
 
-    if (newRecords.maxDailyTotal > previousRecords.maxDailyTotal ||
-        newRecords.maxSingleSession > previousRecords.maxSingleSession ||
-        newRecords.maxSingleSet > previousRecords.maxSingleSet) {
+    // Show celebrations
+    if (isPR) {
       setShowPRCelebration(true);
     }
 
@@ -139,46 +137,61 @@ export default function LogScreen() {
       setCurrentMilestone(newMilestones[0]);
     }
 
-    if (microProgress.detected) {
+    if (microProgress) {
       setMicroProgressMsg(microProgress.message);
     }
 
-    for (const unlock of newUnlocks) {
-      const achievement = getAchievementById(unlock.achievementId);
-      if (achievement) {
-        showAchievement(achievement);
-      }
-    }
-
+    // Reset form
     setStep('builder');
     setSessionData(null);
     setSelectedTags([]);
   };
 
   return (
-    <div className="min-h-screen p-6">
+    <div className="min-h-screen p-6 space-y-6">
+      {/* Date Display with CSS Animation */}
+      <div className="flex justify-center mb-4">
+        <div
+          key={dateKey}
+          className="text-2xl font-bold text-app-accent tracking-wide animate-in fade-in duration-500"
+        >
+          {displayDate}
+        </div>
+      </div>
+
+      <h1 className="text-3xl font-bold text-app-text-primary">Log Workout</h1>
+
       {step === 'builder' && (
         <SessionBuilder onComplete={handleSessionComplete} />
       )}
 
       {step === 'tags' && (
-        <div className="max-w-2xl mx-auto space-y-6">
-          <h2 className="text-2xl font-bold text-app-text-primary">Add Tags (Optional)</h2>
+        <div className="space-y-6">
           <TagMultiSelect
             selected={selectedTags}
             onChange={setSelectedTags}
           />
+
           <div className="flex gap-3">
             <Button
-              onClick={() => setStep('builder')}
               variant="outline"
+              onClick={() => {
+                setStep('builder');
+                setSessionData(null);
+                play('button-click');
+                triggerHaptic('light');
+              }}
               className="flex-1"
             >
               Back
             </Button>
             <Button
-              onClick={handleSave}
-              className="flex-1 bg-app-accent hover:bg-app-accent/90 text-app-bg-primary"
+              onClick={() => {
+                handleSave();
+                play('button-click');
+                triggerHaptic('medium');
+              }}
+              className="flex-1"
             >
               Save Session
             </Button>
@@ -186,6 +199,7 @@ export default function LogScreen() {
         </div>
       )}
 
+      {/* Celebration Overlays */}
       {promotedRank && (
         <RankPromotionOverlay
           rank={promotedRank}

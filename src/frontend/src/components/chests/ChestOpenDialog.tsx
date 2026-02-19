@@ -163,10 +163,10 @@ export default function ChestOpenDialog({ tier, open, onOpenChange, onComplete }
             <div className="grid grid-cols-3 gap-4 max-h-96 overflow-y-auto">
               {cards.map((value, index) => (
                 <CardReveal
-                  key={index}
+                  key={`card-${index}`}
                   value={value}
                   tier={tier}
-                  delay={index * 600}
+                  delay={index * 300}
                   onRevealComplete={() => handleRevealComplete(index, value)}
                 />
               ))}

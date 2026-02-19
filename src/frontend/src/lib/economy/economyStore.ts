@@ -1,7 +1,7 @@
 // Centralized offline economy operations
 import { offlineDb } from '../offlineDb';
 import { ChestOpenRecord, CardWalletItem } from './chestsTypes';
-import { ModifierState, getDefaultModifiers } from './modifiers';
+import { ModifierState } from './modifiers';
 
 export async function getCoins(): Promise<number> {
   return await offlineDb.getCoins();
@@ -27,7 +27,7 @@ export async function deductCoins(amount: number): Promise<boolean> {
 }
 
 export async function getChestHistory(): Promise<ChestOpenRecord[]> {
-  return await offlineDb.getChestHistory();
+  return await offlineDb.getAllChestOpens();
 }
 
 export async function addChestOpen(record: ChestOpenRecord): Promise<void> {
@@ -35,7 +35,7 @@ export async function addChestOpen(record: ChestOpenRecord): Promise<void> {
 }
 
 export async function getCardWallet(): Promise<CardWalletItem[]> {
-  return await offlineDb.getCardWallet();
+  return await offlineDb.getAllCards();
 }
 
 export async function addCardsToWallet(items: CardWalletItem[]): Promise<void> {
@@ -45,9 +45,9 @@ export async function addCardsToWallet(items: CardWalletItem[]): Promise<void> {
 }
 
 export async function getModifiers(): Promise<ModifierState> {
-  return await offlineDb.getChestModifiers();
+  return await offlineDb.getModifiers();
 }
 
 export async function saveModifiers(modifiers: ModifierState): Promise<void> {
-  await offlineDb.saveChestModifiers(modifiers);
+  await offlineDb.setModifiers(modifiers);
 }

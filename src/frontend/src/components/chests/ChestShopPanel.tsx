@@ -10,6 +10,8 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Coins } from 'lucide-react';
+import { useSfx } from '../../hooks/useSfx';
+import { triggerHaptic } from '../../lib/haptics';
 
 export default function ChestShopPanel() {
   const { coins, refreshCoins } = usePullupStore();
@@ -18,6 +20,7 @@ export default function ChestShopPanel() {
   const [history, setHistory] = useState<ChestOpenRecord[]>([]);
   const [streakBonus, setStreakBonus] = useState(false);
   const [dailyBonus, setDailyBonus] = useState(false);
+  const { play } = useSfx();
 
   useEffect(() => {
     loadHistory();
@@ -49,12 +52,16 @@ export default function ChestShopPanel() {
     setStreakBonus(enabled);
     const modifiers = await getModifiers();
     await saveModifiers({ ...modifiers, streakBonusEnabled: enabled });
+    play('button-click');
+    triggerHaptic('light');
   };
 
   const handleDailyToggle = async (enabled: boolean) => {
     setDailyBonus(enabled);
     const modifiers = await getModifiers();
     await saveModifiers({ ...modifiers, dailyBonusEnabled: enabled });
+    play('button-click');
+    triggerHaptic('light');
   };
 
   return (

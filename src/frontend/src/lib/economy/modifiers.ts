@@ -1,12 +1,12 @@
-// Chest modifier logic for streak and daily bonuses
-import { ChestTier, ChestModifiers } from './chestsTypes';
+import { ChestOpenRecord } from './chestsTypes';
+import { getCurrentPSTDate } from '../pstDate';
 import { CardProbability } from './drawTables';
 
 export interface ModifierState {
   streakBonusEnabled: boolean;
   dailyBonusEnabled: boolean;
   currentStreak: number;
-  lastOpenDate: string | null;
+  lastOpenDate: string | null; // PST date in yyyy-mm-dd format
 }
 
 export function getDefaultModifiers(): ModifierState {
@@ -18,53 +18,107 @@ export function getDefaultModifiers(): ModifierState {
   };
 }
 
-export function checkDailyBonus(modifiers: ModifierState): boolean {
-  if (!modifiers.dailyBonusEnabled) return false;
+export function updateModifiersAfterOpen(current: ModifierState): ModifierState {
+  const today = getCurrentPSTDate();
   
-  const today = new Date().toDateString();
-  return modifiers.lastOpenDate !== today;
-}
+  if (current.lastOpenDate === today) {
+    // Same day, no streak change
+    return current;
+  }
 
-export function updateModifiersAfterOpen(modifiers: ModifierState): ModifierState {
-  const today = new Date().toDateString();
-  const isNewDay = modifiers.lastOpenDate !== today;
-  
+  // Check if consecutive day
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+  const newStreak = current.lastOpenDate === yesterdayStr 
+    ? current.currentStreak + 1 
+    : 1;
+
   return {
-    ...modifiers,
-    currentStreak: isNewDay ? 1 : modifiers.currentStreak + 1,
+    ...current,
+    currentStreak: newStreak,
     lastOpenDate: today,
   };
 }
 
+export function checkDailyBonus(state: ModifierState): boolean {
+  const today = getCurrentPSTDate();
+  return state.dailyBonusEnabled && state.lastOpenDate !== today;
+}
+
+export function checkModifierActive(
+  modifier: 'streak' | 'daily',
+  state: ModifierState,
+  chestHistory: ChestOpenRecord[]
+): boolean {
+  const today = getCurrentPSTDate();
+
+  if (modifier === 'streak') {
+    return state.streakBonusEnabled && state.currentStreak >= 3;
+  }
+
+  if (modifier === 'daily') {
+    if (!state.dailyBonusEnabled) return false;
+    
+    // Check if already opened today
+    const todayOpens = chestHistory.filter(record => record.pstDate === today);
+    return todayOpens.length === 0;
+  }
+
+  return false;
+}
+
+export function applyModifiersToProbabilities(
+  baseProbabilities: number[],
+  activeModifiers: { streak: boolean; daily: boolean }
+): number[] {
+  let adjusted = [...baseProbabilities];
+
+  if (activeModifiers.streak) {
+    // Shift 10% probability from common to rare
+    adjusted[0] -= 0.1;
+    adjusted[1] += 0.1;
+  }
+
+  if (activeModifiers.daily) {
+    // Shift 5% from common to epic
+    adjusted[0] -= 0.05;
+    adjusted[2] += 0.05;
+  }
+
+  return adjusted;
+}
+
 export function applyModifiers(
   baseTable: CardProbability[],
-  tier: ChestTier,
+  tier: string,
   modifiers: ModifierState
 ): CardProbability[] {
-  if (!modifiers.streakBonusEnabled && !modifiers.dailyBonusEnabled) {
+  // Simple implementation: if modifiers are active, boost higher values
+  const hasActiveModifiers = modifiers.streakBonusEnabled || modifiers.dailyBonusEnabled;
+  
+  if (!hasActiveModifiers) {
     return baseTable;
   }
 
-  const isDailyBonus = checkDailyBonus(modifiers);
-  const streakBonus = modifiers.streakBonusEnabled ? Math.min(modifiers.currentStreak * 0.02, 0.1) : 0;
-  const dailyBonus = isDailyBonus ? 0.05 : 0;
-  const totalBonus = streakBonus + dailyBonus;
+  // Calculate total probability to normalize
+  const totalProb = baseTable.reduce((sum, entry) => sum + entry.probability, 0);
 
-  if (totalBonus === 0) return baseTable;
-
-  // Shift probability toward higher values
-  const modified = baseTable.map((entry, index) => {
-    const isHighValue = index >= Math.floor(baseTable.length * 0.6);
-    const boost = isHighValue ? totalBonus / (baseTable.length * 0.4) : 0;
-    const reduction = !isHighValue ? totalBonus / (baseTable.length * 0.6) : 0;
-    
+  // Boost probabilities for higher values, reduce for lower values
+  const modified = baseTable.map(entry => {
+    const isHighValue = entry.value >= 100;
+    const boost = isHighValue ? 1.3 : 0.8;
     return {
-      value: entry.value,
-      probability: Math.max(0.01, entry.probability + boost - reduction),
+      ...entry,
+      probability: entry.probability * boost,
     };
   });
 
-  // Normalize probabilities
-  const sum = modified.reduce((acc, e) => acc + e.probability, 0);
-  return modified.map(e => ({ ...e, probability: e.probability / sum }));
+  // Normalize probabilities to sum to 1
+  const newTotal = modified.reduce((sum, entry) => sum + entry.probability, 0);
+  return modified.map(entry => ({
+    ...entry,
+    probability: entry.probability / newTotal,
+  }));
 }

@@ -10,6 +10,7 @@ export interface PullupSession {
   duration?: number;
   tags: string[];
   totalReps: number;
+  pstDate: string; // yyyy-mm-dd format
 }
 
 export interface DailyStats {

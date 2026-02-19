@@ -1,18 +1,29 @@
-import StickmanVolumeControl from '../components/StickmanVolumeControl';
+import VerticalVolumeSlider from '../components/VerticalVolumeSlider';
 import BackupRestorePanel from '../components/BackupRestorePanel';
 import ResetDataDialog from '../components/ResetDataDialog';
 import ChestShopPanel from '../components/chests/ChestShopPanel';
 import { usePullupStore } from '../hooks/usePullupStore';
+import { useSfx } from '../hooks/useSfx';
+import { triggerHaptic } from '../lib/haptics';
 import { Label } from '@/components/ui/label';
 import WheelPicker from '../components/WheelPicker';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Target } from 'lucide-react';
 import { useState } from 'react';
 
 export default function SettingsScreen() {
   const { settings, updateSettings } = usePullupStore();
+  const { volume, setVolume } = useSfx();
   const [showGoalPicker, setShowGoalPicker] = useState(false);
+
+  const handleVolumeChange = (newVolume: number) => {
+    setVolume(newVolume);
+  };
+
+  const handleVolumeStep = () => {
+    triggerHaptic('light');
+  };
 
   return (
     <div className="min-h-screen p-6 space-y-6">
@@ -20,7 +31,15 @@ export default function SettingsScreen() {
 
       <div className="glass-card border-app-border p-6 rounded-xl">
         <h2 className="text-app-text-primary font-semibold mb-4">Volume Control</h2>
-        <StickmanVolumeControl />
+        <div className="flex justify-center py-4">
+          <VerticalVolumeSlider
+            value={volume * 100}
+            onChange={(val) => handleVolumeChange(val / 100)}
+            onStepComplete={handleVolumeStep}
+            onDragStart={() => {}}
+            onDragEnd={() => {}}
+          />
+        </div>
       </div>
 
       <div className="glass-card border-app-border p-6 rounded-xl">

@@ -1,6 +1,7 @@
 import { RankInfo } from '../lib/types';
 import { useState } from 'react';
 import { useSfx } from '../hooks/useSfx';
+import { triggerHaptic } from '../lib/haptics';
 
 interface RankBadgeProps {
   rank: RankInfo;
@@ -15,6 +16,7 @@ export default function RankBadge({ rank, size = 240, isPromoting = false }: Ran
   const handleTap = () => {
     setIsTapped(true);
     play('tick-soft');
+    triggerHaptic('light');
     setTimeout(() => setIsTapped(false), 400);
   };
 

@@ -3,6 +3,7 @@ import { ChestTier, ChestOpenRecord, CardWalletItem, CHEST_DEFINITIONS } from '.
 import { drawCards } from './drawCards';
 import { deductCoins, addChestOpen, addCardsToWallet, getModifiers, saveModifiers } from './economyStore';
 import { updateModifiersAfterOpen } from './modifiers';
+import { getCurrentPSTDate } from '../pstDate';
 
 export interface ChestOpenResult {
   success: boolean;
@@ -28,13 +29,15 @@ export async function openChest(tier: ChestTier): Promise<ChestOpenResult> {
     const updatedModifiers = updateModifiersAfterOpen(modifiers);
     await saveModifiers(updatedModifiers);
 
-    // Persist chest open record
+    // Persist chest open record with PST date
+    const currentPSTDate = getCurrentPSTDate();
     const record: ChestOpenRecord = {
       id: `chest-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       tier,
       cost: definition.cost,
       cards,
       timestamp: Date.now(),
+      pstDate: currentPSTDate,
     };
     await addChestOpen(record);
 

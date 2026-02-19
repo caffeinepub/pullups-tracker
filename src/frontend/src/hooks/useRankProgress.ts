@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { usePullupStore } from './usePullupStore';
 import { getLifetimeTotal } from '../lib/stats';
-import { getRankByTotalReps, getNextRank, getRankProgress, RANKS } from '../lib/ranks';
+import { getRankByTotalReps, getNextRank, getRankProgress } from '../lib/ranks';
 import { RankInfo } from '../lib/types';
 
 export function useRankProgress() {

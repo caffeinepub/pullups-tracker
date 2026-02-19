@@ -1,6 +1,8 @@
 import { ChestTier, CHEST_DEFINITIONS } from '../../lib/economy/chestsTypes';
 import { ASSETS } from '../../assets/generated';
 import { Lock } from 'lucide-react';
+import { useSfx } from '../../hooks/useSfx';
+import { triggerHaptic } from '../../lib/haptics';
 
 interface ChestTileProps {
   tier: ChestTier;
@@ -11,14 +13,23 @@ interface ChestTileProps {
 export default function ChestTile({ tier, coins, onClick }: ChestTileProps) {
   const definition = CHEST_DEFINITIONS[tier];
   const canAfford = coins >= definition.cost;
+  const { play } = useSfx();
   
   const chestImage = tier === 'common' ? ASSETS.chestCommon :
                      tier === 'rare' ? ASSETS.chestRare :
                      ASSETS.chestEpic;
 
+  const handleClick = () => {
+    if (canAfford) {
+      play('button-click');
+      triggerHaptic('medium');
+      onClick();
+    }
+  };
+
   return (
     <button
-      onClick={onClick}
+      onClick={handleClick}
       disabled={!canAfford}
       className={`
         relative glass-card border-app-border rounded-xl p-6

@@ -4,6 +4,7 @@ import { offlineDb } from '../lib/offlineDb';
 
 interface SfxContextType {
   play: (type: SfxType) => void;
+  stop: (type: SfxType) => void;
   volume: number;
   setVolume: (vol: number) => void;
 }
@@ -32,8 +33,12 @@ export function SfxProvider({ children }: { children: ReactNode }) {
     sfxManager.play(type);
   };
 
+  const stop = (type: SfxType) => {
+    sfxManager.stop(type);
+  };
+
   return (
-    <SfxContext.Provider value={{ play, volume, setVolume }}>
+    <SfxContext.Provider value={{ play, stop, volume, setVolume }}>
       {children}
     </SfxContext.Provider>
   );

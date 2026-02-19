@@ -1,10 +1,12 @@
 import { useMemo, useState } from 'react';
 import { usePullupStore } from '../hooks/usePullupStore';
 import { getDailyStats, getWeeklyAverage, getMonthlyTotal, getPersonalRecords } from '../lib/stats';
+import { getPastPSTDates, formatPSTDateForDisplay } from '../lib/pstDate';
 import HistoryGraph365 from '../components/HistoryGraph365';
 import HistoryGraphLifetime from '../components/HistoryGraphLifetime';
 import DayDetailsSheet from '../components/DayDetailsSheet';
 import { DailyStats } from '../lib/types';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 export default function HistoryScreen() {
   const { sessions } = usePullupStore();
@@ -16,6 +18,8 @@ export default function HistoryScreen() {
     return stats.slice(-365);
   }, [sessions]);
 
+  const past365Dates = useMemo(() => getPastPSTDates(365), []);
+
   const weeklyAvg = useMemo(() => getWeeklyAverage(sessions), [sessions]);
   const monthlyTotal = useMemo(() => getMonthlyTotal(sessions), [sessions]);
   const records = useMemo(() => getPersonalRecords(sessions), [sessions]);
@@ -25,12 +29,55 @@ export default function HistoryScreen() {
     setSheetOpen(true);
   };
 
+  const handleDateSelect = (pstDate: string) => {
+    const dayData = dailyStats.find(d => d.date === pstDate);
+    if (dayData) {
+      setSelectedDay(dayData);
+      setSheetOpen(true);
+    }
+  };
+
   return (
     <div className="min-h-screen p-6 space-y-6">
       <h1 className="text-3xl font-bold text-app-text-primary">History</h1>
 
+      {/* Date Timeline */}
       <div className="glass-card border-app-border p-6 rounded-xl">
-        <h2 className="text-app-text-secondary text-sm mb-4">Last 365 Days</h2>
+        <h2 className="text-app-text-secondary text-sm mb-4">Past 365 Days</h2>
+        <ScrollArea className="h-48">
+          <div className="space-y-2">
+            {past365Dates.map(pstDate => {
+              const dayData = dailyStats.find(d => d.date === pstDate);
+              const hasData = !!dayData;
+              const reps = dayData?.totalReps || 0;
+
+              return (
+                <button
+                  key={pstDate}
+                  onClick={() => hasData && handleDateSelect(pstDate)}
+                  className={`w-full text-left p-3 rounded-lg transition-all ${
+                    hasData
+                      ? 'glass-card border-app-border hover:border-app-accent cursor-pointer'
+                      : 'bg-app-bg-secondary/20 border border-transparent cursor-default'
+                  }`}
+                >
+                  <div className="flex justify-between items-center">
+                    <span className={hasData ? 'text-app-text-primary' : 'text-app-text-secondary/50'}>
+                      {formatPSTDateForDisplay(pstDate)}
+                    </span>
+                    {hasData && (
+                      <span className="text-app-accent font-bold">{reps} reps</span>
+                    )}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </ScrollArea>
+      </div>
+
+      <div className="glass-card border-app-border p-6 rounded-xl">
+        <h2 className="text-app-text-secondary text-sm mb-4">Last 365 Days Graph</h2>
         <HistoryGraph365 data={dailyStats} onDayClick={handleDayClick} />
       </div>
 

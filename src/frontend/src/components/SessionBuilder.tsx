@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { useFocusMode } from '../hooks/useFocusMode';
 import { useSfx } from '../hooks/useSfx';
+import { triggerHaptic } from '../lib/haptics';
 
 interface SessionBuilderProps {
   onComplete: (sets: Array<{ reps: number; weight?: number }>, duration?: number) => void;
@@ -40,14 +41,24 @@ export default function SessionBuilder({ onComplete }: SessionBuilderProps) {
       weight: weight > 0 ? weight : undefined,
     }));
 
+    play('button-click');
+    triggerHaptic('medium');
     onComplete(sets, duration > 0 ? duration : undefined);
+  };
+
+  const handlePickerOpen = () => {
+    play('button-click');
+    triggerHaptic('light');
   };
 
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 gap-4">
         <button
-          onClick={() => setShowSetsPicker(true)}
+          onClick={() => {
+            handlePickerOpen();
+            setShowSetsPicker(true);
+          }}
           className="glass-card border-app-border p-6 rounded-xl text-center hover:border-app-accent transition-colors"
         >
           <div className="text-app-text-secondary text-sm mb-2">Sets</div>
@@ -55,7 +66,10 @@ export default function SessionBuilder({ onComplete }: SessionBuilderProps) {
         </button>
 
         <button
-          onClick={() => setShowRepsPicker(true)}
+          onClick={() => {
+            handlePickerOpen();
+            setShowRepsPicker(true);
+          }}
           className="glass-card border-app-border p-6 rounded-xl text-center hover:border-app-accent transition-colors"
         >
           <div className="text-app-text-secondary text-sm mb-2">Reps</div>
@@ -63,7 +77,10 @@ export default function SessionBuilder({ onComplete }: SessionBuilderProps) {
         </button>
 
         <button
-          onClick={() => setShowWeightPicker(true)}
+          onClick={() => {
+            handlePickerOpen();
+            setShowWeightPicker(true);
+          }}
           className="glass-card border-app-border p-6 rounded-xl text-center hover:border-app-accent transition-colors"
         >
           <div className="text-app-text-secondary text-sm mb-2">Weight (kg)</div>
@@ -71,7 +88,10 @@ export default function SessionBuilder({ onComplete }: SessionBuilderProps) {
         </button>
 
         <button
-          onClick={() => setShowDurationPicker(true)}
+          onClick={() => {
+            handlePickerOpen();
+            setShowDurationPicker(true);
+          }}
           className="glass-card border-app-border p-6 rounded-xl text-center hover:border-app-accent transition-colors"
         >
           <div className="text-app-text-secondary text-sm mb-2">Duration (min)</div>

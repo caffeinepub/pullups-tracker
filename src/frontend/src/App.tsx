@@ -4,15 +4,12 @@ import { Toaster } from '@/components/ui/sonner';
 import { SfxProvider } from './hooks/useSfx';
 import { PullupStoreProvider } from './hooks/usePullupStore';
 import { FocusModeProvider } from './hooks/useFocusMode';
-import { AchievementsProvider } from './hooks/useAchievements';
-import { AchievementUnlockProvider } from './components/achievements/AchievementUnlockProvider';
 import AppShell from './components/AppShell';
 import DashboardScreen from './screens/DashboardScreen';
 import LogScreen from './screens/LogScreen';
 import HistoryScreen from './screens/HistoryScreen';
 import AnalyticsScreen from './screens/AnalyticsScreen';
 import AdvancedStatsScreen from './screens/AdvancedStatsScreen';
-import AchievementsScreen from './screens/AchievementsScreen';
 import SettingsScreen from './screens/SettingsScreen';
 
 const rootRoute = createRootRoute({
@@ -49,12 +46,6 @@ const advancedStatsRoute = createRoute({
   component: AdvancedStatsScreen,
 });
 
-const achievementsRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/achievements',
-  component: AchievementsScreen,
-});
-
 const settingsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/settings',
@@ -67,7 +58,6 @@ const routeTree = rootRoute.addChildren([
   historyRoute,
   analyticsRoute,
   advancedStatsRoute,
-  achievementsRoute,
   settingsRoute,
 ]);
 
@@ -85,12 +75,8 @@ export default function App() {
       <PullupStoreProvider>
         <SfxProvider>
           <FocusModeProvider>
-            <AchievementsProvider>
-              <AchievementUnlockProvider>
-                <RouterProvider router={router} />
-                <Toaster />
-              </AchievementUnlockProvider>
-            </AchievementsProvider>
+            <RouterProvider router={router} />
+            <Toaster />
           </FocusModeProvider>
         </SfxProvider>
       </PullupStoreProvider>

@@ -1,96 +1,81 @@
+import { useMemo, useEffect, useState } from 'react';
 import { usePullupStore } from '../hooks/usePullupStore';
 import { useRankProgress } from '../hooks/useRankProgress';
+import { usePSTSync } from '../hooks/usePSTSync';
 import { getTodayTotal, getStreakInfo } from '../lib/stats';
-import { calculateFatigueScore } from '../lib/analytics';
-import { calculateReadiness } from '../lib/intelligence/readiness';
+import { formatPSTDateForDisplay } from '../lib/pstDate';
 import RankBadge from '../components/RankBadge';
-import RollingCounter from '../components/RollingCounter';
 import CoinBalanceBadge from '../components/coins/CoinBalanceBadge';
-import { Flame, Zap, Battery } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { Progress } from '@/components/ui/progress';
 
 export default function DashboardScreen() {
   const { sessions, settings } = usePullupStore();
-  const { currentRank } = useRankProgress();
-  const [mounted, setMounted] = useState(false);
+  const { currentRank, nextRank, progress } = useRankProgress();
+  const { currentPSTDate } = usePSTSync();
+  const [displayDate, setDisplayDate] = useState(formatPSTDateForDisplay(currentPSTDate));
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    setDisplayDate(formatPSTDateForDisplay(currentPSTDate));
+  }, [currentPSTDate]);
 
-  const todayTotal = getTodayTotal(sessions);
-  const streakInfo = getStreakInfo(sessions);
-  const fatigue = calculateFatigueScore(sessions);
-  const readiness = calculateReadiness(sessions);
-
-  const goalProgress = Math.min((todayTotal / settings.dailyGoal) * 100, 100);
+  const todayTotal = useMemo(() => getTodayTotal(sessions), [sessions, currentPSTDate]);
+  const streakInfo = useMemo(() => getStreakInfo(sessions), [sessions]);
+  const goalProgress = (todayTotal / settings.dailyGoal) * 100;
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      <div 
-        className="absolute inset-0 bg-gradient-radial from-app-bg-secondary/30 to-app-bg-primary"
-        style={{ 
-          background: 'radial-gradient(circle at 50% 30%, rgba(0, 240, 255, 0.08) 0%, rgba(11, 15, 20, 1) 70%)'
-        }}
-      />
-
-      <CoinBalanceBadge />
-
-      <div className="relative z-10 p-6 space-y-8">
-        <div className={`
-          flex flex-col items-center pt-12
-          ${mounted ? 'animate-fade-in-up' : 'opacity-0'}
-        `}>
-          <RankBadge rank={currentRank} size={200} />
+    <div className="min-h-screen p-6 space-y-6">
+      {/* Header with Coin Balance */}
+      <div className="flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-bold text-app-text-primary">Dashboard</h1>
+          <p className="text-app-text-secondary text-sm mt-1">{displayDate}</p>
         </div>
+        <CoinBalanceBadge />
+      </div>
 
-        <div className={`
-          text-center space-y-2
-          ${mounted ? 'animate-fade-in-up animation-delay-200' : 'opacity-0'}
-        `}>
-          <p className="text-app-text-secondary text-sm uppercase tracking-wider">
-            Today's Total
+      {/* Rank Badge */}
+      <div className="flex justify-center py-8">
+        <RankBadge rank={currentRank} size={120} />
+      </div>
+
+      {/* Rank Progress */}
+      <div className="glass-card border-app-border p-6 rounded-xl space-y-3">
+        <div className="flex justify-between items-center">
+          <span className="text-app-text-secondary text-sm">Rank Progress</span>
+          <span className="text-app-accent font-bold">{Math.round(progress)}%</span>
+        </div>
+        <Progress value={progress} className="h-2" />
+        {nextRank && (
+          <p className="text-app-text-secondary text-xs text-center">
+            Next: {nextRank.name}
           </p>
-          <div className="text-6xl font-bold text-app-accent">
-            <RollingCounter value={todayTotal} />
-          </div>
-          <div className="text-app-text-secondary">
-            / {settings.dailyGoal} pull-ups
-          </div>
-          <div className="w-64 mx-auto h-2 bg-app-bg-secondary rounded-full overflow-hidden mt-4">
-            <div 
-              className="h-full bg-gradient-to-r from-app-accent to-app-secondary-accent transition-all duration-500"
-              style={{ width: `${goalProgress}%` }}
-            />
+        )}
+      </div>
+
+      {/* Today's Stats */}
+      <div className="glass-card border-app-border p-6 rounded-xl">
+        <h2 className="text-app-text-primary font-semibold mb-4">Today</h2>
+        <div className="space-y-4">
+          <div>
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-app-text-secondary text-sm">Daily Goal</span>
+              <span className="text-app-accent font-bold">{todayTotal} / {settings.dailyGoal}</span>
+            </div>
+            <Progress value={Math.min(goalProgress, 100)} className="h-2" />
           </div>
         </div>
+      </div>
 
-        <div className={`
-          grid grid-cols-3 gap-4 max-w-2xl mx-auto
-          ${mounted ? 'animate-fade-in-up animation-delay-400' : 'opacity-0'}
-        `}>
-          <div className="glass-card border-app-border p-4 rounded-xl text-center">
-            <Flame className="w-8 h-8 text-orange-500 mx-auto mb-2" />
-            <div className="text-2xl font-bold text-app-text-primary">
-              {streakInfo.current}
-            </div>
-            <div className="text-xs text-app-text-secondary">Day Streak</div>
+      {/* Streak */}
+      <div className="glass-card border-app-border p-6 rounded-xl">
+        <div className="flex justify-between items-center">
+          <div>
+            <div className="text-app-text-secondary text-sm">Current Streak</div>
+            <div className="text-3xl font-bold text-app-accent">{streakInfo.current} days</div>
           </div>
-
-          <div className="glass-card border-app-border p-4 rounded-xl text-center">
-            <Battery className="w-8 h-8 text-red-500 mx-auto mb-2" />
-            <div className="text-2xl font-bold text-app-text-primary">
-              {Math.round(fatigue)}%
-            </div>
-            <div className="text-xs text-app-text-secondary">Fatigue</div>
-          </div>
-
-          <div className="glass-card border-app-border p-4 rounded-xl text-center">
-            <Zap className="w-8 h-8 text-app-accent mx-auto mb-2" />
-            <div className="text-2xl font-bold text-app-text-primary">
-              {Math.round(readiness.score)}%
-            </div>
-            <div className="text-xs text-app-text-secondary">Readiness</div>
+          <div className="text-right">
+            <div className="text-app-text-secondary text-sm">Longest Streak</div>
+            <div className="text-2xl font-bold text-app-text-primary">{streakInfo.longest} days</div>
           </div>
         </div>
       </div>

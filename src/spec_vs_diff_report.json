@@ -1,94 +1,14 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-16T21:46:58.492Z",
-  "summary": "Diff adds an offline economy layer (coins, chest history, wallet, modifiers), a Dashboard coin badge with rolling counter and glow, a Settings “Chest Shop” panel with chest tiles/modifier toggles, chest open dialog with staged animation + sequential card reveals, new SFX types, and haptic patterns. However, some requirements are not fully met (notably Epic probability table, insufficient-funds blocking behavior, and unverified backup/coin-award integration).",
-  "missing_requirements": [
-    {
-      "id": "REQ-52",
-      "requirement": "Include coins balance, chest history, and card wallet/inventory in the existing manual export/import backup flow (JSON), preserving backwards compatibility with older backups.",
-      "reason": "The UI text in BackupRestorePanel mentions coins/chest history/card wallet, but the diff summary does not include changes to the actual backup export/import implementation (e.g., frontend/src/lib/backup) to prove new fields are exported/imported and older backups are handled with defaults.",
-      "evidence": [
-        "frontend/src/components/BackupRestorePanel.tsx (mentions coins/chest history/card wallet in copy)"
-      ]
-    },
-    {
-      "id": "REQ-53",
-      "requirement": "Implement an offline Coins awarding system that automatically grants coins after saving a session, milestone detection, streak changes/bonuses, and achievement unlocks (offline).",
-      "reason": "The diff adds coin reward calculation and an awardCoins service, and LogScreen imports awardCoins, but the provided LogScreen changes are truncated before showing any call sites/hooking into save/milestone/achievement flows. Evidence is insufficient to confirm coins are actually awarded during these events without breaking existing flows.",
-      "evidence": [
-        "frontend/src/lib/economy/coinRewards.ts",
-        "frontend/src/lib/economy/economyService.ts",
-        "frontend/src/screens/LogScreen.tsx (truncated; shows import of awardCoins)"
-      ]
-    },
-    {
-      "id": "REQ-56",
-      "requirement": "Block chest opening with insufficient coins with a clear error/toast and no state changes.",
-      "reason": "ChestTile disables clicking when coins are insufficient, but ChestOpenDialog’s confirm handler transitions to the “opening” stage, plays SFX, and triggers haptics before calling openChest (which is where insufficient coins is detected). This means user-visible state changes (stage, animation, audio/haptics) can still occur before the insufficient-coins error is shown.",
-      "evidence": [
-        "frontend/src/components/chests/ChestTile.tsx (disabled when !canAfford)",
-        "frontend/src/components/chests/ChestOpenDialog.tsx (handleConfirm sets stage='opening' and plays SFX/haptic before openChest)",
-        "frontend/src/lib/economy/chestOpenFlow.ts (deductCoins fails -> 'Insufficient coins')"
-      ]
-    },
-    {
-      "id": "REQ-57",
-      "requirement": "Implement exact independent probabilistic draw tables per chest tier, especially Epic table per specification (120rs=30%, 150rs=30%, 180rs=10% totals), with correct draw counts 3/5/7.",
-      "reason": "Common and Rare tables match the spec, and card counts are set to 3/5/7. However the Epic DRAW_TABLES do not match the specified probabilities: code uses 120=0.15, 150=0.05, 180=0.05, which conflicts with required totals (120=0.30, 150=0.30, 180=0.10).",
-      "evidence": [
-        "frontend/src/lib/economy/drawTables.ts (epic probabilities)",
-        "frontend/src/lib/economy/chestsTypes.ts (cardCount 7)",
-        "frontend/src/lib/economy/drawCards.ts (draw loop uses cardCount)"
-      ]
-    },
-    {
-      "id": "REQ-58",
-      "requirement": "Epic chest visuals/effects: gold/amber + animated particles + aura sweep during opening/reveal; tier-based premium styling for all tiers consistent with palette.",
-      "reason": "Tier colors and basic glow effects are present (e.g., CardReveal borderColor/glow, glass panels/cards), but the diff summary does not show implementation of Epic-specific animated particles and aura sweep effects (e.g., dedicated CSS/animations tied to 'epic' during opening/reveal).",
-      "evidence": [
-        "frontend/src/components/chests/CardReveal.tsx (basic radial glow)",
-        "frontend/src/components/chests/ChestTile.tsx (adds class 'chest-tile-epic' but no corresponding CSS shown)",
-        "frontend/src/components/chests/ChestOpenDialog.tsx (truncated; no evidence of particles/aura sweep)"
-      ]
-    }
-  ],
-  "hallucinated_features": [
-    {
-      "description": "Introduced a runtime dependency on Google Fonts via CSS @import, which can require network access at runtime.",
-      "reason": "BuildRequest requires core functionality to remain fully offline with no network required; importing fonts from https://fonts.googleapis.com may trigger network requests and is not explicitly requested for the coins/chest feature.",
-      "evidence": [
-        "frontend/src/index.css (@import url('https://fonts.googleapis.com/...') )"
-      ]
-    }
-  ],
-  "confidence": 0.74,
+  "generatedAt": "2026-02-19T21:20:16.443Z",
+  "summary": "The diff fully implements REQ-1. The date formatting function in pstDate.ts was updated to return uppercase month names. The formatPSTDateForDisplay function now applies .toUpperCase() to month names, converting them from lowercase abbreviations (e.g., 'jan', 'feb') to uppercase (e.g., 'JAN', 'FEB'). No missing requirements or hallucinated features detected.",
+  "missing_requirements": [],
+  "hallucinated_features": [],
+  "confidence": 0.95,
   "changed_files": [
     "frontend-file-summaries.txt",
-    "frontend/src/assets/generated.ts",
-    "frontend/src/components/BackupRestorePanel.tsx",
-    "frontend/src/components/chests/CardReveal.tsx",
-    "frontend/src/components/chests/ChestOpenDialog.tsx",
-    "frontend/src/components/chests/ChestShopPanel.tsx",
-    "frontend/src/components/chests/ChestTile.tsx",
-    "frontend/src/components/coins/CoinBalanceBadge.tsx",
-    "frontend/src/hooks/usePullupStore.tsx",
-    "frontend/src/index.css",
-    "frontend/src/lib/economy/chestOpenFlow.ts",
-    "frontend/src/lib/economy/chestsTypes.ts",
-    "frontend/src/lib/economy/coinRewards.ts",
-    "frontend/src/lib/economy/drawCards.ts",
-    "frontend/src/lib/economy/drawTables.ts",
-    "frontend/src/lib/economy/economyService.ts",
-    "frontend/src/lib/economy/economyStore.ts",
-    "frontend/src/lib/economy/modifiers.ts",
-    "frontend/src/lib/haptics.ts",
-    "frontend/src/lib/offlineDb.ts",
-    "frontend/src/lib/sfx.ts",
-    "frontend/src/screens/DashboardScreen.tsx",
-    "frontend/src/screens/LogScreen.tsx",
-    "frontend/src/screens/SettingsScreen.tsx",
-    "frontend/tailwind.config.js",
+    "frontend/src/lib/pstDate.ts",
     "project_state.json"
   ]
 }

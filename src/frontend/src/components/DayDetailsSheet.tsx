@@ -1,4 +1,5 @@
 import { DailyStats } from '../lib/types';
+import { formatPSTDateForDisplay } from '../lib/pstDate';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 
 interface DayDetailsSheetProps {
@@ -15,12 +16,7 @@ export default function DayDetailsSheet({ day, open, onOpenChange }: DayDetailsS
       <SheetContent className="glass-panel border-app-border">
         <SheetHeader>
           <SheetTitle className="text-app-text-primary">
-            {new Date(day.date).toLocaleDateString('en-US', { 
-              weekday: 'long', 
-              year: 'numeric', 
-              month: 'long', 
-              day: 'numeric' 
-            })}
+            {formatPSTDateForDisplay(day.date)}
           </SheetTitle>
         </SheetHeader>
 

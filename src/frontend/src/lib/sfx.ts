@@ -1,97 +1,90 @@
-export type SfxType = 
+type SfxType =
   | 'button-click'
-  | 'wheel-tick'
-  | 'save-chime'
-  | 'rank-promotion'
-  | 'streak-flame'
-  | 'metal-touch'
-  | 'pr-bass'
-  | 'tick-soft'
-  | 'session-quality-elite'
-  | 'pressure-low-tone'
-  | 'focus-ambient-pulse'
-  | 'micro-progress-reinforce'
+  | 'nav-transition'
+  | 'chest-open-common'
+  | 'chest-open-rare'
+  | 'chest-open-epic'
   | 'chest-common-open'
   | 'chest-rare-open'
   | 'chest-epic-open'
   | 'card-reveal'
   | 'card-reveal-high'
+  | 'celebration'
+  | 'rank-promotion'
+  | 'record-break'
+  | 'micro-progress-reinforce'
+  | 'bonus-unlock'
+  | 'tick-soft'
+  | 'wheel-tick'
+  | 'focus-ambient-pulse'
+  | 'session-quality-elite'
+  | 'pr-bass'
+  | 'date-transition'
+  | 'save-chime'
   | 'coin-award';
 
 class SfxManager {
   private sounds: Map<SfxType, HTMLAudioElement> = new Map();
-  private volume: number = 0.7;
-  private loopingSounds: Set<SfxType> = new Set();
+  private volume: number = 0.5;
 
   constructor() {
-    this.loadSounds();
+    this.initSounds();
   }
 
-  private loadSounds() {
-    const sfxFiles: Record<SfxType, string> = {
-      'button-click': '/assets/sfx/button-click.mp3',
-      'wheel-tick': '/assets/sfx/wheel-tick.mp3',
-      'save-chime': '/assets/sfx/save-chime.mp3',
-      'rank-promotion': '/assets/sfx/rank-promotion-impact.mp3',
-      'streak-flame': '/assets/sfx/streak-ignition-flame.mp3',
-      'metal-touch': '/assets/sfx/metal-touch.mp3',
-      'pr-bass': '/assets/sfx/pr-bass-pulse.mp3',
-      'tick-soft': '/assets/sfx/tick_soft.wav',
-      'session-quality-elite': '/assets/sfx/session-quality-elite.mp3',
-      'pressure-low-tone': '/assets/sfx/pressure-low-tone.mp3',
-      'focus-ambient-pulse': '/assets/sfx/focus-ambient-pulse.mp3',
-      'micro-progress-reinforce': '/assets/sfx/micro-progress-reinforce.mp3',
-      'chest-common-open': '/assets/sfx/chest-common-open.mp3',
-      'chest-rare-open': '/assets/sfx/chest-rare-open.mp3',
-      'chest-epic-open': '/assets/sfx/chest-epic-open.mp3',
-      'card-reveal': '/assets/sfx/card-reveal.mp3',
-      'card-reveal-high': '/assets/sfx/card-reveal-high.mp3',
-      'coin-award': '/assets/sfx/coin-award.mp3',
+  private initSounds() {
+    const soundFiles: Record<SfxType, string> = {
+      'button-click': '/sfx/button-click.mp3',
+      'nav-transition': '/sfx/nav-transition.mp3',
+      'chest-open-common': '/sfx/chest-open-common.mp3',
+      'chest-open-rare': '/sfx/chest-open-rare.mp3',
+      'chest-open-epic': '/sfx/chest-open-epic.mp3',
+      'chest-common-open': '/sfx/chest-open-common.mp3',
+      'chest-rare-open': '/sfx/chest-open-rare.mp3',
+      'chest-epic-open': '/sfx/chest-open-epic.mp3',
+      'card-reveal': '/sfx/card-reveal.mp3',
+      'card-reveal-high': '/sfx/card-reveal.mp3',
+      'celebration': '/sfx/celebration.mp3',
+      'rank-promotion': '/sfx/rank-promotion.mp3',
+      'record-break': '/sfx/record-break.mp3',
+      'micro-progress-reinforce': '/sfx/micro-progress-reinforce.mp3',
+      'bonus-unlock': '/sfx/bonus-unlock.mp3',
+      'tick-soft': '/sfx/tick-soft.mp3',
+      'wheel-tick': '/sfx/tick-soft.mp3',
+      'focus-ambient-pulse': '/sfx/focus-ambient-pulse.mp3',
+      'session-quality-elite': '/sfx/session-quality-elite.mp3',
+      'pr-bass': '/sfx/pr-bass.mp3',
+      'date-transition': '/sfx/date-transition.mp3',
+      'save-chime': '/sfx/celebration.mp3',
+      'coin-award': '/sfx/bonus-unlock.mp3',
     };
 
-    Object.entries(sfxFiles).forEach(([key, path]) => {
+    Object.entries(soundFiles).forEach(([key, path]) => {
       const audio = new Audio(path);
       audio.volume = this.volume;
-      if (key === 'focus-ambient-pulse') {
-        audio.loop = true;
-      }
       this.sounds.set(key as SfxType, audio);
     });
   }
 
   play(type: SfxType) {
-    try {
-      const sound = this.sounds.get(type);
-      if (sound) {
-        if (!sound.loop) {
-          sound.currentTime = 0;
-        }
-        sound.volume = this.volume;
-        sound.play().catch(() => {});
-        if (sound.loop) {
-          this.loopingSounds.add(type);
-        }
-      }
-    } catch (error) {
-      console.warn('Failed to play sound:', error);
+    const sound = this.sounds.get(type);
+    if (sound) {
+      sound.currentTime = 0;
+      sound.play().catch(() => {
+        // Ignore autoplay errors
+      });
     }
   }
 
   stop(type: SfxType) {
-    try {
-      const sound = this.sounds.get(type);
-      if (sound) {
-        sound.pause();
-        sound.currentTime = 0;
-        this.loopingSounds.delete(type);
-      }
-    } catch (error) {
-      console.warn('Failed to stop sound:', error);
+    const sound = this.sounds.get(type);
+    if (sound) {
+      sound.pause();
+      sound.currentTime = 0;
     }
   }
 
-  setVolume(vol: number) {
-    this.volume = Math.max(0, Math.min(1, vol));
+  setVolume(volume: number) {
+    this.volume = Math.max(0, Math.min(1, volume));
     this.sounds.forEach(sound => {
       sound.volume = this.volume;
     });
@@ -103,3 +96,4 @@ class SfxManager {
 }
 
 export const sfxManager = new SfxManager();
+export type { SfxType };

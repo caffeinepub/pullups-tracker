@@ -1,290 +1,38 @@
 {
   "kind": "build_request",
-  "title": "Add Offline Coins + Probabilistic Chest Shop (Settings) with Premium Animations",
-  "projectName": "Pullups Tracker",
+  "title": "Capitalize month letters in date display",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-51",
-      "text": "Extend the offline data layer to persist a Coins system, Chest opening history, and a Card wallet/inventory locally on-device, without removing or rebuilding any existing offline stores (sessions, settings, quality, milestones, achievements).",
+      "id": "REQ-1",
+      "text": "Update the date formatting function in frontend/src/lib/pstDate.ts to return month names in all uppercase letters (e.g., 'JANUARY', 'FEBRUARY', 'MARCH') instead of the current format",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-3"
+          "msg-user-final"
         ],
         "quotes": [
-          "coins stored in-app locally, optional backup to google drive.",
-          "coins, chest history, card inventory stored locally in app"
+          "capital all the letters of the \"month\" in date"
         ]
       },
       "acceptanceCriteria": [
-        "Coins balance persists across refreshes and browser restarts.",
-        "Each opened chest is stored in a chest history list with timestamp, chest type, coin cost, and the revealed card values for that chest.",
-        "Each revealed card is stored in a wallet/inventory list with timestamp, chest type, and value.",
-        "Existing stored data (sessions/settings/quality/milestones/achievements) remains intact and readable after the update."
-      ]
-    },
-    {
-      "id": "REQ-52",
-      "text": "Include coins balance, chest history, and card wallet/inventory in the existing manual export/import backup flow (the JSON file the user can store in Google Drive), preserving backwards compatibility with older backups that do not contain these fields.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-3"
-        ],
-        "quotes": [
-          "optional backup to google drive.",
-          "optional google drive backup and restore"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Exported backup JSON includes coins balance, chest history, and card wallet/inventory in addition to existing data.",
-        "Importing an older backup (missing coins/chests/cards) completes successfully and initializes coins/chests/cards to empty/default values.",
-        "Importing a newer backup restores coins/chests/cards exactly (counts, timestamps, and values).",
-        "Backup & Restore UI remains in Settings and continues to show success/failure states."
-      ]
-    },
-    {
-      "id": "REQ-53",
-      "text": "Implement an offline Coins awarding system that automatically grants coins after: (a) saving a pull-up session, (b) detecting milestones, (c) streak changes/bonuses, and (d) achievements unlocking; coin rewards must be based on performance and must not require network access.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-3"
-        ],
-        "quotes": [
-          "every pullup session, milestone, streak, or achievement can reward coins automatically based on performance."
-        ]
-      },
-      "acceptanceCriteria": [
-        "Coins increase automatically as part of the Log save flow (no extra user action required).",
-        "Coins can also increase when milestones are detected and when achievements unlock (in the same offline flow).",
-        "Awarding coins never blocks or breaks existing flows (session save, milestone overlay, achievement popups, rank promotion, PR celebration, quality overlay).",
-        "All coin events work fully offline."
-      ]
-    },
-    {
-      "id": "REQ-54",
-      "text": "Add a coins balance UI to the Dashboard: show total coins in the top-right with an animated rolling counter and a subtle glow burst when the balance increases; keep the existing Dashboard layout, rank badge, orb, fatigue rings, streak flame, and psychological pressure feedback intact.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-3"
-        ],
-        "quotes": [
-          "coins UI: show total coins in dashboard top-right, animated counter, subtle glow when coins increase."
-        ]
-      },
-      "acceptanceCriteria": [
-        "Dashboard shows a clearly visible coin balance in the top-right corner.",
-        "Coin value changes animate smoothly (rolling/counting effect).",
-        "When coins increase, the coin UI plays a subtle glow/highlight animation without impacting other Dashboard animations.",
-        "No keyboard input is introduced."
-      ]
-    },
-    {
-      "id": "REQ-55",
-      "text": "Create a Chest Shop section inside the existing Settings tab that displays: total coin balance, available chest options (Common, Rare, Epic) with their coin costs, and a history list of opened chests; do not remove or rebuild existing Settings sections (Volume Control, Daily Goal, Backup & Restore, Danger Zone).",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-3"
-        ],
-        "quotes": [
-          "chest system\nintegrated inside settings tab.",
-          "chest section includes total coins balance, available chests, and history of opened chests"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Settings contains a new Chest Shop panel/section while keeping all existing panels present and functional.",
-        "Chest Shop section shows current coin balance.",
-        "Chest Shop section lists three chest types with clear costs: Common 250, Rare 500, Epic 1000.",
-        "Chest Shop section shows a scrollable history of opened chests (most recent first) with timestamp and results."
-      ]
-    },
-    {
-      "id": "REQ-56",
-      "text": "Implement the chest purchase and opening interaction flow: tap a chest, confirm purchase, deduct coins immediately, then play a premium chest-opening animation (shake + glow) and reveal each card one by one (flip/slide) with highlight glow; store results automatically to the offline wallet and chest history.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-3"
-        ],
-        "quotes": [
-          "tap chest → confirm purchase → play opening animation → cards revealed one by one → coins deducted immediately",
-          "animations for chest opening: shake chest, glow, slowly reveal each card with flip/slide animation.",
-          "cards reveal with animation + highlight glow, stored automatically in user wallet inside the app."
-        ]
-      },
-      "acceptanceCriteria": [
-        "Attempting to open a chest with insufficient coins is blocked with a clear error/toast and no state changes.",
-        "On confirmation, coins are deducted immediately and the UI reflects the new balance.",
-        "A chest-opening overlay/modal sequence plays before card results are fully shown.",
-        "Cards are revealed sequentially (not all at once) with a flip/slide animation and a highlight glow.",
-        "After completion, the revealed cards are persisted into the offline wallet and the chest opening is appended to history."
-      ]
-    },
-    {
-      "id": "REQ-57",
-      "text": "Implement the exact independent probabilistic draw tables for each chest type (each card draw is independent; duplicates in the same chest are allowed) and ensure the number of card draws per chest matches the specification: Common (3), Rare (5), Epic (7).",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-3"
-        ],
-        "quotes": [
-          "here are the probability tables for all three chests,",
-          "all draws should be independent, meaning the same value can appear more than once in one chest."
-        ]
-      },
-      "acceptanceCriteria": [
-        "Common chest: 3 independent draws; each draw uses: 10rs=20%, 20rs=30%, 30rs=50%.",
-        "Rare chest: 5 independent draws; each draw uses: 20rs=10%, 40rs=15%, 60rs=20%, 80rs=25%, 100rs=30%.",
-        "Epic chest: 7 independent draws; each draw uses: 50rs=25%, 80rs=30%, 100rs=20%, 120rs=30% total (15%+15% treated as 120rs), 150rs=30% total (5%+5%+5% treated as 150rs), 180rs=10% total (5%+5% treated as 180rs).",
-        "Within a single chest opening, the same value can appear multiple times (no uniqueness constraint).",
-        "The app always produces exactly 3/5/7 card values for Common/Rare/Epic respectively."
-      ]
-    },
-    {
-      "id": "REQ-58",
-      "text": "Apply tier-based chest visual styling and effects that match the existing luxury cold aesthetic and app palette (#0b0f14 background, #00f0ff accents) while adding distinct tier identity: Common (bronze + soft glow), Rare (silver + shimmering aura), Epic (gold/amber + animated particles + aura sweep).",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-3"
-        ],
-        "quotes": [
-          "colors & aura:\ncommon → bronze + soft glow\nrare → silver + shimmering aura\nepic → gold/amber + animated particles + aura sweep",
-          "maintain all previous app colors and styles: #0b0f14 background, #00f0ff accents, hexagon metallic textures, glowing auras, smooth transitions, haptic feedback"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Chest Shop UI uses glass morphism panels, depth shadows, and minimal futuristic styling consistent with the rest of the app.",
-        "Common chest visuals read as bronze with a soft glow.",
-        "Rare chest visuals read as silver with a shimmering aura effect.",
-        "Epic chest visuals read as gold/amber with animated particles and an aura sweep during opening/reveal.",
-        "No existing RankBadge/Orb/Stickman/WheelPicker styling is removed or degraded."
-      ]
-    },
-    {
-      "id": "REQ-59",
-      "text": "Extend the existing SFX system to support chest-related sounds and wire them into the chest flow: Common chest uses a soft metallic click, Rare uses a sparkle/jingle, Epic uses an epic deep pulse/bass + shimmer; additionally, play a per-card reveal sound and stronger unique feedback for high-value reveals (rare/epic moments).",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-3"
-        ],
-        "quotes": [
-          "sounds:\ncommon → soft metallic click\nrare → sparkle/jingle\nepic → epic deep pulse, bass, and shimmer sound",
-          "epic card or rare card reveal triggers stronger animation and unique sound effect"
-        ]
-      },
-      "acceptanceCriteria": [
-        "New chest SFX can be played via the existing global volume control.",
-        "Common chest opening plays the specified soft metallic click-style SFX.",
-        "Rare chest opening plays the specified sparkle/jingle-style SFX.",
-        "Epic chest opening plays the specified epic deep pulse/bass + shimmer-style SFX.",
-        "Each card reveal plays a short reveal sound; high-value reveals trigger stronger/unique audio feedback without overlapping excessively or breaking other SFX."
-      ]
-    },
-    {
-      "id": "REQ-60",
-      "text": "Add subtle positive feedback animations and haptics when coins are awarded and when a chest is opened; add stronger feedback for special reveals (rare/epic/high-value cards), while preserving existing haptic patterns and gracefully degrading on devices without vibration support.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-3"
-        ],
-        "quotes": [
-          "receiving coins and opening chests triggers subtle positive feedback animations and sounds",
-          "epic card or rare card reveal triggers stronger animation and unique sound effect",
-          "haptic feedback"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Coin award events trigger a subtle UI feedback (e.g., glow/pulse on coin counter) and a light/appropriate haptic where supported.",
-        "Opening a chest triggers a stronger but premium feedback moment (visual + optional haptic) aligned with the tier.",
-        "High-value card reveals trigger a noticeably stronger effect than normal reveals (visual + sound; haptic where supported).",
-        "No keyboard input is introduced."
-      ]
-    },
-    {
-      "id": "REQ-61",
-      "text": "Keep all previous app functionality unchanged and compatible: wheel-only input UX, existing navigation/screens, hexagon ranks, orb energy animations, stickman volume system, achievements/milestones/quality overlays, psychological pressure feedback, and performance targets (smooth ~60fps).",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-3"
-        ],
-        "quotes": [
-          "do not rebuild existing systems. extend the app with a coins system and probabilistic chest shop fully offline, ultra-premium, interactive, and animated, while keeping all previous functionality, hexagon ranks, wheel input, sound system, and psychological feedback.",
-          "fully compatible with existing stickman pullup volume system, wheel input, hexagon ranks, and orb energy animations",
-          "no placeholder elements; all chest, coin, and card mechanics fully functional offline"
-        ]
-      },
-      "acceptanceCriteria": [
-        "All existing screens and features remain accessible and function as before.",
-        "No regressions to wheel picker behavior, stickman slider scroll-lock, rank badge animations, or existing SFX/haptics.",
-        "Chest/coin animations remain smooth and do not cause noticeable lag on typical mobile devices.",
-        "Everything works offline; no new network dependencies are introduced for core functionality."
-      ]
-    },
-    {
-      "id": "REQ-62",
-      "text": "Implement optional chest modifiers: (a) a chest streak bonus where opening multiple chests in a row increases chances for higher value cards, and (b) a daily first-chest bonus for the first chest opened each day that slightly increases chances for higher value outcomes; expose clear on/off controls within the Chest Shop section and ensure defaults are off unless otherwise specified.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-3"
-        ],
-        "quotes": [
-          "optional: chest streak bonus (opening multiple chests in a row increases chances for higher value cards)",
-          "optional: daily bonus chest for first chest of the day, slightly higher chance of epic card"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Chest Shop UI provides toggles/controls for enabling/disabling chest streak bonus and daily first-chest bonus.",
-        "When disabled, chest outcomes follow the base probability tables exactly.",
-        "When enabled, the bonus rules apply consistently and transparently (the UI indicates when a bonus is active for an opening).",
-        "Bonus state and relevant counters/timestamps persist offline across refreshes."
+        "All date displays throughout the app show month names in uppercase (e.g., 'JANUARY 15, 2025' instead of 'January 15, 2025')",
+        "The change applies consistently across all screens: Dashboard, History, Log, and Analytics",
+        "Date formatting functions in pstDate.ts return uppercased month names"
       ]
     }
   ],
   "constraints": [
-    "Do not rebuild existing systems; only extend the app while preserving all prior functionality and screens.",
-    "Core functionality must remain fully offline; no network required to award coins, open chests, or view wallet/history.",
-    "Maintain strict 'no keyboard anywhere' UX (no freeform text inputs for this feature).",
-    "Preserve existing luxury cold aesthetic and palette, specifically including #0b0f14 background and #00f0ff accents.",
-    "Use and extend the existing SFX system and global volume control for any new sounds.",
-    "Keep interactions smooth and performant; animations should remain responsive on typical mobile devices.",
-    "Do not modify files listed as immutable in SYSTEM_CONTEXT (compose with existing components instead).",
-    "Backend must remain single-actor; do not introduce new backend services (prefer frontend offline storage for this system)."
+    "Do not modify the PST timezone logic or date calculation logic",
+    "Do not change the date format structure, only the capitalization of month names"
   ],
   "nonGoals": [
-    "Online sync, automatic cloud sync, or any backend-hosted economy features.",
-    "Real-money purchases, payments, or external wallet integrations.",
-    "Adding new navigation tabs or removing/replacing existing screens.",
-    "Changing rank thresholds/tier logic, wheel picker mechanics, stickman volume mechanics, or achievements definitions beyond what is necessary to hook coin rewards."
+    "Changing date format beyond month capitalization",
+    "Modifying other text capitalization in the UI",
+    "Adding user preferences for date formatting"
   ],
   "imageRequirements": {
-    "required": [
-      "3D-styled coin icon with glow (coin-icon.dim_128x128.png)",
-      "Bronze chest illustration with soft glow (chest-common.dim_512x512.png)",
-      "Silver chest illustration with shimmering aura (chest-rare.dim_512x512.png)",
-      "Gold/amber chest illustration with particle accents (chest-epic.dim_512x512.png)",
-      "Luxury card front frame (card-frame.dim_600x840.png)",
-      "Luxury card back design with subtle holographic sheen (card-back.dim_600x840.png)"
-    ],
+    "required": [],
     "edits": []
-  },
-  "userProfileUpdate": {
-    "goalsToAdd": [],
-    "goalsToRemove": [],
-    "preferencesToAdd": [],
-    "preferencesToRemove": [],
-    "miscToAdd": [],
-    "miscToRemove": [],
-    "fieldsToSet": {},
-    "fieldsToDelete": []
   }
 }

@@ -1,229 +1,24 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-16T21:46:58.503Z",
+  "generatedAt": "2026-02-19T21:20:16.446Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 12,
-    "implemented": 12,
+    "total": 1,
+    "implemented": 1,
     "items": [
       {
-        "id": "REQ-51",
-        "summary": "Extend the offline data layer to persist a Coins system, Chest opening history, and a Card wallet/inventory locally on-device, without removing or rebuilding any existing offline stores (sessions, settings, quality, milestones, achievements).",
+        "id": "REQ-1",
+        "summary": "Update the date formatting function in frontend/src/lib/pstDate.ts to return month names in all uppercase letters (e.g., 'JANUARY', 'FEBRUARY', 'MARCH') instead of the current format",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/lib/offlineDb.ts",
-          "frontend/src/lib/types.ts",
-          "frontend/src/lib/economy/chestsTypes.ts",
-          "frontend/src/lib/economy/economyStore.ts"
+          "frontend/src/lib/pstDate.ts"
         ],
         "matchedFiles": [
-          "frontend/src/lib/offlineDb.ts",
-          "frontend/src/lib/economy/chestsTypes.ts",
-          "frontend/src/lib/economy/economyStore.ts"
-        ]
-      },
-      {
-        "id": "REQ-52",
-        "summary": "Include coins balance, chest history, and card wallet/inventory in the existing manual export/import backup flow (the JSON file the user can store in Google Drive), preserving backwards compatibility with older backups that do not contain these fields.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/lib/offlineDb.ts",
-          "frontend/src/lib/backup.ts",
-          "frontend/src/components/BackupRestorePanel.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/lib/offlineDb.ts",
-          "frontend/src/components/BackupRestorePanel.tsx"
-        ]
-      },
-      {
-        "id": "REQ-53",
-        "summary": "Implement an offline Coins awarding system that automatically grants coins after: (a) saving a pull-up session, (b) detecting milestones, (c) streak changes/bonuses, and (d) achievements unlocking; coin rewards must be based on performance and must not require network access.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/lib/economy/coinRewards.ts",
-          "frontend/src/lib/economy/economyService.ts",
-          "frontend/src/screens/LogScreen.tsx",
-          "frontend/src/hooks/usePullupStore.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/lib/economy/coinRewards.ts",
-          "frontend/src/lib/economy/economyService.ts",
-          "frontend/src/screens/LogScreen.tsx",
-          "frontend/src/hooks/usePullupStore.tsx"
-        ]
-      },
-      {
-        "id": "REQ-54",
-        "summary": "Add a coins balance UI to the Dashboard: show total coins in the top-right with an animated rolling counter and a subtle glow burst when the balance increases; keep the existing Dashboard layout, rank badge, orb, fatigue rings, streak flame, and psychological pressure feedback intact.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/coins/CoinBalanceBadge.tsx",
-          "frontend/src/screens/DashboardScreen.tsx",
-          "frontend/src/index.css",
-          "frontend/src/assets/generated.ts",
-          "frontend/public/assets/generated/coin-icon.dim_128x128.png"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/coins/CoinBalanceBadge.tsx",
-          "frontend/src/screens/DashboardScreen.tsx",
-          "frontend/src/index.css",
-          "frontend/src/assets/generated.ts",
-          "frontend/public/assets/generated/coin-icon.dim_128x128.png"
-        ]
-      },
-      {
-        "id": "REQ-55",
-        "summary": "Create a Chest Shop section inside the existing Settings tab that displays: total coin balance, available chest options (Common, Rare, Epic) with their coin costs, and a history list of opened chests; do not remove or rebuild existing Settings sections (Volume Control, Daily Goal, Backup & Restore, Danger Zone).",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/chests/ChestShopPanel.tsx",
-          "frontend/src/screens/SettingsScreen.tsx",
-          "frontend/src/assets/generated.ts",
-          "frontend/public/assets/generated/chest-common.dim_512x512.png",
-          "frontend/public/assets/generated/chest-rare.dim_512x512.png",
-          "frontend/public/assets/generated/chest-epic.dim_512x512.png"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/chests/ChestShopPanel.tsx",
-          "frontend/src/screens/SettingsScreen.tsx",
-          "frontend/src/assets/generated.ts",
-          "frontend/public/assets/generated/chest-common.dim_512x512.png",
-          "frontend/public/assets/generated/chest-rare.dim_512x512.png",
-          "frontend/public/assets/generated/chest-epic.dim_512x512.png"
-        ]
-      },
-      {
-        "id": "REQ-56",
-        "summary": "Implement the chest purchase and opening interaction flow: tap a chest, confirm purchase, deduct coins immediately, then play a premium chest-opening animation (shake + glow) and reveal each card one by one (flip/slide) with highlight glow; store results automatically to the offline wallet and chest history.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/chests/ChestOpenDialog.tsx",
-          "frontend/src/components/chests/CardReveal.tsx",
-          "frontend/src/components/chests/ChestShopPanel.tsx",
-          "frontend/src/lib/economy/chestOpenFlow.ts",
-          "frontend/src/index.css",
-          "frontend/src/assets/generated.ts",
-          "frontend/public/assets/generated/card-frame.dim_600x840.png",
-          "frontend/public/assets/generated/card-back.dim_600x840.png"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/chests/ChestOpenDialog.tsx",
-          "frontend/src/components/chests/CardReveal.tsx",
-          "frontend/src/components/chests/ChestShopPanel.tsx",
-          "frontend/src/lib/economy/chestOpenFlow.ts",
-          "frontend/src/index.css",
-          "frontend/src/assets/generated.ts",
-          "frontend/public/assets/generated/card-frame.dim_600x840.png",
-          "frontend/public/assets/generated/card-back.dim_600x840.png"
-        ]
-      },
-      {
-        "id": "REQ-57",
-        "summary": "Implement the exact independent probabilistic draw tables for each chest type (each card draw is independent; duplicates in the same chest are allowed) and ensure the number of card draws per chest matches the specification: Common (3), Rare (5), Epic (7).",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/lib/economy/drawTables.ts",
-          "frontend/src/lib/economy/drawCards.ts",
-          "frontend/src/lib/economy/chestOpenFlow.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/lib/economy/drawTables.ts",
-          "frontend/src/lib/economy/drawCards.ts",
-          "frontend/src/lib/economy/chestOpenFlow.ts"
-        ]
-      },
-      {
-        "id": "REQ-58",
-        "summary": "Apply tier-based chest visual styling and effects that match the existing luxury cold aesthetic and app palette (#0b0f14 background, #00f0ff accents) while adding distinct tier identity: Common (bronze + soft glow), Rare (silver + shimmering aura), Epic (gold/amber + animated particles + aura sweep).",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/chests/ChestTile.tsx",
-          "frontend/src/components/chests/ChestShopPanel.tsx",
-          "frontend/src/components/chests/ChestOpenDialog.tsx",
-          "frontend/src/index.css"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/chests/ChestTile.tsx",
-          "frontend/src/components/chests/ChestShopPanel.tsx",
-          "frontend/src/components/chests/ChestOpenDialog.tsx",
-          "frontend/src/index.css"
-        ]
-      },
-      {
-        "id": "REQ-59",
-        "summary": "Extend the existing SFX system to support chest-related sounds and wire them into the chest flow: Common chest uses a soft metallic click, Rare uses a sparkle/jingle, Epic uses an epic deep pulse/bass + shimmer; additionally, play a per-card reveal sound and stronger unique feedback for high-value reveals (rare/epic moments).",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/lib/sfx.ts",
-          "frontend/src/components/chests/ChestOpenDialog.tsx",
-          "frontend/src/components/coins/CoinBalanceBadge.tsx",
-          "frontend/public/assets/sfx/chest-common-open.mp3",
-          "frontend/public/assets/sfx/chest-rare-open.mp3",
-          "frontend/public/assets/sfx/chest-epic-open.mp3",
-          "frontend/public/assets/sfx/card-reveal.mp3",
-          "frontend/public/assets/sfx/card-reveal-high.mp3",
-          "frontend/public/assets/sfx/coin-award.mp3"
-        ],
-        "matchedFiles": [
-          "frontend/src/lib/sfx.ts",
-          "frontend/src/components/chests/ChestOpenDialog.tsx",
-          "frontend/src/components/coins/CoinBalanceBadge.tsx"
-        ]
-      },
-      {
-        "id": "REQ-60",
-        "summary": "Add subtle positive feedback animations and haptics when coins are awarded and when a chest is opened; add stronger feedback for special reveals (rare/epic/high-value cards), while preserving existing haptic patterns and gracefully degrading on devices without vibration support.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/coins/CoinBalanceBadge.tsx",
-          "frontend/src/components/chests/ChestOpenDialog.tsx",
-          "frontend/src/lib/haptics.ts",
-          "frontend/src/index.css"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/coins/CoinBalanceBadge.tsx",
-          "frontend/src/components/chests/ChestOpenDialog.tsx",
-          "frontend/src/lib/haptics.ts",
-          "frontend/src/index.css"
-        ]
-      },
-      {
-        "id": "REQ-61",
-        "summary": "Keep all previous app functionality unchanged and compatible: wheel-only input UX, existing navigation/screens, hexagon ranks, orb energy animations, stickman volume system, achievements/milestones/quality overlays, psychological pressure feedback, and performance targets (smooth ~60fps).",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/chests/ChestShopPanel.tsx",
-          "frontend/src/components/chests/ChestOpenDialog.tsx",
-          "frontend/src/screens/DashboardScreen.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/chests/ChestShopPanel.tsx",
-          "frontend/src/components/chests/ChestOpenDialog.tsx",
-          "frontend/src/screens/DashboardScreen.tsx"
-        ]
-      },
-      {
-        "id": "REQ-62",
-        "summary": "Implement optional chest modifiers: (a) a chest streak bonus where opening multiple chests in a row increases chances for higher value cards, and (b) a daily first-chest bonus for the first chest opened each day that slightly increases chances for higher value outcomes; expose clear on/off controls within the Chest Shop section and ensure defaults are off unless otherwise specified.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/lib/economy/modifiers.ts",
-          "frontend/src/lib/economy/drawCards.ts",
-          "frontend/src/lib/offlineDb.ts",
-          "frontend/src/components/chests/ChestShopPanel.tsx",
-          "frontend/src/components/chests/ChestOpenDialog.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/lib/economy/modifiers.ts",
-          "frontend/src/lib/economy/drawCards.ts",
-          "frontend/src/lib/offlineDb.ts",
-          "frontend/src/components/chests/ChestShopPanel.tsx",
-          "frontend/src/components/chests/ChestOpenDialog.tsx"
+          "frontend/src/lib/pstDate.ts"
         ]
       }
     ]
@@ -233,36 +28,7 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/public/assets/generated/card-back.dim_600x840.png",
-    "frontend/public/assets/generated/card-frame.dim_600x840.png",
-    "frontend/public/assets/generated/chest-common.dim_512x512.png",
-    "frontend/public/assets/generated/chest-epic.dim_512x512.png",
-    "frontend/public/assets/generated/chest-rare.dim_512x512.png",
-    "frontend/public/assets/generated/coin-icon.dim_128x128.png",
-    "frontend/src/assets/generated.ts",
-    "frontend/src/components/BackupRestorePanel.tsx",
-    "frontend/src/components/chests/CardReveal.tsx",
-    "frontend/src/components/chests/ChestOpenDialog.tsx",
-    "frontend/src/components/chests/ChestShopPanel.tsx",
-    "frontend/src/components/chests/ChestTile.tsx",
-    "frontend/src/components/coins/CoinBalanceBadge.tsx",
-    "frontend/src/hooks/usePullupStore.tsx",
-    "frontend/src/index.css",
-    "frontend/src/lib/economy/chestOpenFlow.ts",
-    "frontend/src/lib/economy/chestsTypes.ts",
-    "frontend/src/lib/economy/coinRewards.ts",
-    "frontend/src/lib/economy/drawCards.ts",
-    "frontend/src/lib/economy/drawTables.ts",
-    "frontend/src/lib/economy/economyService.ts",
-    "frontend/src/lib/economy/economyStore.ts",
-    "frontend/src/lib/economy/modifiers.ts",
-    "frontend/src/lib/haptics.ts",
-    "frontend/src/lib/offlineDb.ts",
-    "frontend/src/lib/sfx.ts",
-    "frontend/src/screens/DashboardScreen.tsx",
-    "frontend/src/screens/LogScreen.tsx",
-    "frontend/src/screens/SettingsScreen.tsx",
-    "frontend/tailwind.config.js",
+    "frontend/src/lib/pstDate.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

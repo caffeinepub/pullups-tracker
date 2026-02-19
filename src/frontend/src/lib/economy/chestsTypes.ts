@@ -16,6 +16,7 @@ export interface ChestOpenRecord {
   cost: number;
   cards: number[];
   timestamp: number;
+  pstDate: string; // yyyy-mm-dd format
 }
 
 export interface CardWalletItem {
@@ -35,7 +36,7 @@ export interface ChestModifiers {
 export const CHEST_DEFINITIONS: Record<ChestTier, ChestDefinition> = {
   common: {
     tier: 'common',
-    cost: 250,
+    cost: 5000,
     cardCount: 3,
     name: 'Common Chest',
     color: '#CD7F32',
@@ -43,7 +44,7 @@ export const CHEST_DEFINITIONS: Record<ChestTier, ChestDefinition> = {
   },
   rare: {
     tier: 'rare',
-    cost: 500,
+    cost: 10000,
     cardCount: 5,
     name: 'Rare Chest',
     color: '#C0C0C0',
@@ -51,7 +52,7 @@ export const CHEST_DEFINITIONS: Record<ChestTier, ChestDefinition> = {
   },
   epic: {
     tier: 'epic',
-    cost: 1000,
+    cost: 20000,
     cardCount: 7,
     name: 'Epic Chest',
     color: '#FFD700',

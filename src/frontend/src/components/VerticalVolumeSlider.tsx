@@ -1,4 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
+import { useSfx } from '../hooks/useSfx';
+import { triggerHaptic } from '../lib/haptics';
+import { useScrollLock } from '../hooks/useScrollLock';
 
 interface VerticalVolumeSliderProps {
   value: number; // 0-100
@@ -18,10 +21,14 @@ export default function VerticalVolumeSlider({
   const trackRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const lastStepRef = useRef(Math.floor(value / 2));
+  const { play } = useSfx();
+
+  useScrollLock(isDragging);
 
   const handleStart = (clientY: number) => {
     setIsDragging(true);
     onDragStart();
+    triggerHaptic('light');
   };
 
   const handleMove = (clientY: number) => {
@@ -39,8 +46,12 @@ export default function VerticalVolumeSlider({
     
     if (currentStep > lastStep) {
       onStepComplete('up');
+      play('tick-soft');
+      triggerHaptic('light');
     } else if (currentStep < lastStep) {
       onStepComplete('down');
+      play('tick-soft');
+      triggerHaptic('light');
     }
     
     lastStepRef.current = currentStep;
